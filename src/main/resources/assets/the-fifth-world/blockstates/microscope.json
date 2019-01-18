@@ -1,0 +1,29 @@
+{
+  "variants": {
+    "inventory": {
+      "model": "the-fifth-world:microscope"
+    },
+    "facing=east": {
+      "model": "the-fifth-world:microscope",
+      "y": 270
+    },
+    "facing=south": {
+      "model": "the-fifth-world:microscope",
+      "y": 0
+    },
+    "facing=west": {
+      "model": "the-fifth-world:microscope",
+      "y": 90
+    },
+    "facing=north": {
+      "model": "the-fifth-world:microscope",
+      "y": 180
+    },
+    "facing=up": {
+      "model": "the-fifth-world:microscope"
+    },
+    "facing=down": {
+      "model": "the-fifth-world:microscope"
+    }
+  }
+}

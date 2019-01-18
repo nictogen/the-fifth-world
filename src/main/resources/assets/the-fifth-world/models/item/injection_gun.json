@@ -1,0 +1,43 @@
+{
+  "parent": "item/generated",
+  "textures": {
+    "layer0": "the-fifth-world:items/injection_gun_empty"
+  },
+  "display": {
+    "thirdperson_righthand": {
+      "rotation": [ 0, 270, 0 ],
+      "translation": [ 0, 3, 1 ],
+      "scale": [ 0.55, 0.55, 0.55 ]
+    },
+    "thirdperson_lefthand": {
+      "rotation": [ 0, 90, 0 ],
+      "translation": [ 0, 3, 1 ],
+      "scale": [ 0.55, 0.55, 0.55 ]
+    },
+    "firstperson_lefthand": {
+      "rotation": [ 0, 90, -25 ],
+      "translation": [ 1.13, 3.2, 1.13],
+      "scale": [ 0.68, 0.68, 0.68 ]
+    }
+  },
+  "overrides": [
+    {
+      "predicate": {
+        "full": 0
+      },
+      "model": "the-fifth-world:item/injection_gun_vial_empty"
+    },
+    {
+      "predicate": {
+        "full": 1
+      },
+      "model": "the-fifth-world:item/injection_gun_vial_filled"
+    },
+    {
+      "predicate": {
+        "full": 3
+      },
+      "model": "the-fifth-world:item/injection_gun_vial_gene"
+    }
+  ]
+}

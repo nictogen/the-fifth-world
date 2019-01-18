@@ -1,0 +1,7 @@
+{
+  "parent": "item/generated",
+  "textures": {
+    "layer0": "the-fifth-world:items/vial_empty",
+    "layer1": "the-fifth-world:items/vial_gene"
+  }
+}

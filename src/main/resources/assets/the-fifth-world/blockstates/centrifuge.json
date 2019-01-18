@@ -1,0 +1,11 @@
+{
+  "variants": {
+    "inventory": { "model": "the-fifth-world:centrifuge_rotate_0" },
+    "facing=east": { "model": "the-fifth-world:centrifuge_rotate_0", "y": 90  },
+    "facing=south": { "model": "the-fifth-world:centrifuge_rotate_0", "y": 180 },
+    "facing=west": { "model": "the-fifth-world:centrifuge_rotate_0", "y": 270 },
+    "facing=north": { "model": "the-fifth-world:centrifuge_rotate_0", "y": 0 },
+    "facing=down": { "model": "the-fifth-world:centrifuge_rotate_0", "y": 0 },
+    "facing=up": { "model": "the-fifth-world:centrifuge_rotate_0", "y": 0 }
+  }
+}

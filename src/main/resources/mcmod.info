@@ -1,0 +1,16 @@
+[
+{
+  "modid": "the-fifth-world",
+  "name": "The Fifth World",
+  "description": "A mod for Lucraft Core.",
+  "version": "${version}",
+  "mcversion": "${mcversion}",
+  "url": "",
+  "updateUrl": "",
+  "authorList": ["Nictogen"],
+  "credits": "Sheriff, Lucraft",
+  "logoFile": "",
+  "screenshots": [],
+  "dependencies": []
+}
+]

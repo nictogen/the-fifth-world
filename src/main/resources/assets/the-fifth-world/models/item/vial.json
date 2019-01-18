@@ -1,0 +1,26 @@
+{
+  "parent": "item/generated",
+  "textures": {
+    "layer0": "the-fifth-world:items/vial_empty"
+  },
+  "overrides": [
+    {
+      "predicate": {
+        "full": 1
+      },
+      "model": "the-fifth-world:item/vial_filled"
+    },
+    {
+      "predicate": {
+        "full": 2
+      },
+      "model": "the-fifth-world:item/vial_empty_gene"
+    },
+    {
+      "predicate": {
+        "full": 3
+      },
+      "model": "the-fifth-world:item/vial_filled_gene"
+    }
+  ]
+}
