@@ -52,41 +52,22 @@ public class ContainerMicroscope extends Container
 	public ItemStack transferStackInSlot(EntityPlayer playerIn, int index)
 	{
 		ItemStack itemstack = ItemStack.EMPTY;
-		//			Slot slot = this.inventorySlots.get(index);
-		//
-		//			if (slot != null && slot.getHasStack())
-		//			{
-		//				ItemStack itemstack1 = slot.getStack();
-		//				itemstack = itemstack1.copy();
-		//
-		//				if (index < 9)
-		//				{
-		//					if (!this.mergeItemStack(itemstack1, 9, 45, true))
-		//					{
-		//						return ItemStack.EMPTY;
-		//					}
-		//				}
-		//				else if (!this.mergeItemStack(itemstack1, 0, 9, false))
-		//				{
-		//					return ItemStack.EMPTY;
-		//				}
-		//
-		//				if (itemstack1.isEmpty())
-		//				{
-		//					slot.putStack(ItemStack.EMPTY);
-		//				}
-		//				else
-		//				{
-		//					slot.onSlotChanged();
-		//				}
-		//
-		//				if (itemstack1.getCount() == itemstack.getCount())
-		//				{
-		//					return ItemStack.EMPTY;
-		//				} TODO
-		//
-		//				slot.onTake(playerIn, itemstack1);
-		//			}
+		Slot slot = this.inventorySlots.get(index);
+
+		if (slot != null && slot.getHasStack())
+		{
+			ItemStack itemstack1 = slot.getStack();
+			if(index > 3 && index <= 40){
+				if(this.inventorySlots.get(0).getStack().isEmpty()){
+					this.inventorySlots.get(0).putStack(itemstack1);
+					slot.putStack(ItemStack.EMPTY);
+					return itemstack;
+				}
+			} else if(index == 0){
+				if(mergeItemStack(itemstack1, 3, 40, false))
+					slot.putStack(ItemStack.EMPTY);
+			}
+		}
 
 		return itemstack;
 	}
