@@ -43,7 +43,6 @@ public class GuiCentrifuge extends GuiContainer
 
 		if(tileCentrifuge instanceof TileEntityCentrifuge && ((TileEntityCentrifuge) tileCentrifuge).ticksRunning > 0)
 		{
-			//TODO slowly increase speed
 			GlStateManager.pushMatrix();
 			GlStateManager.translate(marginHorizontal + 88, marginVertical + 82, 0);
 			GlStateManager.rotate((partialTicks + Minecraft.getMinecraft().player.ticksExisted) * 10, 0.0f, 0.0f, 1.0f);

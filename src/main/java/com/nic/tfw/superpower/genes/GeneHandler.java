@@ -374,7 +374,7 @@ public class GeneHandler
 
 	private static int addLine(StringBuilder stringBuilder, NBTTagList pages, String content, int index){
 		//TODO handle adding more than 20 characters
-		if(index == 14){
+		if(index == 14) {
 			pages.appendTag(new NBTTagString(stringBuilder.toString()));
 			stringBuilder.delete(0, stringBuilder.length());
 			stringBuilder.append(content);
