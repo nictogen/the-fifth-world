@@ -47,7 +47,6 @@ public class Gene extends IForgeRegistryEntry.Impl<Gene>
 		NBTTagCompound compound = new NBTTagCompound();
 		compound.setString(GeneHandler.GENE_REGISTRY_NAME_TAG, ability.getRegistryName().toString());
 		compound.setFloat(GeneHandler.GENE_QUALITY_TAG, quality);
-		compound.setInteger(GeneHandler.GENE_STACKS_TAG, 1);
 		return compound;
 	}
 
@@ -64,13 +63,13 @@ public class Gene extends IForgeRegistryEntry.Impl<Gene>
 		return alwaysOnChance;
 	}
 
-	public Ability getAbility(EntityPlayer player, float quality, int stacks, NBTTagCompound extraData)
+	public Ability getAbility(EntityPlayer player, float quality, NBTTagCompound extraData)
 	{
 		try
 		{
 			Ability ab = createAbilityInstance(player, extraData);
 			for (int i = 0; i < fields.length; i++)
-				setFieldValue(ab, i, quality, stacks);
+				setFieldValue(ab, i, quality);
 			return ab;
 		}
 		catch (InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException e)
@@ -101,7 +100,7 @@ public class Gene extends IForgeRegistryEntry.Impl<Gene>
 		return f;
 	}
 
-	public void setFieldValue(Ability ab, int fieldIndex, float quality, float stacks) throws IllegalAccessException
+	public void setFieldValue(Ability ab, int fieldIndex, float quality) throws IllegalAccessException
 	{
 		Field f = getField(fieldIndex);
 		Object o = maxValues[fieldIndex];
@@ -109,13 +108,13 @@ public class Gene extends IForgeRegistryEntry.Impl<Gene>
 		if (o instanceof Integer || o instanceof Double || o instanceof Float || o instanceof Long)
 		{
 			if (o instanceof Integer)
-				f.set(ab, (int) ((((Integer) o).floatValue()) * quality * stacks));
+				f.set(ab, (int) ((((Integer) o).floatValue()) * quality));
 			else if (o instanceof Double)
-				f.set(ab, (double) ((((Double) o).floatValue()) * quality * stacks));
+				f.set(ab, (double) ((((Double) o).floatValue()) * quality));
 			else if (o instanceof Long)
-				f.set(ab, (long) ((((Long) o).floatValue()) * quality * stacks));
+				f.set(ab, (long) ((((Long) o).floatValue()) * quality));
 			else
-				f.set(ab, (Float) o * quality * stacks);
+				f.set(ab, (Float) o * quality);
 		}
 		else
 			f.set(ab, maxValues[fieldIndex]);

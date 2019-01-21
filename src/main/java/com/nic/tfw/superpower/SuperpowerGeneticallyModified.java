@@ -57,7 +57,7 @@ public class SuperpowerGeneticallyModified extends Superpower
 				Gene g = GeneHandler.GENE_REGISTRY.getValue(new ResourceLocation(compound.getString(GeneHandler.GENE_REGISTRY_NAME_TAG)));
 				if (g != null)
 				{
-					Ability a = g.getAbility(player, compound.getFloat(GeneHandler.GENE_QUALITY_TAG), compound.getInteger(GeneHandler.GENE_STACKS_TAG), compound);
+					Ability a = g.getAbility(player, compound.getFloat(GeneHandler.GENE_QUALITY_TAG), compound);
 					if (a != null)
 					{
 						a.setUnlocked(true);
@@ -66,21 +66,21 @@ public class SuperpowerGeneticallyModified extends Superpower
 				}
 			}
 
-//			for (int i = 1; genes.hasKey("defect_" + i); i++)
-//			{
-//				NBTTagCompound geneData = genes.getCompoundTag("defect_" + i);
-//				Gene g = GeneHandler.GENE_REGISTRY.getValue(new ResourceLocation(geneData.getString("registry_name")));
-//				if (g != null)
-//				{
-//					Ability a = g.getAbility(player, geneData.getFloat("quality"), geneData.getInteger("stacks"), geneData);
-//					if (a != null)
-//					{
-//						a.setUnlocked(true);
-//						a.setHidden(true);
-//						handler.defaultAbilities.add(a);
-//					}
-//				}
-//			}
+			for (NBTBase nbtBase : genes.getTagList(GeneHandler.DEFECT_LIST_TAG, 10))
+			{
+				NBTTagCompound compound = (NBTTagCompound) nbtBase;
+				Gene g = GeneHandler.GENE_REGISTRY.getValue(new ResourceLocation(compound.getString(GeneHandler.GENE_REGISTRY_NAME_TAG)));
+				if (g != null)
+				{
+					Ability a = g.getAbility(player, 1.0f, compound);
+					if (a != null)
+					{
+						a.setUnlocked(true);
+						a.setHidden(true);
+						handler.defaultAbilities.add(a);
+					}
+				}
+			}
 		}
 
 		list.addAll(handler.defaultAbilities);
@@ -95,7 +95,6 @@ public class SuperpowerGeneticallyModified extends Superpower
 
 	public static class GeneticallyModifiedHandler extends SuperpowerPlayerHandler
 	{
-		//TODO reset superpowerplayerhandler, or at least default abilities list when adding power
 		public List<Ability> defaultAbilities = new ArrayList<>();
 
 		public GeneticallyModifiedHandler(ISuperpowerCapability cap, Superpower superpower)

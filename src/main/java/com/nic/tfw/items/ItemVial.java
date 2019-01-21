@@ -10,8 +10,6 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.nbt.NBTTagList;
-import net.minecraft.nbt.NBTTagString;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.ResourceLocation;
@@ -21,7 +19,6 @@ import javax.annotation.Nullable;
 import java.awt.*;
 import java.util.List;
 import java.util.Random;
-import java.util.UUID;
 
 /**
  * Created by Nictogen on 1/11/19.
@@ -45,20 +42,7 @@ public class ItemVial extends Item
 
 			if (tintIndex == 1 && stack.hasTagCompound())
 			{
-				long a = 0;
-				NBTTagList list = stack.getTagCompound().getTagList(GeneHandler.DONOR_LIST_TAG, 8);
-				for (NBTBase nbtBase : list)
-				{
-					UUID uuid = UUID.fromString(((NBTTagString) nbtBase).getString());
-					a += uuid.getLeastSignificantBits() + uuid.getMostSignificantBits();
-				}
-				list = stack.getTagCompound().getTagList(GeneHandler.GENE_LIST_TAG, 10);
-				for (NBTBase nbtBase : list)
-				{
-					NBTTagCompound compound = (NBTTagCompound) nbtBase;
-					a -= compound.getString(GeneHandler.GENE_REGISTRY_NAME_TAG).length();
-				}
-				Random r = new Random(a);
+				Random r = GeneHandler.getRandom(stack.getTagCompound());
 				c = new Color(r.nextFloat(), r.nextFloat(), r.nextFloat());
 			}
 			return c.getRGB();

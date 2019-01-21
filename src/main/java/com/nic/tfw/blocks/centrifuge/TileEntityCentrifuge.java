@@ -10,6 +10,7 @@ import net.minecraft.inventory.ItemStackHelper;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.NBTTagList;
 import net.minecraft.network.NetworkManager;
 import net.minecraft.network.play.server.SPacketUpdateTileEntity;
 import net.minecraft.tileentity.TileEntityLockableLoot;
@@ -18,6 +19,7 @@ import net.minecraft.util.NonNullList;
 
 import javax.annotation.Nullable;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 
 /**
@@ -96,8 +98,7 @@ public class TileEntityCentrifuge extends TileEntityLockableLoot implements ITic
 	{
 		if (this.ticksRunning > 1)
 			ticksRunning--;
-		else
-			if (this.ticksRunning == 1)
+		else if (this.ticksRunning == 1)
 		{
 			ticksRunning = 0;
 			ItemStack stack1 = getStackInSlot(0);
@@ -112,6 +113,7 @@ public class TileEntityCentrifuge extends TileEntityLockableLoot implements ITic
 				if (full1 == 2 && full2 == 2)
 				{
 					List<NBTTagCompound> uniqueAbilities = new ArrayList<>();
+					HashSet<NBTTagCompound> defects = new HashSet<>();
 					for (NBTBase nbtBase : stack1.getTagCompound().getTagList(GeneHandler.GENE_LIST_TAG, 10))
 					{
 						NBTTagCompound gene1Compound = (NBTTagCompound) nbtBase;
@@ -121,26 +123,32 @@ public class TileEntityCentrifuge extends TileEntityLockableLoot implements ITic
 						for (NBTBase nbtBase2 : stack2.getTagCompound().getTagList(GeneHandler.GENE_LIST_TAG, 10))
 						{
 							NBTTagCompound gene2Compound = (NBTTagCompound) nbtBase2;
-							if (!combine && gene2Compound.getString(GeneHandler.GENE_REGISTRY_NAME_TAG).equals(gene1Compound.getString(GeneHandler.GENE_REGISTRY_NAME_TAG)))
+							if (!combine && gene2Compound.getString(GeneHandler.GENE_REGISTRY_NAME_TAG)
+									.equals(gene1Compound.getString(GeneHandler.GENE_REGISTRY_NAME_TAG)))
 							{
 								for (NBTBase base : gene1Compound.getTagList(GeneHandler.DONOR_LIST_TAG, 8))
 									for (NBTBase nbtBase1 : gene2Compound.getTagList(GeneHandler.DONOR_LIST_TAG, 8))
-										if(base.toString().equals(nbtBase1.toString()))
+										if (base.toString().equals(nbtBase1.toString()))
 											combine = true;
 
-								if(!combine)
+								if (!combine)
 								{
-									gene2Compound.setFloat(GeneHandler.GENE_QUALITY_TAG, gene2Compound.getFloat(GeneHandler.GENE_QUALITY_TAG) + gene1Compound.getFloat(GeneHandler.GENE_QUALITY_TAG));
-									//TODO defects based on new quality/stacks
-									gene2Compound.setInteger(GeneHandler.GENE_STACKS_TAG, gene1Compound.getInteger(GeneHandler.GENE_STACKS_TAG) + gene2Compound.getInteger(GeneHandler.GENE_STACKS_TAG));
+									float quality = gene2Compound.getFloat(GeneHandler.GENE_QUALITY_TAG) + gene1Compound.getFloat(GeneHandler.GENE_QUALITY_TAG);
+									gene2Compound.setFloat(GeneHandler.GENE_QUALITY_TAG, quality);
+									defects.addAll(GeneHandler.getDefects(GeneHandler.getRandom(stack1.getTagCompound(), stack2.getTagCompound()), quality));
+
 									for (NBTBase base : gene1Compound.getTagList(GeneHandler.DONOR_LIST_TAG, 8))
 										gene2Compound.getTagList(GeneHandler.DONOR_LIST_TAG, 8).appendTag(base);
-										combine = true;
+									combine = true;
 								}
 							}
 						}
 						if (!combine)
+						{
 							uniqueAbilities.add(gene1Compound);
+							defects.addAll(GeneHandler.getDefects(GeneHandler.getRandom(stack1.getTagCompound(), stack2.getTagCompound()),
+									gene1Compound.getFloat(GeneHandler.GENE_QUALITY_TAG)));
+						}
 					}
 
 					for (NBTTagCompound uniqueAbility : uniqueAbilities)
@@ -149,47 +157,29 @@ public class TileEntityCentrifuge extends TileEntityLockableLoot implements ITic
 					for (NBTBase nbtBase : stack1.getTagCompound().getTagList(GeneHandler.DONOR_LIST_TAG, 8))
 						stack2.getTagCompound().getTagList(GeneHandler.DONOR_LIST_TAG, 8).appendTag(nbtBase);
 
-					//TODO combine defects
-					//					for (int i = 1; stack1.getTagCompound().hasKey("defect_" + i); i++)
-					//					{
-					//
-					//						int i2 = 1;
-					//						while (stack2.getTagCompound().hasKey("defect_" + i2))
-					//						{
-					//							i2++;
-					//						}
-					//
-					//						stack2.getTagCompound().setTag("defect_" + i2, stack1.getTagCompound().getCompoundTag("defect_" + i));
-					//					}
+					for (NBTBase nbtBase : stack1.getTagCompound().getTagList(GeneHandler.DEFECT_LIST_TAG, 10))
+						defects.add((NBTTagCompound) nbtBase);
 
+					if (stack2.getTagCompound().hasKey(GeneHandler.DEFECT_LIST_TAG))
+						for (NBTBase nbtBase : stack2.getTagCompound().getTagList(GeneHandler.DEFECT_LIST_TAG, 10))
+							defects.add((NBTTagCompound) nbtBase);
 
-					//					int defectIndex = 1;
-					//					List<Gene> defects = GENE_REGISTRY.getValuesCollection().stream()
-					//							.filter(gene -> Arrays.stream(gene.ability.getAbilityClass().getInterfaces()).anyMatch(aClass -> {
-					//								return aClass.equals(IDefect.class);
-					//							})).collect(Collectors.toList());
-					//					List<Condition> conditions = new ArrayList<>(Condition.CONDITION_REGISTRY.getValuesCollection());
+					NBTTagList dL = new NBTTagList();
+					for (NBTTagCompound defect : defects)
+					{
+						dL.appendTag(defect);
+					}
 
-					//					//TODO modify chance by intelligence ?
-					//					if (!defects.isEmpty() && r.nextFloat() >= 0.75)
-					//					{
-					//						n = r.nextInt(defects.size());
-					//						NBTTagCompound nbt = createAbilityTag(defects.get(n), r.nextFloat());
-					//
-					//						nbt.setString("condition", r.nextFloat() > defects.get(n).getAlwaysOnChance() ?
-					//								conditions.get(r.nextInt(conditions.size())).getRegistryName().toString() :
-					//								conditions.get(0).getRegistryName().toString());
-					//						vialCompound.setTag("defect_" + defectIndex++, nbt);
-					//						defects.remove(n);
-					//					}
+					stack2.getTagCompound().setTag(GeneHandler.DEFECT_LIST_TAG, dL);
 
 					setInventorySlotContents(0, new ItemStack(TheFifthWorld.Items.vial));
 				}
-					//Copy
+				//Copy
 				else if (full1 == 2 && full2 == 0)
 					stack2.setTagCompound(stack1.getTagCompound());
 					//Finish
-				else if (full1 == 2 && full2 == 1) {
+				else if (full1 == 2 && full2 == 1)
+				{
 					NBTTagCompound compound = stack1.getTagCompound();
 					compound.setTag(GeneHandler.DONOR_LIST_TAG, stack2.getTagCompound().getTagList(GeneHandler.DONOR_LIST_TAG, 8));
 					compound.setInteger(GeneHandler.VIAL_TYPE_TAG, 3);

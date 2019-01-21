@@ -9,10 +9,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.nbt.NBTTagList;
-import net.minecraft.nbt.NBTTagString;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.EnumActionResult;
 import net.minecraft.util.EnumHand;
@@ -21,7 +18,6 @@ import net.minecraft.world.World;
 
 import java.awt.*;
 import java.util.Random;
-import java.util.UUID;
 
 /**
  * Created by Nictogen on 1/14/19.
@@ -68,7 +64,7 @@ public class ItemInjectionGun extends Item
 		}
 		else if(full == 3){
 
-			String uuid = stack.getTagCompound().getCompoundTag(GeneHandler.VIAL_TYPE_TAG).getTagList(GeneHandler.DONOR_LIST_TAG, 8).getStringTagAt(0);
+			String uuid = stack.getTagCompound().getCompoundTag(GeneHandler.VIAL_DATA_TAG).getTagList(GeneHandler.DONOR_LIST_TAG, 8).getStringTagAt(0);
 			if(!target.getPersistentID().toString().equals(uuid)) return super.hitEntity(stack, target, attacker);
 			if(target instanceof EntityPlayer) {
 				GeneHandler.giveSuperpowerFromInjectionGun(stack, (EntityPlayer) target);
@@ -126,20 +122,7 @@ public class ItemInjectionGun extends Item
 
 			if (tintIndex == 1 && stack.hasTagCompound() && stack.getTagCompound().hasKey(GeneHandler.VIAL_DATA_TAG))
 			{
-				long a = 0;
-				NBTTagList list = stack.getTagCompound().getCompoundTag(GeneHandler.VIAL_DATA_TAG).getTagList(GeneHandler.DONOR_LIST_TAG, 8);
-				for (NBTBase nbtBase : list)
-				{
-					UUID uuid = UUID.fromString(((NBTTagString) nbtBase).getString());
-					a += uuid.getLeastSignificantBits() + uuid.getMostSignificantBits();
-				}
-				list = stack.getTagCompound().getCompoundTag(GeneHandler.VIAL_DATA_TAG).getTagList(GeneHandler.GENE_LIST_TAG, 10);
-				for (NBTBase nbtBase : list)
-				{
-					NBTTagCompound compound = (NBTTagCompound) nbtBase;
-					a -= compound.getString(GeneHandler.GENE_REGISTRY_NAME_TAG).length();
-				}
-				Random r = new Random(a);
+				Random r = GeneHandler.getRandom(stack.getTagCompound().getCompoundTag(GeneHandler.VIAL_DATA_TAG));
 				c = new Color(r.nextFloat(), r.nextFloat(), r.nextFloat());
 			}
 			return c.getRGB();

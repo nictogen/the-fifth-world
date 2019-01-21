@@ -4,6 +4,7 @@ import com.nic.tfw.TheFifthWorld;
 import com.nic.tfw.potion.PotionExplode;
 import com.nic.tfw.superpower.SuperpowerGeneticallyModified;
 import com.nic.tfw.superpower.abilities.*;
+import com.nic.tfw.superpower.conditions.Condition;
 import lucraft.mods.lucraftcore.LucraftCore;
 import lucraft.mods.lucraftcore.karma.KarmaHandler;
 import lucraft.mods.lucraftcore.karma.KarmaStat;
@@ -16,6 +17,7 @@ import net.minecraft.entity.passive.*;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.nbt.NBTTagString;
@@ -33,9 +35,7 @@ import net.minecraftforge.registries.IForgeRegistry;
 import net.minecraftforge.registries.RegistryBuilder;
 
 import java.lang.reflect.Field;
-import java.util.ArrayList;
-import java.util.Random;
-import java.util.UUID;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static com.nic.tfw.items.ItemInjectionGun.removeContentsOfVial;
@@ -50,11 +50,12 @@ public class GeneHandler
 
 	public static final UUID RANDOM_UUID = UUID.fromString("dc7bfdde-5e0e-44b8-ae43-20063182cd8b");
 	public static final String GENE_LIST_TAG = "genes";
+	public static final String DEFECT_LIST_TAG = "defects";
+	public static final String CONDITION_TAG = "condition";
 	public static final String VIAL_TYPE_TAG = "full";
 	public static final String DONOR_LIST_TAG = "donors";
 	public static final String VIAL_DATA_TAG = "vial_data";
 	public static final String GENE_REGISTRY_NAME_TAG = "registry_name";
-	public static final String GENE_STACKS_TAG = "stacks";
 	public static final String GENE_QUALITY_TAG = "quality";
 
 	@GameRegistry.ObjectHolder(LucraftCore.MODID)
@@ -86,24 +87,24 @@ public class GeneHandler
 	public static void populateGeneList()
 	{
 
-		GENE_REGISTRY.register(new GeneAbilityAttributeModifierOperation(AbilityHealth.class, new int[] { -100 }, new Object[] { 2f }, "Health Boost"));
-		GENE_REGISTRY.register(new Gene(AbilityHealing.class, new int[] { 0, 1 }, new Object[] { 20, 0.5f }, "Healing Factor"));
-		GENE_REGISTRY.register(new GeneAbilityAttributeModifierOperation(AbilityStrength.class, new int[] { -100 }, new Object[] { 2.5f }, "Strength Boost"));
-		GENE_REGISTRY.register(new GeneAbilityAttributeModifierOperation(AbilityPunch.class, new int[] { -100 }, new Object[] { 2.5f }, "Punch Boost"));
-		GENE_REGISTRY.register(new GeneAbilityAttributeModifier(AbilitySprint.class, new int[] { -100 }, new Object[] { 0.1f }, "Sprint Boost"));
+		GENE_REGISTRY.register(new GeneAbilityAttributeModifierOperation(AbilityHealth.class, new int[] { -100 }, new Object[] { 20f }, "Health Boost"));
+		GENE_REGISTRY.register(new Gene(AbilityHealing.class, new int[] { 1 }, new Object[] { 5f }, "Healing Factor"));
+		GENE_REGISTRY.register(new GeneAbilityAttributeModifierOperation(AbilityStrength.class, new int[] { -100 }, new Object[] { 20f }, "Strength Boost"));
+		GENE_REGISTRY.register(new GeneAbilityAttributeModifierOperation(AbilityPunch.class, new int[] { -100 }, new Object[] { 20f }, "Punch Boost"));
+		GENE_REGISTRY.register(new GeneAbilityAttributeModifier(AbilitySprint.class, new int[] { -100 }, new Object[] { 1f }, "Sprint Boost"));
 		GENE_REGISTRY.register(new GeneAbilityAttributeModifierOperation(AbilityJumpBoost.class, new int[] { -100 }, new Object[] { 1f }, "Jump Boost"));
-		GENE_REGISTRY.register(new GeneAbilityAttributeModifierOperation(AbilityDamageResistance.class, new int[] { -100 }, new Object[] { 4f }, "Resistance"));
-		GENE_REGISTRY.register(new GeneAbilityAttributeModifierOperation(AbilityFallResistance.class, new int[] { -100 }, new Object[] { -5f }, "Fall Resistance"));
+		GENE_REGISTRY.register(new GeneAbilityAttributeModifierOperation(AbilityDamageResistance.class, new int[] { -100 }, new Object[] { 35f }, "Resistance"));
+		GENE_REGISTRY.register(new GeneAbilityAttributeModifierOperation(AbilityFallResistance.class, new int[] { -100 }, new Object[] { 35f }, "Fall Resistance"));
 		GENE_REGISTRY.register(new Gene(AbilityFireResistance.class, new int[] {}, new Object[] {}, "Fire Res."));
-		GENE_REGISTRY.register(new GeneAbilityAttributeModifierOperation(AbilityStepAssist.class, new int[] { -100 }, new Object[] { 1f }, "Step Assist"));
+		GENE_REGISTRY.register(new GeneAbilityAttributeModifierOperation(AbilityStepAssist.class, new int[] { -100 }, new Object[] { 10f }, "Step Assist"));
 		GENE_REGISTRY.register(new Gene(AbilitySizeChange.class, new int[] { 0 }, new Object[] { 5 }, "Size Changing"));
-		GENE_REGISTRY.register(new Gene(AbilityTeleport.class, new int[] { 0 }, new Object[] { 3 }, "Teleportation"));
-		GENE_REGISTRY.register(new GeneAbilityAttributeModifierOperation(AbilityKnockbackResistance.class, new int[] { -100 }, new Object[] { 5f }, "Knockback Resistance"));
+		GENE_REGISTRY.register(new Gene(AbilityTeleport.class, new int[] { 0 }, new Object[] { 50 }, "Teleportation"));
+		GENE_REGISTRY.register(new GeneAbilityAttributeModifierOperation(AbilityKnockbackResistance.class, new int[] { -100 }, new Object[] { 35f }, "Knockback Resistance"));
 		//		GENE_REGISTRY.register(new Gene(AbilityPotionPunch.class, new int[]{-100}, new Object[]{5})); TODO
 		GENE_REGISTRY.register(new Gene(AbilitySlowfall.class, new int[] {}, new Object[] {}, "Slowfall"));
-		GENE_REGISTRY.register(new Gene(AbilityEnergyBlast.class, new int[] { 0 }, new Object[] { 2.5f }, "Energy Blast")); //TODO color
-		GENE_REGISTRY.register(new Gene(AbilityFirePunch.class, new int[] { 0, -204 }, new Object[] { 5, 5 }, "Fire Punch"));
-		GENE_REGISTRY.register(new Gene(AbilityFlight.class, new int[] { 0, 1 }, new Object[] { 0.5, 1.0 }, "Flight"));
+		GENE_REGISTRY.register(new Gene(AbilityEnergyBlast.class, new int[] { 0 }, new Object[] { 20f }, "Energy Blast")); //TODO color
+		GENE_REGISTRY.register(new Gene(AbilityFirePunch.class, new int[] { 0, -204 }, new Object[] { 50, 50 }, "Fire Punch"));
+		GENE_REGISTRY.register(new Gene(AbilityFlight.class, new int[] { 0, 1 }, new Object[] { 5.0, 10.0 }, "Flight"));
 		GENE_REGISTRY.register(new Gene(AbilityWaterBreathing.class, new int[] {}, new Object[] {}, "Water Breathing"));
 		GENE_REGISTRY.register(new Gene(AbilityToughLungs.class, new int[] {}, new Object[] {}, "Tough Lungs"));
 		GENE_REGISTRY.register(new Gene(AbilityInvisibility.class, new int[] {}, new Object[] {}, "Invisibility"));
@@ -307,11 +308,11 @@ public class GeneHandler
 	public enum GeneStrength {
 		NONE(0.0f),
 		VERY_LOW(0.1f),
-		LOW(0.25f),
-		MID(0.5f),
-		HIGH(0.75f),
-		VERY_HIGH(0.9f),
-		PERFECT(1.0f);
+		LOW(0.2f),
+		MID(0.3f),
+		HIGH(0.4f),
+		VERY_HIGH(0.5f),
+		PERFECT(0.6f);
 
 		public float chance;
 		GeneStrength(float chance){
@@ -319,7 +320,6 @@ public class GeneHandler
 		}
 	}
 
-	//TODO update
 	public static ItemStack createGeneDataBook(ItemStack stack, EntityLivingBase attacker){
 		ItemStack s = new ItemStack(Items.WRITTEN_BOOK);
 		NBTTagCompound nbt = new NBTTagCompound();
@@ -332,31 +332,28 @@ public class GeneHandler
 		StringBuilder s2 = new StringBuilder("");
 
 		index = addLine(s2, pages, "Genetic Abilities:", index);
-		for (int l = 1; stack.getTagCompound().getCompoundTag("vial_tag").hasKey("gene_" + l); l++)
+		for (NBTBase nbtBase : stack.getTagCompound().getCompoundTag(GeneHandler.VIAL_DATA_TAG).getTagList(GeneHandler.GENE_LIST_TAG, 10))
 		{
-			NBTTagCompound gene = stack.getTagCompound().getCompoundTag("vial_tag").getCompoundTag("gene_" + l);
-			Gene g = GeneHandler.GENE_REGISTRY.getValue(new ResourceLocation(gene.getString("registry_name")));
+			NBTTagCompound gene = (NBTTagCompound) nbtBase;
+			Gene g = GeneHandler.GENE_REGISTRY.getValue(new ResourceLocation(gene.getString(GeneHandler.GENE_REGISTRY_NAME_TAG)));
 			if(g != null)
 			{
 
 				index = addLine(s2, pages, "", index);
 				index = addLine(s2, pages, g.displayName, index);
-				index = addLine(s2, pages, Math.round(gene.getFloat("quality")*10000f) / 100.0 + "% Quality", index);
-				index = addLine(s2, pages, gene.getInteger("stacks") + " Iterations", index);
+				index = addLine(s2, pages, Math.round(gene.getFloat(GeneHandler.GENE_QUALITY_TAG)*1000f) / 10.0 + "% Quality", index);
 			}
 		}
 		index = addLine(s2, pages, "", index);
 		index = addLine(s2, pages, "Genetic Defects", index);
 		index = addLine(s2, pages, "", index);
-		for (int l = 1; stack.getTagCompound().getCompoundTag("vial_tag").hasKey("defect_" + l); l++)
-		{
-			NBTTagCompound defect = stack.getTagCompound().getCompoundTag("vial_tag").getCompoundTag("defect_" + l);
-			Gene g = GeneHandler.GENE_REGISTRY.getValue(new ResourceLocation(defect.getString("registry_name")));
-			if(g != null)
-			{
 
+		for (NBTBase nbtBase : stack.getTagCompound().getCompoundTag(GeneHandler.VIAL_DATA_TAG).getTagList(GeneHandler.DEFECT_LIST_TAG, 10))
+		{
+			NBTTagCompound gene = (NBTTagCompound) nbtBase;
+			Gene g = GeneHandler.GENE_REGISTRY.getValue(new ResourceLocation(gene.getString(GeneHandler.GENE_REGISTRY_NAME_TAG)));
+			if(g != null)
 				index = addLine(s2, pages, g.displayName, index);
-			}
 		}
 
 		pages.appendTag(new NBTTagString(s2.toString()));
@@ -427,5 +424,83 @@ public class GeneHandler
 	@SubscribeEvent
 	public static void onRegisterKarmaStats(RegistryEvent.Register<KarmaStat> e) {
 		e.getRegistry().register(TEST_SUBJECTS_EXPLODED = new KarmaStat("test_subjects_exploded", -25).setRegistryName(TheFifthWorld.MODID, "test_subjects_exploded"));
+	}
+
+	public static Random getRandom(NBTTagCompound vialData){
+
+		long a = 0;
+		NBTTagList list = vialData.getTagList(GeneHandler.DONOR_LIST_TAG, 8);
+		for (NBTBase nbtBase : list)
+		{
+			UUID uuid = UUID.fromString(((NBTTagString) nbtBase).getString());
+			a += uuid.getLeastSignificantBits() + uuid.getMostSignificantBits();
+		}
+		list = vialData.getTagList(GeneHandler.GENE_LIST_TAG, 10);
+		for (NBTBase nbtBase : list)
+		{
+			NBTTagCompound compound = (NBTTagCompound) nbtBase;
+			a -= compound.getString(GeneHandler.GENE_REGISTRY_NAME_TAG).length();
+		}
+		return new Random(a);
+	}
+
+	public static Random getRandom(NBTTagCompound vialData, NBTTagCompound vialData2){
+
+		long a = 0;
+		NBTTagList list = vialData.getTagList(GeneHandler.DONOR_LIST_TAG, 8);
+		for (NBTBase nbtBase : list)
+		{
+			UUID uuid = UUID.fromString(((NBTTagString) nbtBase).getString());
+			a += uuid.getLeastSignificantBits() + uuid.getMostSignificantBits();
+		}
+		list = vialData.getTagList(GeneHandler.GENE_LIST_TAG, 10);
+		for (NBTBase nbtBase : list)
+		{
+			NBTTagCompound compound = (NBTTagCompound) nbtBase;
+			a -= compound.getString(GeneHandler.GENE_REGISTRY_NAME_TAG).length();
+		}
+
+		list = vialData2.getTagList(GeneHandler.DONOR_LIST_TAG, 8);
+		for (NBTBase nbtBase : list)
+		{
+			UUID uuid = UUID.fromString(((NBTTagString) nbtBase).getString());
+			a += uuid.getLeastSignificantBits() + uuid.getMostSignificantBits();
+		}
+		list = vialData2.getTagList(GeneHandler.GENE_LIST_TAG, 10);
+		for (NBTBase nbtBase : list)
+		{
+			NBTTagCompound compound = (NBTTagCompound) nbtBase;
+			a -= compound.getString(GeneHandler.GENE_REGISTRY_NAME_TAG).length();
+		}
+
+		return new Random(a);
+	}
+	//TODO modify chance by intelligence ?
+	public static ArrayList<NBTTagCompound> getDefects(Random r, float quality) {
+		List<Gene> d = GeneHandler.GENE_REGISTRY.getValuesCollection().stream().filter(gene -> Arrays.stream(gene.ability.getAbilityClass().getInterfaces()).anyMatch(aClass -> { return aClass.equals(IDefect.class); })).collect(Collectors.toList());
+
+		List<Condition> conditions = new ArrayList<>(Condition.CONDITION_REGISTRY.getValuesCollection());
+
+		ArrayList<NBTTagCompound> defects = new ArrayList<>();
+
+		while (quality > 0)
+		{
+			Gene defect = d.get(r.nextInt(d.size()));
+			float chance = quality;
+			if(chance > 100) chance = 100;
+			if (r.nextFloat() > (chance / 2.0f))
+			{
+				NBTTagCompound nbt = defect.createAbilityTag(1.0f);
+
+				nbt.setString(GeneHandler.CONDITION_TAG, r.nextFloat() > defect.getAlwaysOnChance() ?
+						conditions.get(r.nextInt(conditions.size())).getRegistryName().toString() :
+						conditions.get(0).getRegistryName().toString());
+
+				defects.add(nbt);
+			}
+			quality -= chance;
+		}
+
+		return defects;
 	}
 }
