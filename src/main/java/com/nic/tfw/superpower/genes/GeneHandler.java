@@ -15,6 +15,7 @@ import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.monster.*;
 import net.minecraft.entity.passive.*;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTBase;
@@ -28,6 +29,7 @@ import net.minecraft.util.text.TextComponentString;
 import net.minecraft.village.MerchantRecipe;
 import net.minecraft.village.MerchantRecipeList;
 import net.minecraftforge.event.RegistryEvent;
+import net.minecraftforge.event.entity.living.LivingDeathEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.registry.GameRegistry;
@@ -502,5 +504,11 @@ public class GeneHandler
 		}
 
 		return defects;
+	}
+
+	@SubscribeEvent
+	public static void onDeath(LivingDeathEvent event){
+		if(event.getEntity() instanceof EntityPlayerMP && SuperpowerHandler.getSuperpower((EntityPlayer) event.getEntity()) instanceof SuperpowerGeneticallyModified)
+			SuperpowerHandler.removeSuperpower((EntityPlayer) event.getEntity());
 	}
 }
