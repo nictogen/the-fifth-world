@@ -8,10 +8,10 @@ import com.nic.tfw.client.GuiHandler;
 import com.nic.tfw.items.ItemInjectionGun;
 import com.nic.tfw.items.ItemVial;
 import com.nic.tfw.proxy.CommonProxy;
-import com.nic.tfw.superpower.Gene;
 import com.nic.tfw.superpower.SuperpowerGeneticallyModified;
 import com.nic.tfw.superpower.abilities.*;
 import com.nic.tfw.superpower.conditions.Condition;
+import com.nic.tfw.superpower.genes.GeneHandler;
 import lucraft.mods.lucraftcore.superpowers.Superpower;
 import lucraft.mods.lucraftcore.superpowers.abilities.Ability;
 import net.minecraft.block.Block;
@@ -65,7 +65,7 @@ public class TheFifthWorld
 	@EventHandler
 	public void postInit(FMLPostInitializationEvent event)
 	{
-		Gene.populateGeneList();
+		GeneHandler.populateGeneList();
 		Condition.populateConditionList();
 	}
 

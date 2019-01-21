@@ -1,7 +1,8 @@
 package com.nic.tfw.superpower;
 
 import com.nic.tfw.TheFifthWorld;
-import com.nic.tfw.superpower.conditions.Condition;
+import com.nic.tfw.superpower.genes.Gene;
+import com.nic.tfw.superpower.genes.GeneHandler;
 import lucraft.mods.lucraftcore.superpowers.Superpower;
 import lucraft.mods.lucraftcore.superpowers.SuperpowerHandler;
 import lucraft.mods.lucraftcore.superpowers.SuperpowerPlayerHandler;
@@ -11,6 +12,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Gui;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
@@ -48,14 +50,14 @@ public class SuperpowerGeneticallyModified extends Superpower
 
 		if (handler.defaultAbilities.isEmpty())
 		{
-			NBTTagCompound genes = handler.getStyleNBTTag().getCompoundTag("gene_data");
-			for (int i = 1; genes.hasKey("gene_" + i); i++)
+			NBTTagCompound genes = handler.getStyleNBTTag().getCompoundTag(GeneHandler.VIAL_DATA_TAG);
+			for (NBTBase nbtBase : genes.getTagList(GeneHandler.GENE_LIST_TAG, 10))
 			{
-				NBTTagCompound geneData = genes.getCompoundTag("gene_" + i);
-				Gene g = Gene.GENE_REGISTRY.getValue(new ResourceLocation(geneData.getString("registry_name")));
+				NBTTagCompound compound = (NBTTagCompound) nbtBase;
+				Gene g = GeneHandler.GENE_REGISTRY.getValue(new ResourceLocation(compound.getString(GeneHandler.GENE_REGISTRY_NAME_TAG)));
 				if (g != null)
 				{
-					Ability a = g.getAbility(player, geneData.getFloat("quality"), geneData.getInteger("stacks"), null);
+					Ability a = g.getAbility(player, compound.getFloat(GeneHandler.GENE_QUALITY_TAG), compound.getInteger(GeneHandler.GENE_STACKS_TAG), compound);
 					if (a != null)
 					{
 						a.setUnlocked(true);
@@ -64,22 +66,21 @@ public class SuperpowerGeneticallyModified extends Superpower
 				}
 			}
 
-			for (int i = 1; genes.hasKey("defect_" + i); i++)
-			{
-				NBTTagCompound geneData = genes.getCompoundTag("defect_" + i);
-				Gene g = Gene.GENE_REGISTRY.getValue(new ResourceLocation(geneData.getString("registry_name")));
-				if (g != null)
-				{
-					Ability a = g.getAbility(player, geneData.getFloat("quality"), geneData.getInteger("stacks"),
-							Condition.CONDITION_REGISTRY.getValue(new ResourceLocation(geneData.getString("condition"))));
-					if (a != null)
-					{
-						a.setUnlocked(true);
-						a.setHidden(true);
-						handler.defaultAbilities.add(a);
-					}
-				}
-			}
+//			for (int i = 1; genes.hasKey("defect_" + i); i++)
+//			{
+//				NBTTagCompound geneData = genes.getCompoundTag("defect_" + i);
+//				Gene g = GeneHandler.GENE_REGISTRY.getValue(new ResourceLocation(geneData.getString("registry_name")));
+//				if (g != null)
+//				{
+//					Ability a = g.getAbility(player, geneData.getFloat("quality"), geneData.getInteger("stacks"), geneData);
+//					if (a != null)
+//					{
+//						a.setUnlocked(true);
+//						a.setHidden(true);
+//						handler.defaultAbilities.add(a);
+//					}
+//				}
+//			}
 		}
 
 		list.addAll(handler.defaultAbilities);
@@ -94,7 +95,7 @@ public class SuperpowerGeneticallyModified extends Superpower
 
 	public static class GeneticallyModifiedHandler extends SuperpowerPlayerHandler
 	{
-
+		//TODO reset superpowerplayerhandler, or at least default abilities list when adding power
 		public List<Ability> defaultAbilities = new ArrayList<>();
 
 		public GeneticallyModifiedHandler(ISuperpowerCapability cap, Superpower superpower)
@@ -106,7 +107,7 @@ public class SuperpowerGeneticallyModified extends Superpower
 		{
 			super.onUpdate(phase);
 
-			if((defaultAbilities.isEmpty() || getAbilities().isEmpty()) && getStyleNBTTag() != null && getStyleNBTTag().hasKey("gene_data") && getStyleNBTTag().getCompoundTag("gene_data").hasKey("gene_1")){
+			if((defaultAbilities.isEmpty() || getAbilities().isEmpty()) && getStyleNBTTag() != null && getStyleNBTTag().hasKey(GeneHandler.VIAL_DATA_TAG) && getStyleNBTTag().getCompoundTag(GeneHandler.VIAL_DATA_TAG).hasKey(GeneHandler.GENE_LIST_TAG)){
 				cap.getSuperpower().getDefaultAbilities(getPlayer(), getAbilities());
 			}
 		}

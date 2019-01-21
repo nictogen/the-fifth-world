@@ -1,13 +1,17 @@
 package com.nic.tfw.items;
 
 import com.nic.tfw.TheFifthWorld;
-import com.nic.tfw.superpower.Gene;
+import com.nic.tfw.superpower.genes.Gene;
+import com.nic.tfw.superpower.genes.GeneHandler;
 import net.minecraft.client.renderer.color.IItemColor;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.NBTTagList;
+import net.minecraft.nbt.NBTTagString;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.ResourceLocation;
@@ -29,7 +33,7 @@ public class ItemVial extends Item
 		setRegistryName(TheFifthWorld.MODID, "vial");
 		setTranslationKey("vial");
 		addPropertyOverride(new ResourceLocation("full"),
-				(stack, worldIn, entityIn) -> stack.hasTagCompound() ? stack.getTagCompound().getInteger("full") : 0);
+				(stack, worldIn, entityIn) -> stack.hasTagCompound() ? stack.getTagCompound().getInteger(GeneHandler.VIAL_TYPE_TAG) : 0);
 		setMaxStackSize(1);
 	}
 
@@ -41,12 +45,22 @@ public class ItemVial extends Item
 
 			if (tintIndex == 1 && stack.hasTagCompound())
 			{
-				UUID donorUUID = stack.getTagCompound().getUniqueId("donor_uuid");
-				int mod = stack.getTagCompound().getCompoundTag("gene_1").getString("registry_name").length();
-				Random r = new Random(donorUUID.getMostSignificantBits() + donorUUID.getLeastSignificantBits() + mod);
+				long a = 0;
+				NBTTagList list = stack.getTagCompound().getTagList(GeneHandler.DONOR_LIST_TAG, 8);
+				for (NBTBase nbtBase : list)
+				{
+					UUID uuid = UUID.fromString(((NBTTagString) nbtBase).getString());
+					a += uuid.getLeastSignificantBits() + uuid.getMostSignificantBits();
+				}
+				list = stack.getTagCompound().getTagList(GeneHandler.GENE_LIST_TAG, 10);
+				for (NBTBase nbtBase : list)
+				{
+					NBTTagCompound compound = (NBTTagCompound) nbtBase;
+					a -= compound.getString(GeneHandler.GENE_REGISTRY_NAME_TAG).length();
+				}
+				Random r = new Random(a);
 				c = new Color(r.nextFloat(), r.nextFloat(), r.nextFloat());
 			}
-
 			return c.getRGB();
 		}
 	}
@@ -54,23 +68,29 @@ public class ItemVial extends Item
 	@Override public void addInformation(ItemStack stack, @Nullable World worldIn, List<String> tooltip, ITooltipFlag flagIn)
 	{
 		super.addInformation(stack, worldIn, tooltip, flagIn);
-		if(stack.hasTagCompound() && stack.getTagCompound().getInteger("full") == 2 && stack.getTagCompound().hasKey("gene_1"))
+		if(stack.hasTagCompound() && stack.getTagCompound().getInteger(GeneHandler.VIAL_TYPE_TAG) == 2 && !stack.getTagCompound().getTagList(GeneHandler.GENE_LIST_TAG, 10).isEmpty())
 		{
 			tooltip.add("Genes: ");
-			for (int i = 1; stack.getTagCompound().hasKey("gene_" + i); i++)
+			for (NBTBase nbtBase : stack.getTagCompound().getTagList(GeneHandler.GENE_LIST_TAG, 10))
 			{
-				String s = "";
-				s += Gene.GENE_REGISTRY.getValue(new ResourceLocation(stack.getTagCompound().getCompoundTag("gene_" + i).getString("registry_name"))).displayName;
-				s += ", ";
-				for (QualityRating qualityRating : QualityRating.values())
+				NBTTagCompound compound = (NBTTagCompound) nbtBase;
+				Gene g = GeneHandler.GENE_REGISTRY.getValue(new ResourceLocation(compound.getString(GeneHandler.GENE_REGISTRY_NAME_TAG)));
+				if(g != null)
 				{
-					if(stack.getTagCompound().getCompoundTag("gene_" + i).getFloat("quality") >= qualityRating.minQuality){
-						s += qualityRating.displayName;
-						break;
+					String s = "";
+					s += g.displayName;
+					s += ", ";
+					for (QualityRating qualityRating : QualityRating.values())
+					{
+						if (compound.getFloat(GeneHandler.GENE_QUALITY_TAG) >= qualityRating.minQuality)
+						{
+							s += qualityRating.displayName;
+							break;
+						}
 					}
+					s += " Quality";
+					tooltip.add(s);
 				}
-				s += " Quality";
-				tooltip.add(s);
 			}
 		}
 	}
@@ -86,7 +106,7 @@ public class ItemVial extends Item
 		return super.onItemRightClick(worldIn, playerIn, handIn);
 	}
 
-	public enum QualityRating{
+	public enum QualityRating {
 		OFF_THE_CHARTS("Off The Charts", 1.0f),
 		EXCELLENT("Excellent", 0.85f),
 		GOOD("Good", 0.675f),
