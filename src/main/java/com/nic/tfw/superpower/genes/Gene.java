@@ -21,6 +21,8 @@ public class Gene extends IForgeRegistryEntry.Impl<Gene>
 	public Object[] maxValues;
 	public String displayName;
 
+
+	public Gene(){}
 	public Gene(Class<? extends Ability> c, int[] fields, Object[] maxValues, String displayName)
 	{
 		Optional<Ability.AbilityEntry> abilityEntry = Ability.ABILITY_REGISTRY.getValuesCollection().stream().filter(
@@ -108,8 +110,8 @@ public class Gene extends IForgeRegistryEntry.Impl<Gene>
 		if (o instanceof Integer || o instanceof Double || o instanceof Float || o instanceof Long)
 		{
 			if (o instanceof Integer)
-				f.set(ab, (int) ((((Integer) o).floatValue()) * quality));
-			else if (o instanceof Double)
+				f.set(ab, Math.max((int) ((((Integer) o).floatValue()) * quality), 1));
+			 else if (o instanceof Double)
 				f.set(ab, (double) ((((Double) o).floatValue()) * quality));
 			else if (o instanceof Long)
 				f.set(ab, (long) ((((Long) o).floatValue()) * quality));
@@ -156,6 +158,10 @@ public class Gene extends IForgeRegistryEntry.Impl<Gene>
 
 			return quality + ((float) r.nextGaussian() * 0.25f);
 		}
+	}
+
+	public void combineGenes(NBTTagCompound one, NBTTagCompound two){
+
 	}
 }
 

@@ -2,6 +2,7 @@ package com.nic.tfw.blocks.centrifuge;
 
 import com.nic.tfw.TheFifthWorld;
 import com.nic.tfw.items.ItemVial;
+import com.nic.tfw.superpower.genes.Gene;
 import com.nic.tfw.superpower.genes.GeneHandler;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.InventoryPlayer;
@@ -21,6 +22,7 @@ import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * Created by Nictogen on 1/11/19.
@@ -133,8 +135,14 @@ public class TileEntityCentrifuge extends TileEntityLockableLoot implements ITic
 
 								if (!combine)
 								{
+
+									List<Gene> g = GeneHandler.GENE_REGISTRY.getValuesCollection().stream().filter(gene -> gene.getRegistryName().toString().equals(gene1Compound.getString(GeneHandler.GENE_REGISTRY_NAME_TAG))).collect(Collectors.toList());
+									if(!g.isEmpty()){
+										g.get(0).combineGenes(gene1Compound, gene2Compound);
+									}
 									float quality = gene2Compound.getFloat(GeneHandler.GENE_QUALITY_TAG) + gene1Compound.getFloat(GeneHandler.GENE_QUALITY_TAG);
 									gene2Compound.setFloat(GeneHandler.GENE_QUALITY_TAG, quality);
+
 									defects.addAll(GeneHandler.getDefects(GeneHandler.getRandom(stack1.getTagCompound(), stack2.getTagCompound()), quality));
 
 									for (NBTBase base : gene1Compound.getTagList(GeneHandler.DONOR_LIST_TAG, 8))

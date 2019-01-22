@@ -22,6 +22,7 @@ import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.nbt.NBTTagString;
+import net.minecraft.potion.Potion;
 import net.minecraft.potion.PotionEffect;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.ITextComponent;
@@ -102,14 +103,24 @@ public class GeneHandler
 		GENE_REGISTRY.register(new Gene(AbilitySizeChange.class, new int[] { 0 }, new Object[] { 5 }, "Size Changing"));
 		GENE_REGISTRY.register(new Gene(AbilityTeleport.class, new int[] { 0 }, new Object[] { 50 }, "Teleportation"));
 		GENE_REGISTRY.register(new GeneAbilityAttributeModifierOperation(AbilityKnockbackResistance.class, new int[] { -100 }, new Object[] { 35f }, "Knockback Resistance"));
-		//		GENE_REGISTRY.register(new Gene(AbilityPotionPunch.class, new int[]{-100}, new Object[]{5})); TODO
 		GENE_REGISTRY.register(new Gene(AbilitySlowfall.class, new int[] {}, new Object[] {}, "Slowfall"));
-		GENE_REGISTRY.register(new Gene(AbilityEnergyBlast.class, new int[] { 0 }, new Object[] { 20f }, "Energy Blast")); //TODO color
+		GENE_REGISTRY.register(new Gene(AbilityEnergyBlast.class, new int[] { 0 }, new Object[] { 20f }, "Energy Blast"));
 		GENE_REGISTRY.register(new Gene(AbilityFirePunch.class, new int[] { 0, -204 }, new Object[] { 50, 50 }, "Fire Punch"));
 		GENE_REGISTRY.register(new Gene(AbilityFlight.class, new int[] { 0, 1 }, new Object[] { 5.0, 10.0 }, "Flight"));
 		GENE_REGISTRY.register(new Gene(AbilityWaterBreathing.class, new int[] {}, new Object[] {}, "Water Breathing"));
 		GENE_REGISTRY.register(new Gene(AbilityToughLungs.class, new int[] {}, new Object[] {}, "Tough Lungs"));
 		GENE_REGISTRY.register(new Gene(AbilityInvisibility.class, new int[] {}, new Object[] {}, "Invisibility"));
+
+		GENE_REGISTRY.register(new GenePotionPunch(AbilityPotionPunch.class, new int[] {1, 2}, new Object[]{3, 500}, "Poison Punch", Potion.getPotionById(19)));
+		GENE_REGISTRY.register(new GenePotionPunch(AbilityPotionPunch.class, new int[] {1, 2}, new Object[]{5, 500}, "Slowness Punch", Potion.getPotionById(2)));
+		GENE_REGISTRY.register(new GenePotionPunch(AbilityPotionPunch.class, new int[] {1, 2}, new Object[]{2, 500}, "Weakness Punch", Potion.getPotionById(18)));
+		GENE_REGISTRY.register(new GenePotionPunch(AbilityPotionPunch.class, new int[] {1, 2}, new Object[]{1, 250}, "Nausea Punch", Potion.getPotionById(9)));
+		GENE_REGISTRY.register(new GenePotionPunch(AbilityPotionPunch.class, new int[] {1, 2}, new Object[]{1, 500}, "Fatigue Punch", Potion.getPotionById(4)));
+		GENE_REGISTRY.register(new GenePotionPunch(AbilityPotionPunch.class, new int[] {1, 2}, new Object[]{10, 1}, "Healing Punch", Potion.getPotionById(6)));
+		GENE_REGISTRY.register(new GenePotionPunch(AbilityPotionPunch.class, new int[] {1, 2}, new Object[]{1, 250}, "Blindness Punch", Potion.getPotionById(15)));
+		GENE_REGISTRY.register(new GenePotionPunch(AbilityPotionPunch.class, new int[] {1, 2}, new Object[]{10, 500}, "Hunger Punch", Potion.getPotionById(17)));
+		GENE_REGISTRY.register(new GenePotionPunch(AbilityPotionPunch.class, new int[] {1, 2}, new Object[]{3, 400}, "Wither Punch", Potion.getPotionById(20)));
+		GENE_REGISTRY.register(new GenePotionPunch(AbilityPotionPunch.class, new int[] {1, 2}, new Object[]{10, 250}, "Levitation Punch", Potion.getPotionById(25)));
 
 		//Defects
 		GENE_REGISTRY.register(new GeneDefect(DefectExplosion.class, new int[] {}, new Object[] {}, "Explodes").setAlwaysOnChance(0.1f));
