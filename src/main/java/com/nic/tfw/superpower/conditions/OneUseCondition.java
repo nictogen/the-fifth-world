@@ -1,7 +1,7 @@
 package com.nic.tfw.superpower.conditions;
 
 import lucraft.mods.lucraftcore.superpowers.abilities.Ability;
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.EntityLivingBase;
 
 import java.util.HashMap;
 
@@ -10,18 +10,18 @@ import java.util.HashMap;
  */
 public class OneUseCondition extends Condition {
 
-	private HashMap<EntityPlayer, Boolean> isEnabled = new HashMap<>();
+	private HashMap<EntityLivingBase, Boolean> isEnabled = new HashMap<>();
 
-	@Override public boolean isEnabled(EntityPlayer player, Ability ability)
+	@Override public boolean isEnabled(EntityLivingBase entity, Ability ability)
 	{
-		if(isEnabled.get(player) != null && isEnabled.get(player)){
-			isEnabled.put(player, false);
+		if(isEnabled.get(entity) != null && isEnabled.get(entity)){
+			isEnabled.put(entity, false);
 			return true;
 		}
 		return false;
 	}
 
-	public void setEnabled(EntityPlayer player)
+	public void setEnabled(EntityLivingBase player)
 	{
 		isEnabled.put(player, true);
 	}

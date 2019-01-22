@@ -1,7 +1,7 @@
 package com.nic.tfw.superpower.genes;
 
 import lucraft.mods.lucraftcore.superpowers.abilities.Ability;
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.registries.IForgeRegistryEntry;
 
@@ -65,11 +65,11 @@ public class Gene extends IForgeRegistryEntry.Impl<Gene>
 		return alwaysOnChance;
 	}
 
-	public Ability getAbility(EntityPlayer player, float quality, NBTTagCompound extraData)
+	public Ability getAbility(EntityLivingBase entity, float quality, NBTTagCompound extraData)
 	{
 		try
 		{
-			Ability ab = createAbilityInstance(player, extraData);
+			Ability ab = createAbilityInstance(entity, extraData);
 			for (int i = 0; i < fields.length; i++)
 				setFieldValue(ab, i, quality);
 			return ab;
@@ -81,8 +81,8 @@ public class Gene extends IForgeRegistryEntry.Impl<Gene>
 		}
 	}
 
-	public Ability createAbilityInstance(EntityPlayer player, NBTTagCompound nbt) throws NoSuchMethodException, IllegalAccessException, InvocationTargetException, InstantiationException {
-		return ability.getAbilityClass().getConstructor(EntityPlayer.class).newInstance(player);
+	public Ability createAbilityInstance(EntityLivingBase entity, NBTTagCompound nbt) throws NoSuchMethodException, IllegalAccessException, InvocationTargetException, InstantiationException {
+		return ability.getAbilityClass().getConstructor(EntityLivingBase.class).newInstance(entity);
 	}
 
 	public Field getField(int fieldIndex){

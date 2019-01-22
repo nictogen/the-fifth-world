@@ -8,8 +8,8 @@ import com.nic.tfw.superpower.conditions.Condition;
 import lucraft.mods.lucraftcore.LucraftCore;
 import lucraft.mods.lucraftcore.karma.KarmaHandler;
 import lucraft.mods.lucraftcore.karma.KarmaStat;
+import lucraft.mods.lucraftcore.superpowers.SuperpowerEntityHandler;
 import lucraft.mods.lucraftcore.superpowers.SuperpowerHandler;
-import lucraft.mods.lucraftcore.superpowers.SuperpowerPlayerHandler;
 import lucraft.mods.lucraftcore.superpowers.abilities.*;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.monster.*;
@@ -102,25 +102,36 @@ public class GeneHandler
 		GENE_REGISTRY.register(new GeneAbilityAttributeModifierOperation(AbilityStepAssist.class, new int[] { -100 }, new Object[] { 10f }, "Step Assist"));
 		GENE_REGISTRY.register(new Gene(AbilitySizeChange.class, new int[] { 0 }, new Object[] { 5 }, "Size Changing"));
 		GENE_REGISTRY.register(new Gene(AbilityTeleport.class, new int[] { 0 }, new Object[] { 50 }, "Teleportation"));
-		GENE_REGISTRY.register(new GeneAbilityAttributeModifierOperation(AbilityKnockbackResistance.class, new int[] { -100 }, new Object[] { 35f }, "Knockback Resistance"));
+		GENE_REGISTRY.register(
+				new GeneAbilityAttributeModifierOperation(AbilityKnockbackResistance.class, new int[] { -100 }, new Object[] { 35f }, "Knockback Resistance"));
 		GENE_REGISTRY.register(new Gene(AbilitySlowfall.class, new int[] {}, new Object[] {}, "Slowfall"));
-		GENE_REGISTRY.register(new Gene(AbilityEnergyBlast.class, new int[] { 0 }, new Object[] { 20f }, "Energy Blast"));
+		GENE_REGISTRY.register(new GeneEnergyBlast(AbilityEnergyBlast.class, new int[] { 0 }, new Object[] { 20f }, "Energy Blast"));
 		GENE_REGISTRY.register(new Gene(AbilityFirePunch.class, new int[] { 0, -204 }, new Object[] { 50, 50 }, "Fire Punch"));
 		GENE_REGISTRY.register(new Gene(AbilityFlight.class, new int[] { 0, 1 }, new Object[] { 5.0, 10.0 }, "Flight"));
 		GENE_REGISTRY.register(new Gene(AbilityWaterBreathing.class, new int[] {}, new Object[] {}, "Water Breathing"));
 		GENE_REGISTRY.register(new Gene(AbilityToughLungs.class, new int[] {}, new Object[] {}, "Tough Lungs"));
 		GENE_REGISTRY.register(new Gene(AbilityInvisibility.class, new int[] {}, new Object[] {}, "Invisibility"));
 
-		GENE_REGISTRY.register(new GenePotionPunch(AbilityPotionPunch.class, new int[] {1, 2}, new Object[]{3, 500}, "Poison Punch", Potion.getPotionById(19)));
-		GENE_REGISTRY.register(new GenePotionPunch(AbilityPotionPunch.class, new int[] {1, 2}, new Object[]{5, 500}, "Slowness Punch", Potion.getPotionById(2)));
-		GENE_REGISTRY.register(new GenePotionPunch(AbilityPotionPunch.class, new int[] {1, 2}, new Object[]{2, 500}, "Weakness Punch", Potion.getPotionById(18)));
-		GENE_REGISTRY.register(new GenePotionPunch(AbilityPotionPunch.class, new int[] {1, 2}, new Object[]{1, 250}, "Nausea Punch", Potion.getPotionById(9)));
-		GENE_REGISTRY.register(new GenePotionPunch(AbilityPotionPunch.class, new int[] {1, 2}, new Object[]{1, 500}, "Fatigue Punch", Potion.getPotionById(4)));
-		GENE_REGISTRY.register(new GenePotionPunch(AbilityPotionPunch.class, new int[] {1, 2}, new Object[]{10, 1}, "Healing Punch", Potion.getPotionById(6)));
-		GENE_REGISTRY.register(new GenePotionPunch(AbilityPotionPunch.class, new int[] {1, 2}, new Object[]{1, 250}, "Blindness Punch", Potion.getPotionById(15)));
-		GENE_REGISTRY.register(new GenePotionPunch(AbilityPotionPunch.class, new int[] {1, 2}, new Object[]{10, 500}, "Hunger Punch", Potion.getPotionById(17)));
-		GENE_REGISTRY.register(new GenePotionPunch(AbilityPotionPunch.class, new int[] {1, 2}, new Object[]{3, 400}, "Wither Punch", Potion.getPotionById(20)));
-		GENE_REGISTRY.register(new GenePotionPunch(AbilityPotionPunch.class, new int[] {1, 2}, new Object[]{10, 250}, "Levitation Punch", Potion.getPotionById(25)));
+		GENE_REGISTRY
+				.register(new GenePotionPunch(AbilityPotionPunch.class, new int[] { 1, 2 }, new Object[] { 3, 500 }, "Poison Punch", Potion.getPotionById(19)));
+		GENE_REGISTRY.register(
+				new GenePotionPunch(AbilityPotionPunch.class, new int[] { 1, 2 }, new Object[] { 5, 500 }, "Slowness Punch", Potion.getPotionById(2)));
+		GENE_REGISTRY.register(
+				new GenePotionPunch(AbilityPotionPunch.class, new int[] { 1, 2 }, new Object[] { 2, 500 }, "Weakness Punch", Potion.getPotionById(18)));
+		GENE_REGISTRY
+				.register(new GenePotionPunch(AbilityPotionPunch.class, new int[] { 1, 2 }, new Object[] { 1, 250 }, "Nausea Punch", Potion.getPotionById(9)));
+		GENE_REGISTRY
+				.register(new GenePotionPunch(AbilityPotionPunch.class, new int[] { 1, 2 }, new Object[] { 1, 500 }, "Fatigue Punch", Potion.getPotionById(4)));
+		GENE_REGISTRY
+				.register(new GenePotionPunch(AbilityPotionPunch.class, new int[] { 1, 2 }, new Object[] { 10, 1 }, "Healing Punch", Potion.getPotionById(6)));
+		GENE_REGISTRY.register(
+				new GenePotionPunch(AbilityPotionPunch.class, new int[] { 1, 2 }, new Object[] { 1, 250 }, "Blindness Punch", Potion.getPotionById(15)));
+		GENE_REGISTRY.register(
+				new GenePotionPunch(AbilityPotionPunch.class, new int[] { 1, 2 }, new Object[] { 10, 500 }, "Hunger Punch", Potion.getPotionById(17)));
+		GENE_REGISTRY
+				.register(new GenePotionPunch(AbilityPotionPunch.class, new int[] { 1, 2 }, new Object[] { 3, 400 }, "Wither Punch", Potion.getPotionById(20)));
+		GENE_REGISTRY.register(
+				new GenePotionPunch(AbilityPotionPunch.class, new int[] { 1, 2 }, new Object[] { 10, 250 }, "Levitation Punch", Potion.getPotionById(25)));
 
 		//Defects
 		GENE_REGISTRY.register(new GeneDefect(DefectExplosion.class, new int[] {}, new Object[] {}, "Explodes").setAlwaysOnChance(0.1f));
@@ -146,24 +157,22 @@ public class GeneHandler
 
 		NBTTagCompound vialCompound = new NBTTagCompound();
 
-		if (entity instanceof EntityPlayer)
-		{
-			SuperpowerPlayerHandler handler = SuperpowerHandler.getSuperpowerPlayerHandler((EntityPlayer) entity);
-			if (handler != null && handler.superpower != null && !(handler.superpower instanceof SuperpowerGeneticallyModified))
-				for (Ability ability : handler.getAbilities())
-					//TODO overrideable gene method to test if same ability
-					for (Gene gene : GENE_REGISTRY.getValuesCollection().stream().filter(gene -> gene.ability == ability.getAbilityEntry()).collect(Collectors.toList()))
+		SuperpowerEntityHandler handler = SuperpowerHandler.getSuperpowerEntityHandler(entity);
+		if (handler != null && handler.superpower != null && !(handler.superpower instanceof SuperpowerGeneticallyModified))
+			for (Ability ability : handler.getAbilities())
+				//TODO overrideable gene method to test if same ability
+				for (Gene gene : GENE_REGISTRY.getValuesCollection().stream().filter(gene -> gene.ability == ability.getAbilityEntry())
+						.collect(Collectors.toList()))
+				{
+					try
 					{
-						try
-						{
-							list.add(gene.createAbilityTagFromAbility(r, ability));
-						}
-						catch (IllegalAccessException e)
-						{
-							e.printStackTrace();
-						}
+						list.add(gene.createAbilityTagFromAbility(r, ability));
 					}
-		}
+					catch (IllegalAccessException e)
+					{
+						e.printStackTrace();
+					}
+				}
 
 		//TODO specific entity genes
 		if (entity instanceof EntityBat)
@@ -212,6 +221,9 @@ public class GeneHandler
 		if (entity instanceof EntityParrot)
 		{
 			list.add(LucraftCoreGenes.flight.createAbilityTag(r, GeneStrength.HIGH));
+			NBTTagCompound e = LucraftCoreGenes.energy_blast.createAbilityTag(r, GeneStrength.HIGH);
+			e.setIntArray("color", new int[]{255, 255, 0});
+			list.add(e);
 		}
 
 		if (entity instanceof EntityPig)
@@ -318,7 +330,8 @@ public class GeneHandler
 		stack.getTagCompound().setTag(VIAL_DATA_TAG, vialCompound);
 	}
 
-	public enum GeneStrength {
+	public enum GeneStrength
+	{
 		NONE(0.0f),
 		VERY_LOW(0.1f),
 		LOW(0.2f),
@@ -328,12 +341,15 @@ public class GeneHandler
 		PERFECT(0.6f);
 
 		public float chance;
-		GeneStrength(float chance){
+
+		GeneStrength(float chance)
+		{
 			this.chance = chance;
 		}
 	}
 
-	public static ItemStack createGeneDataBook(ItemStack stack, EntityLivingBase attacker){
+	public static ItemStack createGeneDataBook(ItemStack stack, EntityLivingBase attacker)
+	{
 		ItemStack s = new ItemStack(Items.WRITTEN_BOOK);
 		NBTTagCompound nbt = new NBTTagCompound();
 		nbt.setString("title", "Gene Data");
@@ -349,12 +365,12 @@ public class GeneHandler
 		{
 			NBTTagCompound gene = (NBTTagCompound) nbtBase;
 			Gene g = GeneHandler.GENE_REGISTRY.getValue(new ResourceLocation(gene.getString(GeneHandler.GENE_REGISTRY_NAME_TAG)));
-			if(g != null)
+			if (g != null)
 			{
 
 				index = addLine(s2, pages, "", index);
 				index = addLine(s2, pages, g.displayName, index);
-				index = addLine(s2, pages, Math.round(gene.getFloat(GeneHandler.GENE_QUALITY_TAG)*1000f) / 10.0 + "% Quality", index);
+				index = addLine(s2, pages, Math.round(gene.getFloat(GeneHandler.GENE_QUALITY_TAG) * 1000f) / 10.0 + "% Quality", index);
 			}
 		}
 		index = addLine(s2, pages, "", index);
@@ -365,7 +381,7 @@ public class GeneHandler
 		{
 			NBTTagCompound gene = (NBTTagCompound) nbtBase;
 			Gene g = GeneHandler.GENE_REGISTRY.getValue(new ResourceLocation(gene.getString(GeneHandler.GENE_REGISTRY_NAME_TAG)));
-			if(g != null)
+			if (g != null)
 				index = addLine(s2, pages, g.displayName, index);
 		}
 
@@ -383,27 +399,31 @@ public class GeneHandler
 		return s;
 	}
 
-	private static int addLine(StringBuilder stringBuilder, NBTTagList pages, String content, int index){
+	private static int addLine(StringBuilder stringBuilder, NBTTagList pages, String content, int index)
+	{
 		//TODO handle adding more than 20 characters
-		if(index == 14) {
+		if (index == 14)
+		{
 			pages.appendTag(new NBTTagString(stringBuilder.toString()));
 			stringBuilder.delete(0, stringBuilder.length());
 			stringBuilder.append(content);
 			stringBuilder.append("\n");
 			return 1;
-		} else
+		}
+		else
 			stringBuilder.append(content);
 		stringBuilder.append("\n");
 		return index + 1;
 	}
 
-	public static void giveSuperpowerFromInjectionGun(ItemStack stack, EntityPlayer player){
-		if(SuperpowerHandler.getSuperpower(player) == null)
+	public static void giveSuperpowerFromInjectionGun(ItemStack stack, EntityLivingBase entity)
+	{
+		if (SuperpowerHandler.getSuperpower(entity) == null)
 		{
 			NBTTagCompound compound = new NBTTagCompound();
 			compound.setTag(GeneHandler.VIAL_DATA_TAG, stack.getTagCompound().getTag(GeneHandler.VIAL_DATA_TAG));
-			SuperpowerHandler.setSuperpower(player, TheFifthWorld.Superpowers.genetically_modified);
-			SuperpowerGeneticallyModified.GeneticallyModifiedHandler handler = SuperpowerHandler.getSpecificSuperpowerPlayerHandler(player, SuperpowerGeneticallyModified.GeneticallyModifiedHandler.class);
+			SuperpowerHandler.setSuperpower(entity, TheFifthWorld.Superpowers.genetically_modified);
+			SuperpowerGeneticallyModified.GeneticallyModifiedHandler handler = SuperpowerHandler.getSpecificSuperpowerEntityHandler(entity, SuperpowerGeneticallyModified.GeneticallyModifiedHandler.class);
 			handler.setStyleNBTTag(compound);
 			handler.defaultAbilities.clear();
 			handler.getAbilities().clear();
@@ -411,7 +431,8 @@ public class GeneHandler
 		}
 	}
 
-	public static void giveSuperpowerFromInjectionGun(ItemStack stack, EntityLivingBase injector, EntityVillager villager){
+	public static void giveSuperpowerFromInjectionGun(ItemStack stack, EntityLivingBase injector, EntityVillager villager)
+	{
 		ItemStack s = GeneHandler.createGeneDataBook(stack, injector);
 		MerchantRecipeList recipes = new MerchantRecipeList();
 		recipes.add(new MerchantRecipe(new ItemStack(Items.PAPER), s));
@@ -425,8 +446,9 @@ public class GeneHandler
 		{
 			e.printStackTrace();
 		}
-		villager.addPotionEffect(new PotionEffect(PotionExplode.POTION_EXPLODE, 5*20));
-		if(injector instanceof EntityPlayer){
+		villager.addPotionEffect(new PotionEffect(PotionExplode.POTION_EXPLODE, 5 * 20));
+		if (injector instanceof EntityPlayer)
+		{
 			KarmaHandler.increaseKarmaStat((EntityPlayer) injector, TEST_SUBJECTS_EXPLODED);
 		}
 		removeContentsOfVial(stack);
@@ -435,11 +457,14 @@ public class GeneHandler
 	public static KarmaStat TEST_SUBJECTS_EXPLODED;
 
 	@SubscribeEvent
-	public static void onRegisterKarmaStats(RegistryEvent.Register<KarmaStat> e) {
-		e.getRegistry().register(TEST_SUBJECTS_EXPLODED = new KarmaStat("test_subjects_exploded", -25).setRegistryName(TheFifthWorld.MODID, "test_subjects_exploded"));
+	public static void onRegisterKarmaStats(RegistryEvent.Register<KarmaStat> e)
+	{
+		e.getRegistry()
+				.register(TEST_SUBJECTS_EXPLODED = new KarmaStat("test_subjects_exploded", -25).setRegistryName(TheFifthWorld.MODID, "test_subjects_exploded"));
 	}
 
-	public static Random getRandom(NBTTagCompound vialData){
+	public static Random getRandom(NBTTagCompound vialData)
+	{
 
 		long a = 0;
 		NBTTagList list = vialData.getTagList(GeneHandler.DONOR_LIST_TAG, 8);
@@ -457,7 +482,8 @@ public class GeneHandler
 		return new Random(a);
 	}
 
-	public static Random getRandom(NBTTagCompound vialData, NBTTagCompound vialData2){
+	public static Random getRandom(NBTTagCompound vialData, NBTTagCompound vialData2)
+	{
 
 		long a = 0;
 		NBTTagList list = vialData.getTagList(GeneHandler.DONOR_LIST_TAG, 8);
@@ -488,9 +514,14 @@ public class GeneHandler
 
 		return new Random(a);
 	}
+
 	//TODO modify chance by intelligence ?
-	public static ArrayList<NBTTagCompound> getDefects(Random r, float quality) {
-		List<Gene> d = GeneHandler.GENE_REGISTRY.getValuesCollection().stream().filter(gene -> Arrays.stream(gene.ability.getAbilityClass().getInterfaces()).anyMatch(aClass -> { return aClass.equals(IDefect.class); })).collect(Collectors.toList());
+	public static ArrayList<NBTTagCompound> getDefects(Random r, float quality)
+	{
+		List<Gene> d = GeneHandler.GENE_REGISTRY.getValuesCollection().stream()
+				.filter(gene -> Arrays.stream(gene.ability.getAbilityClass().getInterfaces()).anyMatch(aClass -> {
+					return aClass.equals(IDefect.class);
+				})).collect(Collectors.toList());
 
 		List<Condition> conditions = new ArrayList<>(Condition.CONDITION_REGISTRY.getValuesCollection());
 
@@ -500,7 +531,8 @@ public class GeneHandler
 		{
 			Gene defect = d.get(r.nextInt(d.size()));
 			float chance = quality;
-			if(chance > 100) chance = 100;
+			if (chance > 100)
+				chance = 100;
 			if (r.nextFloat() > (chance / 2.0f))
 			{
 				NBTTagCompound nbt = defect.createAbilityTag(1.0f);
@@ -518,8 +550,10 @@ public class GeneHandler
 	}
 
 	@SubscribeEvent
-	public static void onDeath(LivingDeathEvent event){
-		if(event.getEntity() instanceof EntityPlayerMP && SuperpowerHandler.getSuperpower((EntityPlayer) event.getEntity()) instanceof SuperpowerGeneticallyModified)
+	public static void onDeath(LivingDeathEvent event)
+	{
+		if (event.getEntity() instanceof EntityPlayerMP && SuperpowerHandler
+				.getSuperpower((EntityPlayer) event.getEntity()) instanceof SuperpowerGeneticallyModified)
 			SuperpowerHandler.removeSuperpower((EntityPlayer) event.getEntity());
 	}
 }

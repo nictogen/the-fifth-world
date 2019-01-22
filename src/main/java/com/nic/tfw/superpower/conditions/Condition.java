@@ -3,7 +3,7 @@ package com.nic.tfw.superpower.conditions;
 import com.nic.tfw.TheFifthWorld;
 import lucraft.mods.lucraftcore.LucraftCore;
 import lucraft.mods.lucraftcore.superpowers.abilities.Ability;
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.fml.common.Mod;
@@ -19,7 +19,7 @@ import net.minecraftforge.registries.RegistryBuilder;
 public abstract class Condition extends IForgeRegistryEntry.Impl<Condition>
 {
 	public static IForgeRegistry<Condition> CONDITION_REGISTRY;
-	public abstract boolean isEnabled(EntityPlayer player, Ability ability);
+	public abstract boolean isEnabled(EntityLivingBase entity, Ability ability);
 
 	@SubscribeEvent
 	public static void onNewRegistry(RegistryEvent.NewRegistry event)
@@ -31,7 +31,7 @@ public abstract class Condition extends IForgeRegistryEntry.Impl<Condition>
 	{
 		CONDITION_REGISTRY.register(new Condition()
 		{
-			@Override public boolean isEnabled(EntityPlayer player, Ability ability)
+			@Override public boolean isEnabled(EntityLivingBase entity, Ability ability)
 			{
 				return true;
 			}
@@ -39,49 +39,49 @@ public abstract class Condition extends IForgeRegistryEntry.Impl<Condition>
 
 		CONDITION_REGISTRY.register(new Condition()
 		{
-			@Override public boolean isEnabled(EntityPlayer player, Ability ability)
+			@Override public boolean isEnabled(EntityLivingBase entity, Ability ability)
 			{
-				return player.isSneaking();
+				return entity.isSneaking();
 			}
 		}.setRegistryName(TheFifthWorld.MODID, "isSneaking"));
 
 		CONDITION_REGISTRY.register(new Condition()
 		{
-			@Override public boolean isEnabled(EntityPlayer player, Ability ability)
+			@Override public boolean isEnabled(EntityLivingBase entity, Ability ability)
 			{
-				return player.isPlayerSleeping();
+				return entity.isPlayerSleeping();
 			}
 		}.setRegistryName(TheFifthWorld.MODID, "isSleeping"));
 
 		CONDITION_REGISTRY.register(new Condition()
 		{
-			@Override public boolean isEnabled(EntityPlayer player, Ability ability)
+			@Override public boolean isEnabled(EntityLivingBase entity, Ability ability)
 			{
-				return player.isInWater();
+				return entity.isInWater();
 			}
 		}.setRegistryName(TheFifthWorld.MODID, "inWater"));
 
 		CONDITION_REGISTRY.register(new Condition()
 		{
-			@Override public boolean isEnabled(EntityPlayer player, Ability ability)
+			@Override public boolean isEnabled(EntityLivingBase entity, Ability ability)
 			{
-				return player.isSprinting();
+				return entity.isSprinting();
 			}
 		}.setRegistryName(TheFifthWorld.MODID, "isSprinting"));
 
 		CONDITION_REGISTRY.register(new Condition()
 		{
-			@Override public boolean isEnabled(EntityPlayer player, Ability ability)
+			@Override public boolean isEnabled(EntityLivingBase entity, Ability ability)
 			{
-				return player.fallDistance > 1;
+				return entity.fallDistance > 1;
 			}
 		}.setRegistryName(TheFifthWorld.MODID, "isFalling"));
 
 		CONDITION_REGISTRY.register(new Condition()
 		{
-			@Override public boolean isEnabled(EntityPlayer player, Ability ability)
+			@Override public boolean isEnabled(EntityLivingBase entity, Ability ability)
 			{
-				return player.isHandActive();
+				return entity.isHandActive();
 			}
 		}.setRegistryName(TheFifthWorld.MODID, "handActive"));
 

@@ -3,7 +3,7 @@ package com.nic.tfw.superpower.genes;
 import com.nic.tfw.superpower.abilities.IDefect;
 import com.nic.tfw.superpower.conditions.Condition;
 import lucraft.mods.lucraftcore.superpowers.abilities.Ability;
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.ResourceLocation;
 
@@ -19,7 +19,7 @@ public class GeneDefect extends Gene
 		super(c, fields, maxValues, displayName);
 	}
 
-	@Override public Ability createAbilityInstance(EntityPlayer player, NBTTagCompound nbt)
+	@Override public Ability createAbilityInstance(EntityLivingBase player, NBTTagCompound nbt)
 			throws NoSuchMethodException, IllegalAccessException, InvocationTargetException, InstantiationException
 	{
 		Ability a = super.createAbilityInstance(player, nbt);

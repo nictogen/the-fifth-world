@@ -4,7 +4,6 @@ import com.nic.tfw.TheFifthWorld;
 import com.nic.tfw.superpower.genes.GeneHandler;
 import net.minecraft.client.renderer.color.IItemColor;
 import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.entity.passive.EntityVillager;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.Item;
@@ -66,11 +65,10 @@ public class ItemInjectionGun extends Item
 
 			String uuid = stack.getTagCompound().getCompoundTag(GeneHandler.VIAL_DATA_TAG).getTagList(GeneHandler.DONOR_LIST_TAG, 8).getStringTagAt(0);
 			if(!target.getPersistentID().toString().equals(uuid)) return super.hitEntity(stack, target, attacker);
-			if(target instanceof EntityPlayer) {
-				GeneHandler.giveSuperpowerFromInjectionGun(stack, (EntityPlayer) target);
-			} else if(target instanceof EntityVillager){
-				GeneHandler.giveSuperpowerFromInjectionGun(stack, attacker, (EntityVillager) target);
-			}
+			GeneHandler.giveSuperpowerFromInjectionGun(stack, target);
+//			} else if(target instanceof EntityVillager){
+//				GeneHandler.giveSuperpowerFromInjectionGun(stack, attacker, (EntityVillager) target);
+//			}
 		}
 		return super.hitEntity(stack, target, attacker);
 	}

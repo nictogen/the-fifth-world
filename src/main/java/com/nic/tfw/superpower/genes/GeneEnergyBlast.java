@@ -1,7 +1,7 @@
 package com.nic.tfw.superpower.genes;
 
 import lucraft.mods.lucraftcore.superpowers.abilities.Ability;
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.math.Vec3d;
 
@@ -21,11 +21,11 @@ public class GeneEnergyBlast extends Gene
 		super(c, fields, maxValues, displayName);
 	}
 
-	@Override public Ability createAbilityInstance(EntityPlayer player, NBTTagCompound nbt) throws NoSuchMethodException, IllegalAccessException, InvocationTargetException, InstantiationException
+	@Override public Ability createAbilityInstance(EntityLivingBase player, NBTTagCompound nbt) throws NoSuchMethodException, IllegalAccessException, InvocationTargetException, InstantiationException
 	{
 		int[] color = nbt.getIntArray(COLOR_TAG);
 		Vec3d vColor = color.length == 0 ? new Vec3d(1.0, 1.0, 1.0) : new Vec3d(color[0], color[1], color[2]);
-		return ability.getAbilityClass().getConstructor(EntityPlayer.class, float.class, Vec3d.class).newInstance(player, 0f, vColor);
+		return ability.getAbilityClass().getConstructor(EntityLivingBase.class, float.class, Vec3d.class).newInstance(player, 0f, vColor);
 	}
 
 	@Override public NBTTagCompound createAbilityTag(float quality)

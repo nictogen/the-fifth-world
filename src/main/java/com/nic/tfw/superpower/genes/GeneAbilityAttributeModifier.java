@@ -1,7 +1,7 @@
 package com.nic.tfw.superpower.genes;
 
 import lucraft.mods.lucraftcore.superpowers.abilities.Ability;
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.nbt.NBTTagCompound;
 
 import java.lang.reflect.InvocationTargetException;
@@ -18,9 +18,9 @@ public class GeneAbilityAttributeModifier extends Gene
 		super(c, fields, maxValues, displayName);
 	}
 
-	@Override public Ability createAbilityInstance(EntityPlayer player, NBTTagCompound nbt)
+	@Override public Ability createAbilityInstance(EntityLivingBase player, NBTTagCompound nbt)
 			throws NoSuchMethodException, IllegalAccessException, InvocationTargetException, InstantiationException
 	{
-		return ability.getAbilityClass().getConstructor(EntityPlayer.class, UUID.class, float.class).newInstance(player, GeneHandler.RANDOM_UUID, 0f);
+		return ability.getAbilityClass().getConstructor(EntityLivingBase.class, UUID.class, float.class).newInstance(player, GeneHandler.RANDOM_UUID, 0f);
 	}
 }
