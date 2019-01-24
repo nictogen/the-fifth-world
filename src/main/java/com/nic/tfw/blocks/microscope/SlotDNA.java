@@ -1,14 +1,14 @@
 package com.nic.tfw.blocks.microscope;
 
+import com.google.common.collect.Lists;
 import com.nic.tfw.TheFifthWorld;
 import com.nic.tfw.items.ItemVial;
-import com.nic.tfw.superpower.genes.GeneHandler;
+import com.nic.tfw.superpower.genes.GeneSet;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTBase;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.nbt.NBTTagList;
+
+import java.util.ArrayList;
 
 /**
  * Created by Nictogen on 1/11/19.
@@ -28,28 +28,14 @@ public class SlotDNA extends Slot
 			inventory.setInventorySlotContents(2, ItemStack.EMPTY);
 			inventory.setInventorySlotContents(3, ItemStack.EMPTY);
 		} else {
+			GeneSet g = GeneSet.fromStack(getStack());
 
-			if(getStack().hasTagCompound()){
-				int i = 1;
-				for (NBTBase nbtBase : getStack().getTagCompound().getTagList(GeneHandler.GENE_LIST_TAG, 10))
+			if(g != null){
+				for (int i = 0; i < g.genes.size() && i < 4; i++)
 				{
-					if(i < 4)
-					{
-						NBTTagCompound compound = new NBTTagCompound();
-						ItemStack s = new ItemStack(TheFifthWorld.Items.vial);
-						compound.setInteger(GeneHandler.VIAL_TYPE_TAG, 2);
-						NBTTagList list = new NBTTagList();
-						list.appendTag(nbtBase);
-						compound.setTag(GeneHandler.GENE_LIST_TAG, list);
-						compound.setTag(GeneHandler.DONOR_LIST_TAG, ((NBTTagCompound)nbtBase).getTagList(GeneHandler.DONOR_LIST_TAG, 8));
-						s.setTagCompound(compound);
-						inventory.setInventorySlotContents(i, s);
-						i++;
-					}
-//					for (int j = 1; this.getStack().hasTagCompound() && this.getStack().getTagCompound().hasKey("defect_" + j); j++)
-//					{
-//						geneCompound.setTag("defect_" + j, this.getStack().getTagCompound().getCompoundTag("defect_" + j));
-//					}
+					ItemStack s = new ItemStack(TheFifthWorld.Items.vial);
+					new GeneSet(GeneSet.SetType.GENE, Lists.newArrayList(g.genes.get(i)), new ArrayList<>()).addTo(s);
+					inventory.setInventorySlotContents(i + 1, s);
 				}
 			}
 		}
@@ -57,6 +43,7 @@ public class SlotDNA extends Slot
 
 	@Override public boolean isItemValid(ItemStack stack)
 	{
-		return stack.getItem() instanceof ItemVial && stack.hasTagCompound() && stack.getTagCompound().getInteger("full") == 1;
+		GeneSet g = GeneSet.fromStack(stack);
+		return stack.getItem() instanceof ItemVial && g != null && g.type == GeneSet.SetType.SAMPLE;
 	}
 }

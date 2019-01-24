@@ -104,6 +104,10 @@ public class TheFifthWorld
 		event.getRegistry().register(new Ability.AbilityEntry(DefectDiet.class, new ResourceLocation(MODID, "defect_diet")));
 		event.getRegistry().register(new Ability.AbilityEntry(DefectDisable.class, new ResourceLocation(MODID, "defect_disable")));
 		event.getRegistry().register(new Ability.AbilityEntry(DefectEnable.class, new ResourceLocation(MODID, "defect_enable")));
+
+
+		event.getRegistry().register(new Ability.AbilityEntry(AbilityMakeHostile.class, new ResourceLocation(MODID, "make_hostile")));
+
 	}
 
     @GameRegistry.ObjectHolder(MODID)

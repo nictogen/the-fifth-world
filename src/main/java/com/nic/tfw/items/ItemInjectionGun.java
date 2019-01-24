@@ -1,7 +1,7 @@
 package com.nic.tfw.items;
 
 import com.nic.tfw.TheFifthWorld;
-import com.nic.tfw.superpower.genes.GeneHandler;
+import com.nic.tfw.superpower.genes.GeneSet;
 import net.minecraft.client.renderer.color.IItemColor;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
@@ -27,7 +27,8 @@ public class ItemInjectionGun extends Item
 	{
 		setRegistryName(TheFifthWorld.MODID, "injection_gun");
 		setTranslationKey("injection_gun");
-		addPropertyOverride(new ResourceLocation("full"), (stack, worldIn, entityIn) -> stack.hasTagCompound() && stack.getTagCompound().hasKey(GeneHandler.VIAL_DATA_TAG) ? stack.getTagCompound().getCompoundTag(GeneHandler.VIAL_DATA_TAG).getInteger(GeneHandler.VIAL_TYPE_TAG) : -1);
+		addPropertyOverride(new ResourceLocation("full"), (stack, worldIn, entityIn) -> stack.hasTagCompound() && stack.getTagCompound().hasKey(GeneSet.VIAL_DATA_TAG) ? stack.getTagCompound().getCompoundTag(
+				GeneSet.VIAL_DATA_TAG).getInteger(GeneSet.VIAL_TYPE_TAG) : -1);
 		setMaxStackSize(1);
 	}
 
@@ -35,18 +36,17 @@ public class ItemInjectionGun extends Item
 	{
 		if (entityLiving.isSneaking() && entityLiving instanceof EntityPlayerMP)
 		{
-			if(!stack.hasTagCompound() || !stack.getTagCompound().hasKey(GeneHandler.VIAL_DATA_TAG)) return super.onEntitySwing(entityLiving, stack);
-			int full = stack.getTagCompound().getCompoundTag(GeneHandler.VIAL_DATA_TAG).getInteger(GeneHandler.VIAL_TYPE_TAG);
-			if (full == 0)
+			GeneSet existingGeneSet = GeneSet.fromStack(stack);
+			if(existingGeneSet == null) return super.onEntitySwing(entityLiving, stack);
+
+			if (existingGeneSet.type == GeneSet.SetType.EMPTY)
 			{
-				GeneHandler.getRandomGenes(entityLiving, stack);
+				new GeneSet(entityLiving).addTo(stack);
 				return true;
 			}
-			else if(full == 3){
-				String uuid = stack.getTagCompound().getCompoundTag(GeneHandler.VIAL_DATA_TAG).getTagList(GeneHandler.DONOR_LIST_TAG, 8).getStringTagAt(0);
-				if(entityLiving.getPersistentID().toString().equals(uuid)){
-					GeneHandler.giveSuperpowerFromInjectionGun(stack, (EntityPlayer) entityLiving);
-				}
+			else if(existingGeneSet.type == GeneSet.SetType.SERUM){
+				if(existingGeneSet.giveTo(entityLiving))
+					removeContentsOfVial(stack);
 			}
 			return true;
 		}
@@ -55,28 +55,19 @@ public class ItemInjectionGun extends Item
 
 	@Override public boolean hitEntity(ItemStack stack, EntityLivingBase target, EntityLivingBase attacker)
 	{
-		if(attacker.world.isRemote || !stack.hasTagCompound() || !stack.getTagCompound().hasKey(GeneHandler.VIAL_DATA_TAG)) return super.hitEntity(stack, target, attacker);
-		int full = stack.getTagCompound().getCompoundTag(GeneHandler.VIAL_DATA_TAG).getInteger(GeneHandler.VIAL_TYPE_TAG);
-		if (full == 0)
-		{
-			GeneHandler.getRandomGenes(target, stack);
-		}
-		else if(full == 3){
-
-			String uuid = stack.getTagCompound().getCompoundTag(GeneHandler.VIAL_DATA_TAG).getTagList(GeneHandler.DONOR_LIST_TAG, 8).getStringTagAt(0);
-			if(!target.getPersistentID().toString().equals(uuid)) return super.hitEntity(stack, target, attacker);
-			GeneHandler.giveSuperpowerFromInjectionGun(stack, target);
-//			} else if(target instanceof EntityVillager){
-//				GeneHandler.giveSuperpowerFromInjectionGun(stack, attacker, (EntityVillager) target);
-//			}
+		GeneSet existingGeneSet = GeneSet.fromStack(stack);
+		if(attacker.world.isRemote || existingGeneSet == null) return super.hitEntity(stack, target, attacker);
+		if (existingGeneSet.type == GeneSet.SetType.EMPTY)
+			new GeneSet(target).addTo(stack);
+		else if(existingGeneSet.type == GeneSet.SetType.SERUM){
+			if(existingGeneSet.giveTo(target))
+				removeContentsOfVial(stack);
 		}
 		return super.hitEntity(stack, target, attacker);
 	}
 
 	public static void removeContentsOfVial(ItemStack stack){
-		NBTTagCompound compound = new NBTTagCompound();
-		compound.setInteger(GeneHandler.VIAL_TYPE_TAG, 0);
-		stack.getTagCompound().setTag(GeneHandler.VIAL_DATA_TAG, compound);
+		stack.getTagCompound().setTag(GeneSet.VIAL_DATA_TAG, new GeneSet(new NBTTagCompound()).serializeNBT());
 	}
 
 	@Override public ActionResult<ItemStack> onItemRightClick(World worldIn, EntityPlayer playerIn, EnumHand handIn)
@@ -85,28 +76,28 @@ public class ItemInjectionGun extends Item
 		EnumHand off = handIn == EnumHand.MAIN_HAND ? EnumHand.OFF_HAND : EnumHand.MAIN_HAND;
 		ItemStack stack = playerIn.getHeldItem(handIn);
 		ItemStack stackOff = playerIn.getHeldItem(off);
-		if (stackOff.getItem() instanceof ItemVial && (!stack.hasTagCompound() || !stack.getTagCompound().hasKey(GeneHandler.VIAL_DATA_TAG)))
+
+		GeneSet set = GeneSet.fromStack(stack);
+		GeneSet setOff = GeneSet.fromStack(stackOff);
+
+		if (stackOff.getItem() instanceof ItemVial && set == null)
 		{
-			if (!stack.hasTagCompound())
-				stack.setTagCompound(new NBTTagCompound());
-			if (!stackOff.hasTagCompound() || stackOff.getTagCompound().getInteger(GeneHandler.VIAL_TYPE_TAG) == 0)
+			if (setOff == null || setOff.type == GeneSet.SetType.EMPTY)
 			{
-				NBTTagCompound nbt = new NBTTagCompound();
-				nbt.setInteger(GeneHandler.VIAL_TYPE_TAG, 0);
-				stackOff.setTagCompound(nbt);
+				(setOff != null ? setOff : new GeneSet(new NBTTagCompound())).addTo(stack);
+				playerIn.setHeldItem(off, ItemStack.EMPTY);
+			} else if(setOff.type != GeneSet.SetType.GENE) {
+				setOff.addTo(stack);
+				playerIn.setHeldItem(off, ItemStack.EMPTY);
 			}
-			else if (stackOff.hasTagCompound() && stackOff.getTagCompound().getInteger(GeneHandler.VIAL_TYPE_TAG) == 2)
-				return super.onItemRightClick(worldIn, playerIn, handIn);
-			stack.getTagCompound().setTag(GeneHandler.VIAL_DATA_TAG, stackOff.getTagCompound());
-			playerIn.setHeldItem(off, ItemStack.EMPTY);
 			return new ActionResult<>(EnumActionResult.SUCCESS, playerIn.getHeldItem(handIn));
 		}
-		else if (stackOff.isEmpty() && stack.hasTagCompound() && stack.getTagCompound().hasKey(GeneHandler.VIAL_DATA_TAG))
+		else if (stackOff.isEmpty() && set != null)
 		{
 			ItemStack vial = new ItemStack(TheFifthWorld.Items.vial);
-			vial.setTagCompound(stack.getTagCompound().getCompoundTag(GeneHandler.VIAL_DATA_TAG));
+			set.addTo(vial);
 			playerIn.setHeldItem(off, vial);
-			stack.getTagCompound().removeTag(GeneHandler.VIAL_DATA_TAG);
+			stack.getTagCompound().removeTag(GeneSet.VIAL_DATA_TAG);
 			return new ActionResult<>(EnumActionResult.SUCCESS, playerIn.getHeldItem(handIn));
 		}
 		return super.onItemRightClick(worldIn, playerIn, handIn);
@@ -117,10 +108,10 @@ public class ItemInjectionGun extends Item
 		@Override public int colorMultiplier(ItemStack stack, int tintIndex)
 		{
 			Color c = new Color(1.0f, 1.0f, 1.0f, 1.0f);
-
-			if (tintIndex == 1 && stack.hasTagCompound() && stack.getTagCompound().hasKey(GeneHandler.VIAL_DATA_TAG))
+			GeneSet g = GeneSet.fromStack(stack);
+			if (tintIndex == 1 && g != null)
 			{
-				Random r = GeneHandler.getRandom(stack.getTagCompound().getCompoundTag(GeneHandler.VIAL_DATA_TAG));
+				Random r = g.getRandom();
 				c = new Color(r.nextFloat(), r.nextFloat(), r.nextFloat());
 			}
 			return c.getRGB();

@@ -1,6 +1,7 @@
 package com.nic.tfw.blocks.centrifuge;
 
 import com.nic.tfw.items.ItemVial;
+import com.nic.tfw.superpower.genes.GeneSet;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.Slot;
@@ -40,9 +41,12 @@ public class SlotCentrifuge extends Slot
 		ItemStack stack1 = centrifuge.getStackInSlot(0);
 		ItemStack stack2 = centrifuge.getStackInSlot(1);
 		if(stack1.getItem() instanceof ItemVial && stack2.getItem() instanceof ItemVial){
-			int full1 = stack1.hasTagCompound() ? stack1.getTagCompound().getInteger("full") : 0;
-			int full2 = stack2.hasTagCompound() ? stack2.getTagCompound().getInteger("full") : 0;
-			if((full1 == 2 && full2 == 2) || (full1 == 2 && full2 == 0) || (full1 == 2 && full2 == 1))
+			GeneSet set1 = GeneSet.fromStack(stack1);
+			GeneSet set2 = GeneSet.fromStack(stack2);
+			GeneSet.SetType full1 = set1 != null ? set1.type : GeneSet.SetType.EMPTY;
+			GeneSet.SetType full2 = set2 != null ? set2.type : GeneSet.SetType.EMPTY;
+
+			if((full1 == GeneSet.SetType.GENE && full2 == GeneSet.SetType.GENE) || (full1 == GeneSet.SetType.GENE && full2 == GeneSet.SetType.EMPTY) || (full1 == GeneSet.SetType.GENE && full2 == GeneSet.SetType.SAMPLE))
 			{
 				centrifuge.ticksRunning = 100;
 				centrifuge.markDirty();

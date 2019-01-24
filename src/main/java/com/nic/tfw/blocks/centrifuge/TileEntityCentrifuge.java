@@ -2,16 +2,13 @@ package com.nic.tfw.blocks.centrifuge;
 
 import com.nic.tfw.TheFifthWorld;
 import com.nic.tfw.items.ItemVial;
-import com.nic.tfw.superpower.genes.Gene;
-import com.nic.tfw.superpower.genes.GeneHandler;
+import com.nic.tfw.superpower.genes.GeneSet;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.inventory.Container;
 import net.minecraft.inventory.ItemStackHelper;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.nbt.NBTTagList;
 import net.minecraft.network.NetworkManager;
 import net.minecraft.network.play.server.SPacketUpdateTileEntity;
 import net.minecraft.tileentity.TileEntityLockableLoot;
@@ -19,10 +16,6 @@ import net.minecraft.util.ITickable;
 import net.minecraft.util.NonNullList;
 
 import javax.annotation.Nullable;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  * Created by Nictogen on 1/11/19.
@@ -103,96 +96,35 @@ public class TileEntityCentrifuge extends TileEntityLockableLoot implements ITic
 		else if (this.ticksRunning == 1)
 		{
 			ticksRunning = 0;
-			ItemStack stack1 = getStackInSlot(0);
-			ItemStack stack2 = getStackInSlot(1);
-			if (stack1.getItem() instanceof ItemVial && stack2.getItem() instanceof ItemVial)
+			if(!this.world.isRemote)
 			{
-
-				int full1 = stack1.hasTagCompound() ? stack1.getTagCompound().getInteger(GeneHandler.VIAL_TYPE_TAG) : 0;
-				int full2 = stack2.hasTagCompound() ? stack2.getTagCompound().getInteger(GeneHandler.VIAL_TYPE_TAG) : 0;
-
-				//Combine
-				if (full1 == 2 && full2 == 2)
+				ItemStack stack1 = getStackInSlot(0);
+				ItemStack stack2 = getStackInSlot(1);
+				if (stack1.getItem() instanceof ItemVial && stack2.getItem() instanceof ItemVial)
 				{
-					List<NBTTagCompound> uniqueAbilities = new ArrayList<>();
-					HashSet<NBTTagCompound> defects = new HashSet<>();
-					for (NBTBase nbtBase : stack1.getTagCompound().getTagList(GeneHandler.GENE_LIST_TAG, 10))
+					GeneSet set1 = GeneSet.fromStack(stack1);
+					GeneSet set2 = GeneSet.fromStack(stack2);
+
+					GeneSet.SetType type1 = set1 != null ? set1.type : GeneSet.SetType.EMPTY;
+					GeneSet.SetType type2 = set2 != null ? set2.type : GeneSet.SetType.EMPTY;
+
+					if (type1 == GeneSet.SetType.GENE && type2 == GeneSet.SetType.GENE)
 					{
-						NBTTagCompound gene1Compound = (NBTTagCompound) nbtBase;
-
-						boolean combine = false;
-
-						for (NBTBase nbtBase2 : stack2.getTagCompound().getTagList(GeneHandler.GENE_LIST_TAG, 10))
-						{
-							NBTTagCompound gene2Compound = (NBTTagCompound) nbtBase2;
-							if (!combine && gene2Compound.getString(GeneHandler.GENE_REGISTRY_NAME_TAG)
-									.equals(gene1Compound.getString(GeneHandler.GENE_REGISTRY_NAME_TAG)))
-							{
-								for (NBTBase base : gene1Compound.getTagList(GeneHandler.DONOR_LIST_TAG, 8))
-									for (NBTBase nbtBase1 : gene2Compound.getTagList(GeneHandler.DONOR_LIST_TAG, 8))
-										if (base.toString().equals(nbtBase1.toString()))
-											combine = true;
-
-								if (!combine)
-								{
-
-									List<Gene> g = GeneHandler.GENE_REGISTRY.getValuesCollection().stream().filter(gene -> gene.getRegistryName().toString().equals(gene1Compound.getString(GeneHandler.GENE_REGISTRY_NAME_TAG))).collect(Collectors.toList());
-									if(!g.isEmpty()){
-										g.get(0).combineGenes(gene1Compound, gene2Compound);
-									}
-									float quality = gene2Compound.getFloat(GeneHandler.GENE_QUALITY_TAG) + gene1Compound.getFloat(GeneHandler.GENE_QUALITY_TAG);
-									gene2Compound.setFloat(GeneHandler.GENE_QUALITY_TAG, quality);
-
-									defects.addAll(GeneHandler.getDefects(GeneHandler.getRandom(stack1.getTagCompound(), stack2.getTagCompound()), quality));
-
-									for (NBTBase base : gene1Compound.getTagList(GeneHandler.DONOR_LIST_TAG, 8))
-										gene2Compound.getTagList(GeneHandler.DONOR_LIST_TAG, 8).appendTag(base);
-									combine = true;
-								}
-							}
-						}
-						if (!combine)
-						{
-							uniqueAbilities.add(gene1Compound);
-							defects.addAll(GeneHandler.getDefects(GeneHandler.getRandom(stack1.getTagCompound(), stack2.getTagCompound()),
-									gene1Compound.getFloat(GeneHandler.GENE_QUALITY_TAG)));
-						}
+						//Combine
+						set1.combine(set2).addTo(stack2);
+						setInventorySlotContents(0, new ItemStack(TheFifthWorld.Items.vial));
 					}
-
-					for (NBTTagCompound uniqueAbility : uniqueAbilities)
-						stack2.getTagCompound().getTagList(GeneHandler.GENE_LIST_TAG, 10).appendTag(uniqueAbility);
-
-					for (NBTBase nbtBase : stack1.getTagCompound().getTagList(GeneHandler.DONOR_LIST_TAG, 8))
-						stack2.getTagCompound().getTagList(GeneHandler.DONOR_LIST_TAG, 8).appendTag(nbtBase);
-
-					for (NBTBase nbtBase : stack1.getTagCompound().getTagList(GeneHandler.DEFECT_LIST_TAG, 10))
-						defects.add((NBTTagCompound) nbtBase);
-
-					if (stack2.getTagCompound().hasKey(GeneHandler.DEFECT_LIST_TAG))
-						for (NBTBase nbtBase : stack2.getTagCompound().getTagList(GeneHandler.DEFECT_LIST_TAG, 10))
-							defects.add((NBTTagCompound) nbtBase);
-
-					NBTTagList dL = new NBTTagList();
-					for (NBTTagCompound defect : defects)
+					else if (type1 == GeneSet.SetType.GENE && type2 == GeneSet.SetType.EMPTY)
 					{
-						dL.appendTag(defect);
+						//Copy
+						set1.addTo(stack2);
 					}
-
-					stack2.getTagCompound().setTag(GeneHandler.DEFECT_LIST_TAG, dL);
-
-					setInventorySlotContents(0, new ItemStack(TheFifthWorld.Items.vial));
-				}
-				//Copy
-				else if (full1 == 2 && full2 == 0)
-					stack2.setTagCompound(stack1.getTagCompound());
-					//Finish
-				else if (full1 == 2 && full2 == 1)
-				{
-					NBTTagCompound compound = stack1.getTagCompound();
-					compound.setTag(GeneHandler.DONOR_LIST_TAG, stack2.getTagCompound().getTagList(GeneHandler.DONOR_LIST_TAG, 8));
-					compound.setInteger(GeneHandler.VIAL_TYPE_TAG, 3);
-					stack2.setTagCompound(compound);
-					setInventorySlotContents(0, new ItemStack(TheFifthWorld.Items.vial));
+					else if (type1 == GeneSet.SetType.GENE && type2 == GeneSet.SetType.SAMPLE)
+					{
+						//Finish
+						setInventorySlotContents(0, new ItemStack(TheFifthWorld.Items.vial));
+						set1.toSerum(set2).addTo(stack2);
+					}
 				}
 			}
 		}

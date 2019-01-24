@@ -1,8 +1,7 @@
 package com.nic.tfw.superpower;
 
 import com.nic.tfw.TheFifthWorld;
-import com.nic.tfw.superpower.genes.Gene;
-import com.nic.tfw.superpower.genes.GeneHandler;
+import com.nic.tfw.superpower.genes.GeneSet;
 import lucraft.mods.lucraftcore.superpowers.Superpower;
 import lucraft.mods.lucraftcore.superpowers.SuperpowerEntityHandler;
 import lucraft.mods.lucraftcore.superpowers.SuperpowerHandler;
@@ -13,8 +12,6 @@ import net.minecraft.client.gui.Gui;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.nbt.NBTBase;
-import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
@@ -49,39 +46,7 @@ public class SuperpowerGeneticallyModified extends Superpower
 		GeneticallyModifiedHandler handler = SuperpowerHandler.getSpecificSuperpowerEntityHandler(entity, GeneticallyModifiedHandler.class);
 
 		if (handler.defaultAbilities.isEmpty())
-		{
-			NBTTagCompound genes = handler.getStyleNBTTag().getCompoundTag(GeneHandler.VIAL_DATA_TAG);
-			for (NBTBase nbtBase : genes.getTagList(GeneHandler.GENE_LIST_TAG, 10))
-			{
-				NBTTagCompound compound = (NBTTagCompound) nbtBase;
-				Gene g = GeneHandler.GENE_REGISTRY.getValue(new ResourceLocation(compound.getString(GeneHandler.GENE_REGISTRY_NAME_TAG)));
-				if (g != null)
-				{
-					Ability a = g.getAbility(entity, compound.getFloat(GeneHandler.GENE_QUALITY_TAG), compound);
-					if (a != null)
-					{
-						a.setUnlocked(true);
-						handler.defaultAbilities.add(a);
-					}
-				}
-			}
-
-			for (NBTBase nbtBase : genes.getTagList(GeneHandler.DEFECT_LIST_TAG, 10))
-			{
-				NBTTagCompound compound = (NBTTagCompound) nbtBase;
-				Gene g = GeneHandler.GENE_REGISTRY.getValue(new ResourceLocation(compound.getString(GeneHandler.GENE_REGISTRY_NAME_TAG)));
-				if (g != null)
-				{
-					Ability a = g.getAbility(entity, 1.0f, compound);
-					if (a != null)
-					{
-						a.setUnlocked(true);
-						a.setHidden(true);
-						handler.defaultAbilities.add(a);
-					}
-				}
-			}
-		}
+			handler.defaultAbilities.addAll(new GeneSet(handler.getStyleNBTTag().getCompoundTag(GeneSet.VIAL_DATA_TAG)).toAbilities(entity));
 
 		list.addAll(handler.defaultAbilities);
 
@@ -105,9 +70,10 @@ public class SuperpowerGeneticallyModified extends Superpower
 		@Override public void onUpdate()
 		{
 			super.onUpdate();
-
-			if((defaultAbilities.isEmpty() || getAbilities().isEmpty()) && getStyleNBTTag() != null && getStyleNBTTag().hasKey(GeneHandler.VIAL_DATA_TAG) && getStyleNBTTag().getCompoundTag(GeneHandler.VIAL_DATA_TAG).hasKey(GeneHandler.GENE_LIST_TAG)){
-				cap.getSuperpower().getDefaultAbilities(getEntity(), getAbilities());
+			if(defaultAbilities.isEmpty() || getAbilities().isEmpty()){
+				GeneSet g = new GeneSet(getStyleNBTTag().getCompoundTag(GeneSet.VIAL_DATA_TAG));
+				if(g.type == GeneSet.SetType.SERUM)
+					cap.getSuperpower().getDefaultAbilities(getEntity(), getAbilities());
 			}
 		}
 	}

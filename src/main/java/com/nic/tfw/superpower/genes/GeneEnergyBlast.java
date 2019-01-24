@@ -1,12 +1,13 @@
 package com.nic.tfw.superpower.genes;
 
 import lucraft.mods.lucraftcore.superpowers.abilities.Ability;
+import lucraft.mods.lucraftcore.superpowers.abilities.AbilityEnergyBlast;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.math.Vec3d;
 
-import java.awt.*;
 import java.lang.reflect.InvocationTargetException;
+import java.util.Random;
 
 /**
  * Created by Nictogen on 1/18/19.
@@ -16,31 +17,39 @@ public class GeneEnergyBlast extends Gene
 {
 
 	public static final String COLOR_TAG = "color";
-	public GeneEnergyBlast(Class<? extends Ability> c, int[] fields, Object[] maxValues, String displayName)
+	private float maxDamage;
+	public GeneEnergyBlast(String displayName, float maxDamage)
 	{
-		super(c, fields, maxValues, displayName);
+		super(AbilityEnergyBlast.class, displayName);
+		this.maxDamage = maxDamage;
 	}
 
-	@Override public Ability createAbilityInstance(EntityLivingBase player, NBTTagCompound nbt) throws NoSuchMethodException, IllegalAccessException, InvocationTargetException, InstantiationException
+
+	@Override public void serializeExtra(GeneSet.GeneData geneData, NBTTagCompound compound)
 	{
-		int[] color = nbt.getIntArray(COLOR_TAG);
-		Vec3d vColor = color.length == 0 ? new Vec3d(1.0, 1.0, 1.0) : new Vec3d(color[0], color[1], color[2]);
-		return ability.getAbilityClass().getConstructor(EntityLivingBase.class, float.class, Vec3d.class).newInstance(player, 0f, vColor);
+		super.serializeExtra(geneData, compound);
+		compound.setIntArray(COLOR_TAG, getColor(geneData));
 	}
 
-	@Override public NBTTagCompound createAbilityTag(float quality)
+	@Override public Ability createAbilityInstance(EntityLivingBase entity, GeneSet.GeneData geneData)
+			throws NoSuchMethodException, IllegalAccessException, InvocationTargetException, InstantiationException
 	{
-		return super.createAbilityTag(quality);
+		int[] c = getColor(geneData);
+		return ability.getAbilityClass().getConstructor(EntityLivingBase.class, float.class, Vec3d.class).newInstance(entity, maxDamage*geneData.quality, new Vec3d(((double) c[0])/255.0, ((double) c[1])/255.0, ((double) c[2])/255.0));
 	}
 
-	@Override public void combineGenes(NBTTagCompound one, NBTTagCompound two)
+	private int[] getColor(GeneSet.GeneData geneData){
+		return geneData.extra.hasKey(COLOR_TAG) ? geneData.extra.getIntArray(COLOR_TAG) : new int[]{255, 255, 255};
+	}
+
+	@Override public GeneSet.GeneData combine(GeneSet.GeneData one, GeneSet.GeneData two)
 	{
-		super.combineGenes(one, two);
-		int[] c1 = one.getIntArray(COLOR_TAG);
-		Color color1 = c1.length == 0 ? new Color(1.0f, 1.0f, 1.0f) : new Color(c1[0], c1[1], c1[2]);
-		int[] c2 = two.getIntArray(COLOR_TAG);
-		Color color2 = c2.length == 0 ? new Color(1.0f, 1.0f, 1.0f) : new Color(c2[0], c2[1], c2[2]);
-		two.setIntArray(COLOR_TAG, new int[]{loop(color1.getRed() + color2.getRed()), loop(color1.getGreen()) + color2.getGreen(), loop(color1.getBlue() + color2.getBlue())});
+		GeneSet.GeneData three = super.combine(one, two);
+		int[] c1 = getColor(one);
+		int[] c2 = getColor(two);
+		three.extra.setIntArray(COLOR_TAG,new int[]{loop(c1[0] + c2[0]), loop(c1[1] + c2[1]), loop(c1[2] + c2[2])} );
+
+		return three;
 	}
 
 	private int loop(int num){
@@ -48,5 +57,10 @@ public class GeneEnergyBlast extends Gene
 			int over = 255 - num;
 			return 255 - over;
 		} else return num;
+	}
+
+	@Override float getQuality(Ability ability, Random r)
+	{
+		return (((AbilityEnergyBlast) ability).damage / maxDamage) + ((float) r.nextGaussian() * 0.25f);
 	}
 }
