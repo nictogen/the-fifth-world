@@ -39,12 +39,13 @@ public class GeneFlight extends Gene
 			if (((EntityCreature) entity).tasks.taskEntries.stream()
 					.noneMatch(entityAITaskEntry -> entityAITaskEntry.action instanceof EntityAIWanderAvoidWaterFlying))
 			{
-				((EntityCreature) entity).tasks.addTask(3, new EntityAIWanderAvoidWaterFlying((EntityCreature) entity, 1.0D));
+				((EntityCreature) entity).tasks.addTask(3, new EntityAIWanderAvoidWaterFlying((EntityCreature) entity, maxSpeed*geneData.quality));
 			}
 			if (entity instanceof EntityTameable)
 			{
 				((EntityCreature) entity).tasks.addTask(3, new EntityAIFollowOwnerFlying((EntityTameable) entity, 1.0D, 5.0f, 1.0f));
 			}
+		//TODO try again
 		}
 
 		return ability.getAbilityClass().getConstructor(EntityLivingBase.class, double.class, double.class, boolean.class).newInstance(entity, maxSpeed*geneData.quality, maxSpeed*geneData.quality*2.5, true);
