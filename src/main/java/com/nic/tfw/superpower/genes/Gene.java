@@ -2,6 +2,9 @@ package com.nic.tfw.superpower.genes;
 
 import com.nic.tfw.util.ListUtil;
 import lucraft.mods.lucraftcore.superpowers.abilities.Ability;
+import lucraft.mods.lucraftcore.superpowers.abilities.AbilityEntry;
+import lucraft.mods.lucraftcore.superpowers.abilities.data.AbilityData;
+import lucraft.mods.lucraftcore.superpowers.abilities.data.AbilityDataManager;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.registries.IForgeRegistryEntry;
@@ -15,34 +18,69 @@ import java.util.UUID;
  * Created by Nictogen on 1/12/19.
  */
 
-public abstract class Gene extends IForgeRegistryEntry.Impl<Gene>
+public class Gene extends IForgeRegistryEntry.Impl<Gene>
 {
-	public Ability.AbilityEntry ability;
+	public AbilityEntry ability;
 	public String displayName;
 
-	public Gene(Class<? extends Ability> c, String displayName)
-	{
-		this.ability = ListUtil.firstMatches(Ability.ABILITY_REGISTRY.getValuesCollection(), abilityEntry1 -> abilityEntry1.getAbilityClass() == c);
-		setRegistryName(ability.getRegistryName());
-		this.displayName = displayName;
-	}
+	private ArrayList<DataMod> dataMods = new ArrayList<>();
 
 	public Gene(Class<? extends Ability> c, String displayName, boolean dontRegister)
 	{
 		this.ability = ListUtil.firstMatches(Ability.ABILITY_REGISTRY.getValuesCollection(), abilityEntry1 -> abilityEntry1.getAbilityClass() == c);
 		this.displayName = displayName;
+		if (!dontRegister)
+			setRegistryName(ability.getRegistryName());
 	}
 
-	abstract float getQuality(Ability ability, Random r);
+	public Gene(Class<? extends Ability> c, String displayName)
+	{
+		this(c, displayName, false);
+	}
 
-	public void serializeExtra(GeneSet.GeneData geneData, NBTTagCompound compound){}
+	float getQuality(Ability ability, Random r)
+	{
+		float quality = 0f;
+		ArrayList<DataMod> list = new ArrayList<>(dataMods);
+		list.removeIf(dataMod -> !dataMod.isQualified && ability.getDataManager().has(dataMod.data));
+		for (DataMod dataMod : list)
+		{
+			@SuppressWarnings("unchecked") float abilityVal = (float) ability.getDataManager().get(dataMod.data);
+			float maxVal = (float) dataMod.value;
 
-	public Ability getAbility(EntityLivingBase entity, GeneSet.GeneData geneData)
+			if (!dataMod.isReversed)
+				quality += abilityVal / maxVal;
+			else
+				quality += 1f - (abilityVal / maxVal);
+		}
+		quality /= (float) list.size();
+		return quality;
+	}
+
+	public void serializeExtra(GeneSet.GeneData geneData, NBTTagCompound compound)
+	{
+	}
+
+	public Gene addDataMod(DataMod mod){
+		this.dataMods.add(mod);
+		return this;
+	}
+
+	Ability getAbility(EntityLivingBase entity, GeneSet.GeneData geneData)
 	{
 		try
 		{
-			Ability ab = createAbilityInstance(entity, geneData);
-			return ab;
+			Ability a = ability.getAbilityClass().getConstructor(EntityLivingBase.class).newInstance(entity);
+			AbilityDataManager abilityDataManager = a.getDataManager();
+			for (DataMod dataMod : dataMods)
+			{
+				if (abilityDataManager.has(dataMod.data))
+				{
+					//noinspection unchecked
+					abilityDataManager.set(dataMod.data, dataMod.getValue(geneData));
+				}
+			}
+			return a;
 		}
 		catch (InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException e)
 		{
@@ -51,14 +89,14 @@ public abstract class Gene extends IForgeRegistryEntry.Impl<Gene>
 		}
 	}
 
-	public abstract Ability createAbilityInstance(EntityLivingBase entity, GeneSet.GeneData geneData) throws NoSuchMethodException, IllegalAccessException, InvocationTargetException, InstantiationException;
-
-	public GeneSet.GeneData combine(GeneSet.GeneData one, GeneSet.GeneData two){
+	public GeneSet.GeneData combine(GeneSet.GeneData one, GeneSet.GeneData two)
+	{
 		ArrayList<UUID> donors = new ArrayList<>();
 
 		for (UUID donor : one.donors)
 			for (UUID uuid : two.donors)
-				if(uuid.equals(donor)) return one;
+				if (uuid.equals(donor))
+					return one;
 
 		donors.addAll(one.donors);
 		donors.addAll(two.donors);
@@ -66,6 +104,41 @@ public abstract class Gene extends IForgeRegistryEntry.Impl<Gene>
 		return new GeneSet.GeneData(one.gene, donors, one.quality + two.quality);
 	}
 
+	public static class DataMod<T>
+	{
+		private T value;
+		private boolean isQualified, isReversed;
+		public AbilityData<T> data;
 
+		public DataMod(AbilityData<T> data, T value, boolean isQualified, boolean isReversed)
+		{
+			this.data = data;
+			this.value = value;
+			this.isQualified = isQualified;
+			this.isReversed = isReversed;
+		}
+
+		public DataMod(AbilityData<T> data, T value, boolean isQualified)
+		{
+			this(data, value, isQualified, false);
+		}
+
+		public DataMod(AbilityData<T> data, T value)
+		{
+			this(data, value, true, false);
+		}
+
+		@SuppressWarnings("unchecked") T getValue(GeneSet.GeneData geneData)
+		{
+			if (isQualified)
+			{
+				T val = (!isReversed) ? (T) (Object) (((float) value) * geneData.quality) : (T) (Object) (((float) value) * (1f - geneData.quality));
+				if(val.getClass().equals(int.class) && (int) val == 0)
+					val = (T) (Object) 1;
+				return val;
+			}
+			return value;
+		}
+	}
 }
 

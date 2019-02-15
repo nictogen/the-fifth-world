@@ -1,8 +1,6 @@
 package com.nic.tfw.superpower.abilities;
 
 import com.nic.tfw.superpower.conditions.Condition;
-import lucraft.mods.lucraftcore.superpowers.SuperpowerEntityHandler;
-import lucraft.mods.lucraftcore.superpowers.SuperpowerHandler;
 import lucraft.mods.lucraftcore.superpowers.abilities.Ability;
 import lucraft.mods.lucraftcore.superpowers.abilities.AbilityConstant;
 import net.minecraft.entity.EntityLivingBase;
@@ -44,9 +42,7 @@ public class DefectDiet extends AbilityConstant implements IDefect
 		@SubscribeEvent
 		public static void onEat(LivingEntityUseItemEvent event){
 			if(event.getItem().getItem() instanceof ItemFood){
-				SuperpowerEntityHandler handler = SuperpowerHandler.getSuperpowerEntityHandler((EntityLivingBase) event.getEntity());
-				if(handler == null) return;
-				for (Ability ability : handler.getAbilities())
+				for (Ability ability : Ability.getAbilities(event.getEntityLiving()))
 				{
 					if(ability instanceof DefectDiet && ((DefectDiet) ability).condition.isEnabled((EntityLivingBase) event.getEntity(), ability)){
 						event.setCanceled(true);

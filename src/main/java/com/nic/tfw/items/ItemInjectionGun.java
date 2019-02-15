@@ -45,7 +45,7 @@ public class ItemInjectionGun extends Item
 				return true;
 			}
 			else if(existingGeneSet.type == GeneSet.SetType.SERUM){
-				if(existingGeneSet.giveTo(entityLiving))
+				if(existingGeneSet.giveTo(entityLiving, (EntityPlayer) entityLiving))
 					removeContentsOfVial(stack);
 			}
 			return true;
@@ -60,7 +60,7 @@ public class ItemInjectionGun extends Item
 		if (existingGeneSet.type == GeneSet.SetType.EMPTY)
 			new GeneSet(target).addTo(stack);
 		else if(existingGeneSet.type == GeneSet.SetType.SERUM){
-			if(existingGeneSet.giveTo(target))
+			if(existingGeneSet.giveTo(target, (attacker instanceof EntityPlayer) ? (EntityPlayer) attacker : null))
 				removeContentsOfVial(stack);
 		}
 		return super.hitEntity(stack, target, attacker);

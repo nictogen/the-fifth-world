@@ -57,10 +57,4 @@ public class GeneDefect extends Gene
 	{
 		return 0;
 	}
-
-	@Override public Ability createAbilityInstance(EntityLivingBase entity, GeneSet.GeneData geneData)
-			throws NoSuchMethodException, IllegalAccessException, InvocationTargetException, InstantiationException
-	{
-		return null;
-	}
 }

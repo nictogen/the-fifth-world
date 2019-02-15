@@ -13,7 +13,7 @@ import com.nic.tfw.superpower.abilities.*;
 import com.nic.tfw.superpower.conditions.Condition;
 import com.nic.tfw.superpower.genes.GeneHandler;
 import lucraft.mods.lucraftcore.superpowers.Superpower;
-import lucraft.mods.lucraftcore.superpowers.abilities.Ability;
+import lucraft.mods.lucraftcore.superpowers.abilities.AbilityEntry;
 import net.minecraft.block.Block;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;
@@ -37,7 +37,7 @@ public class TheFifthWorld
 {
     public static final String MODID = "the-fifth-world";
     public static final String NAME = "The Fifth World";
-    public static final String VERSION = "0.2";
+    public static final String VERSION = "0.3";
 	public static final String DEPENDENCIES = "required-after:lucraftcore@[1.12.2-2.3.4,)";
 
 
@@ -95,23 +95,23 @@ public class TheFifthWorld
 	}
 
 	@SubscribeEvent
-	public static void registerAbilities(RegistryEvent.Register<Ability.AbilityEntry> event)
+	public static void registerAbilities(RegistryEvent.Register<AbilityEntry> event)
 	{
-		event.getRegistry().register(new Ability.AbilityEntry(DefectExplosion.class, new ResourceLocation(MODID, "defect_explosion")));
-		event.getRegistry().register(new Ability.AbilityEntry(DefectBurning.class, new ResourceLocation(MODID, "defect_burning")));
-		event.getRegistry().register(new Ability.AbilityEntry(DefectButterFingers.class, new ResourceLocation(MODID, "defect_butter_fingers")));
-		event.getRegistry().register(new Ability.AbilityEntry(DefectDiet.class, new ResourceLocation(MODID, "defect_diet")));
-		event.getRegistry().register(new Ability.AbilityEntry(DefectDisable.class, new ResourceLocation(MODID, "defect_disable")));
-		event.getRegistry().register(new Ability.AbilityEntry(DefectEnable.class, new ResourceLocation(MODID, "defect_enable")));
+		event.getRegistry().register(new AbilityEntry(DefectExplosion.class, new ResourceLocation(MODID, "defect_explosion")));
+		event.getRegistry().register(new AbilityEntry(DefectBurning.class, new ResourceLocation(MODID, "defect_burning")));
+		event.getRegistry().register(new AbilityEntry(DefectButterFingers.class, new ResourceLocation(MODID, "defect_butter_fingers")));
+		event.getRegistry().register(new AbilityEntry(DefectDiet.class, new ResourceLocation(MODID, "defect_diet")));
+//		event.getRegistry().register(new AbilityEntry(DefectDisable.class, new ResourceLocation(MODID, "defect_disable")));
+//		event.getRegistry().register(new AbilityEntry(DefectEnable.class, new ResourceLocation(MODID, "defect_enable")));
 
-		event.getRegistry().register(new Ability.AbilityEntry(AbilityMakeHostile.class, new ResourceLocation(MODID, "make_hostile")));
-		event.getRegistry().register(new Ability.AbilityEntry(AbilityScreech.class, new ResourceLocation(MODID, "screech")));
-		event.getRegistry().register(new Ability.AbilityEntry(AbilityLayEgg.class, new ResourceLocation(MODID, "lay_egg")));
-		event.getRegistry().register(new Ability.AbilityEntry(AbilityEatBlock.class, new ResourceLocation(MODID, "eat_block")));
-		event.getRegistry().register(new Ability.AbilityEntry(AbilityPotionImmunity.class, new ResourceLocation(MODID, "potion_immunity")));
-		event.getRegistry().register(new Ability.AbilityEntry(AbilityExplode.class, new ResourceLocation(MODID, "explode")));
-		event.getRegistry().register(new Ability.AbilityEntry(AbilityMountable.class, new ResourceLocation(MODID, "mountable")));
-		event.getRegistry().register(new Ability.AbilityEntry(AbilityItemCreation.class, new ResourceLocation(MODID, "create_item")));
+		event.getRegistry().register(new AbilityEntry(AbilityMakeHostile.class, new ResourceLocation(MODID, "make_hostile")));
+		event.getRegistry().register(new AbilityEntry(AbilityScreech.class, new ResourceLocation(MODID, "screech")));
+		event.getRegistry().register(new AbilityEntry(AbilityLayEgg.class, new ResourceLocation(MODID, "lay_egg")));
+		event.getRegistry().register(new AbilityEntry(AbilityEatBlock.class, new ResourceLocation(MODID, "eat_block")));
+		event.getRegistry().register(new AbilityEntry(AbilityPotionImmunity.class, new ResourceLocation(MODID, "potion_immunity")));
+		event.getRegistry().register(new AbilityEntry(AbilityExplode.class, new ResourceLocation(MODID, "explode")));
+		event.getRegistry().register(new AbilityEntry(AbilityMountable.class, new ResourceLocation(MODID, "mountable")));
+		event.getRegistry().register(new AbilityEntry(AbilityItemCreation.class, new ResourceLocation(MODID, "create_item")));
 
 	}
 

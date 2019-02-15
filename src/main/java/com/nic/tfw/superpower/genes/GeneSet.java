@@ -2,21 +2,32 @@ package com.nic.tfw.superpower.genes;
 
 import com.google.common.collect.Lists;
 import com.nic.tfw.TheFifthWorld;
-import com.nic.tfw.superpower.SuperpowerGeneticallyModified;
+import com.nic.tfw.potion.PotionExplode;
 import com.nic.tfw.superpower.conditions.Condition;
+import lucraft.mods.lucraftcore.karma.KarmaHandler;
 import lucraft.mods.lucraftcore.superpowers.SuperpowerHandler;
 import lucraft.mods.lucraftcore.superpowers.abilities.Ability;
+import lucraft.mods.lucraftcore.superpowers.capabilities.ISuperpowerCapability;
 import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.entity.passive.EntityVillager;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.nbt.NBTTagString;
+import net.minecraft.potion.PotionEffect;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.village.MerchantRecipe;
+import net.minecraft.village.MerchantRecipeList;
 
 import javax.annotation.Nullable;
+import java.lang.reflect.Field;
 import java.util.*;
 import java.util.stream.Collectors;
+
+import static com.nic.tfw.superpower.genes.GeneHandler.TEST_SUBJECTS_EXPLODED;
 
 /**
  * Created by Nictogen on 1/23/19.
@@ -105,7 +116,7 @@ public class GeneSet
 		stack.getTagCompound().setTag(VIAL_DATA_TAG, serializeNBT());
 	}
 
-	public boolean giveTo(EntityLivingBase entity)
+	public boolean giveTo(EntityLivingBase entity, @Nullable EntityPlayer injector)
 	{
 		if (type != SetType.SERUM)
 			return false;
@@ -113,21 +124,41 @@ public class GeneSet
 			return false;
 		if (!getDonors().contains(entity.getPersistentID()))
 			return false;
+
+		ISuperpowerCapability capability = SuperpowerHandler.getSuperpowerCapability(entity);
+		capability.getData().setTag(VIAL_DATA_TAG, serializeNBT());
+
 		SuperpowerHandler.setSuperpower(entity, TheFifthWorld.Superpowers.genetically_modified);
-		SuperpowerGeneticallyModified.GeneticallyModifiedHandler handler = SuperpowerHandler
-				.getSpecificSuperpowerEntityHandler(entity, SuperpowerGeneticallyModified.GeneticallyModifiedHandler.class);
-		NBTTagCompound compound = new NBTTagCompound();
-		compound.setTag(VIAL_DATA_TAG, serializeNBT());
-		handler.setStyleNBTTag(compound);
-		handler.defaultAbilities.clear();
-		handler.getAbilities().clear();
+
+		if(injector != null && entity instanceof EntityVillager)
+		{
+			//Villager stuff
+			ItemStack s = GeneHandler.createGeneDataBook(this, injector);
+			MerchantRecipeList recipes = new MerchantRecipeList();
+			recipes.add(new MerchantRecipe(new ItemStack(Items.PAPER), s));
+			Field f = EntityVillager.class.getDeclaredFields()[7];
+			f.setAccessible(true);
+			try
+			{
+				f.set(entity, recipes);
+			}
+			catch (IllegalAccessException e)
+			{
+				e.printStackTrace();
+			}
+			if(!this.defects.isEmpty())
+			{
+				entity.addPotionEffect(new PotionEffect(PotionExplode.POTION_EXPLODE, 5 * 20));
+				KarmaHandler.increaseKarmaStat(injector, TEST_SUBJECTS_EXPLODED);
+			}
+		}
 		return true;
 	}
 
-	public ArrayList<Ability> toAbilities(EntityLivingBase entityLivingBase)
+	public Ability.AbilityMap toAbilities(EntityLivingBase entityLivingBase)
 	{
 
-		ArrayList<Ability> abilityList = new ArrayList<>();
+		Ability.AbilityMap abilityList = new Ability.AbilityMap();
 		for (GeneData gene : genes)
 		{
 			if (gene.gene != null)
@@ -135,8 +166,7 @@ public class GeneSet
 				Ability a = gene.gene.getAbility(entityLivingBase, gene);
 				if (a != null)
 				{
-					a.setUnlocked(true);
-					abilityList.add(a);
+					abilityList.put("gene_" + gene.gene.getRegistryName().toString(), a);
 				}
 			}
 		}
@@ -148,8 +178,7 @@ public class GeneSet
 				Ability a = ((GeneDefect) defect.gene).getAbility(entityLivingBase, defect);
 				if (a != null)
 				{
-					a.setUnlocked(true);
-					abilityList.add(a);
+					abilityList.put("defect_" + defect.gene.getRegistryName().toString(), a);
 				}
 			}
 		}

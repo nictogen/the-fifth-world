@@ -1,12 +1,16 @@
 package com.nic.tfw.superpower.abilities;
 
+import com.nic.tfw.superpower.AbilityDataBlock;
 import lucraft.mods.lucraftcore.superpowers.abilities.AbilityAction;
-import net.minecraft.block.state.IBlockState;
+import lucraft.mods.lucraftcore.superpowers.abilities.data.AbilityData;
+import lucraft.mods.lucraftcore.superpowers.abilities.data.AbilityDataFloat;
+import lucraft.mods.lucraftcore.superpowers.abilities.data.AbilityDataInteger;
+import lucraft.mods.lucraftcore.superpowers.abilities.supplier.EnumSync;
+import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Gui;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.math.Vec3d;
@@ -16,34 +20,14 @@ import net.minecraft.util.math.Vec3d;
  */
 public class AbilityEatBlock extends AbilityAction
 {
-	private IBlockState fromState = Blocks.AIR.getDefaultState();
-	private IBlockState toState = Blocks.AIR.getDefaultState();
-
-	public int getHungerIncrease()
-	{
-		return hungerIncrease;
-	}
-
-	public float getSaturationIncrease()
-	{
-		return saturationIncrease;
-	}
-
-	private int hungerIncrease = 0;
-	private float saturationIncrease = 0f;
+	public static final AbilityData<Float> SATURATION = new AbilityDataFloat("saturation").disableSaving().setSyncType(EnumSync.SELF).enableSetting("saturation", "The amount of saturation to gain from eating the block.");
+	public static final AbilityData<Integer> FOOD = new AbilityDataInteger("food").disableSaving().setSyncType(EnumSync.SELF).enableSetting("food", "The amount of food to gain from eating the block.");
+	public static final AbilityData<Block> FROM = new AbilityDataBlock("from").disableSaving().setSyncType(EnumSync.SELF).enableSetting("from", "The block to eat");
+	public static final AbilityData<Block> TO = new AbilityDataBlock("to").disableSaving().setSyncType(EnumSync.SELF).enableSetting("to", "The block to turn eaten block in to");
 
 	public AbilityEatBlock(EntityLivingBase player)
 	{
 		super(player);
-	}
-
-	public AbilityEatBlock(EntityLivingBase player, IBlockState fromState, IBlockState toState, int hungerIncrease, float saturationIncrease)
-	{
-		super(player);
-		this.fromState = fromState;
-		this.toState = toState;
-		this.hungerIncrease = hungerIncrease;
-		this.saturationIncrease = saturationIncrease;
 	}
 
 	@Override public boolean action()
@@ -51,10 +35,10 @@ public class AbilityEatBlock extends AbilityAction
 		Vec3d lookVec = entity.getLookVec().scale(2f);
 		RayTraceResult rtr = entity.world.rayTraceBlocks(new Vec3d(entity.posX, entity.posY + entity.getEyeHeight(), entity.posZ),
 				new Vec3d(entity.posX + lookVec.x, entity.posY + entity.getEyeHeight() + lookVec.y, entity.posZ + lookVec.z));
-		if(rtr != null && entity.world.getBlockState(rtr.getBlockPos()).getBlock() == fromState.getBlock()){
-			entity.world.setBlockState(rtr.getBlockPos(), toState);
+		if(rtr != null && entity.world.getBlockState(rtr.getBlockPos()).getBlock() == getDataManager().get(FROM)){
+			entity.world.setBlockState(rtr.getBlockPos(), getDataManager().get(TO).getDefaultState());
 			if(entity instanceof EntityPlayer)
-				((EntityPlayer) entity).getFoodStats().addStats(hungerIncrease, saturationIncrease);
+				((EntityPlayer) entity).getFoodStats().addStats(getDataManager().get(FOOD), getDataManager().get(SATURATION));
 			return true;
 		}
 		return false;
@@ -62,13 +46,9 @@ public class AbilityEatBlock extends AbilityAction
 
 	@Override public void drawIcon(Minecraft mc, Gui gui, int x, int y)
 	{
-		//TODO check if works
-//		float zLevel = Minecraft.getMinecraft().getRenderItem().zLevel;
-//		Minecraft.getMinecraft().getRenderItem().zLevel = -100.5F;
-//		GlStateManager.pushMatrix();
-//		GlStateManager.translate(x, y, 0);
-		Minecraft.getMinecraft().getRenderItem().renderItemIntoGUI(new ItemStack(fromState.getBlock()), x, y);
-//		GlStateManager.popMatrix();
-//		Minecraft.getMinecraft().getRenderItem().zLevel = zLevel;
+		float zLevel = Minecraft.getMinecraft().getRenderItem().zLevel;
+		Minecraft.getMinecraft().getRenderItem().zLevel = -100.5F;
+		Minecraft.getMinecraft().getRenderItem().renderItemIntoGUI(new ItemStack(getDataManager().get(FROM)), x, y);
+		Minecraft.getMinecraft().getRenderItem().zLevel = zLevel;
 	}
 }

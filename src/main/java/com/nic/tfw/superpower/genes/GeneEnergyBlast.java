@@ -4,10 +4,8 @@ import lucraft.mods.lucraftcore.superpowers.abilities.Ability;
 import lucraft.mods.lucraftcore.superpowers.abilities.AbilityEnergyBlast;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.util.math.Vec3d;
 
-import java.lang.reflect.InvocationTargetException;
-import java.util.Random;
+import java.awt.*;
 
 /**
  * Created by Nictogen on 1/18/19.
@@ -16,12 +14,12 @@ import java.util.Random;
 public class GeneEnergyBlast extends Gene
 {
 
-	public static final String COLOR_TAG = "color";
-	private float maxDamage;
+	private static final String COLOR_TAG = "color";
+
 	public GeneEnergyBlast(String displayName, float maxDamage)
 	{
 		super(AbilityEnergyBlast.class, displayName);
-		this.maxDamage = maxDamage;
+		addDataMod(new DataMod<>(AbilityEnergyBlast.DAMAGE, maxDamage));
 	}
 
 
@@ -31,11 +29,12 @@ public class GeneEnergyBlast extends Gene
 		compound.setIntArray(COLOR_TAG, getColor(geneData));
 	}
 
-	@Override public Ability createAbilityInstance(EntityLivingBase entity, GeneSet.GeneData geneData)
-			throws NoSuchMethodException, IllegalAccessException, InvocationTargetException, InstantiationException
+	@Override Ability getAbility(EntityLivingBase entity, GeneSet.GeneData geneData)
 	{
-		int[] c = getColor(geneData);
-		return ability.getAbilityClass().getConstructor(EntityLivingBase.class, float.class, Vec3d.class).newInstance(entity, maxDamage*geneData.quality, new Vec3d(((double) c[0])/255.0, ((double) c[1])/255.0, ((double) c[2])/255.0));
+		Ability a = super.getAbility(entity, geneData);
+		int[] color = getColor(geneData);
+		a.getDataManager().set(AbilityEnergyBlast.COLOR, new Color(color[0], color[1], color[2]));
+		return a;
 	}
 
 	private int[] getColor(GeneSet.GeneData geneData){
@@ -59,8 +58,4 @@ public class GeneEnergyBlast extends Gene
 		} else return num;
 	}
 
-	@Override float getQuality(Ability ability, Random r)
-	{
-		return (((AbilityEnergyBlast) ability).damage / maxDamage) + ((float) r.nextGaussian() * 0.25f);
-	}
 }

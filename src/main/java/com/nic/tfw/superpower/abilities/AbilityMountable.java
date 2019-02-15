@@ -29,7 +29,7 @@ public class AbilityMountable extends AbilityConstant
 		public static void onRightClick(PlayerInteractEvent.EntityInteract event){
 			if(event.getTarget() instanceof EntityLivingBase && event.getTarget().getPassengers().isEmpty())
 			{
-				for (Ability currentAbility : Ability.getCurrentAbilities((EntityLivingBase) event.getTarget()))
+				for (Ability currentAbility : Ability.getAbilities((EntityLivingBase) event.getTarget()))
 				{
 					if(currentAbility instanceof AbilityMountable && currentAbility.isEnabled()){
 						event.getEntityLiving().startRiding(event.getTarget());

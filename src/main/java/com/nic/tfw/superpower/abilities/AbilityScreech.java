@@ -3,6 +3,9 @@ package com.nic.tfw.superpower.abilities;
 import com.nic.tfw.util.ClientUtils;
 import lucraft.mods.lucraftcore.superpowers.abilities.Ability;
 import lucraft.mods.lucraftcore.superpowers.abilities.AbilityHeld;
+import lucraft.mods.lucraftcore.superpowers.abilities.data.AbilityData;
+import lucraft.mods.lucraftcore.superpowers.abilities.data.AbilityDataFloat;
+import lucraft.mods.lucraftcore.superpowers.abilities.supplier.EnumSync;
 import lucraft.mods.lucraftcore.superpowers.render.RenderSuperpowerLayerEvent;
 import lucraft.mods.lucraftcore.util.helper.LCEntityHelper;
 import lucraft.mods.lucraftcore.util.helper.LCRenderHelper;
@@ -30,18 +33,19 @@ import org.lwjgl.opengl.GL11;
  */
 public class AbilityScreech extends AbilityHeld
 {
+	public static final AbilityData<Float> DAMAGE = new AbilityDataFloat("damage").disableSaving().setSyncType(EnumSync.SELF).enableSetting("damage", "The damage done by the attack");
+
 	public AbilityScreech(EntityLivingBase player)
 	{
 		super(player);
 	}
 
-	public AbilityScreech(EntityLivingBase player, float damage)
+	@Override
+	public void registerData()
 	{
-		super(player);
-		this.damage = damage;
+		super.registerData();
+		this.dataManager.register(DAMAGE, 1F);
 	}
-
-	public float damage = 1f;
 
 	@Override public void updateTick()
 	{
@@ -54,7 +58,7 @@ public class AbilityScreech extends AbilityHeld
 			entity1.motionZ += Math.cos((double) (entity.rotationYaw * (float) Math.PI / 180.0F)) * speed;
 
 			if(entity.getDistance(entity1) < 2f || entity1.collidedHorizontally){
-				entity1.attackEntityFrom(DamageSource.causeMobDamage(entity), damage);
+				entity1.attackEntityFrom(DamageSource.causeMobDamage(entity), this.dataManager.get(DAMAGE));
 			}
 		}
 
@@ -86,7 +90,7 @@ public class AbilityScreech extends AbilityHeld
 			EntityPlayer player = Minecraft.getMinecraft().player;
 			AxisAlignedBB voxel = new AxisAlignedBB(-0.025, -0.025, -0.025, 0.025, 0.025, 0.025);
 
-			for (AbilityScreech ab : Ability.getAbilitiesFromClass(Ability.getCurrentAbilities(player), AbilityScreech.class))
+			for (AbilityScreech ab : Ability.getAbilitiesFromClass(Ability.getAbilities(player), AbilityScreech.class))
 			{
 				if (ab != null && ab.isUnlocked() && ab.isEnabled())
 				{
@@ -140,13 +144,10 @@ public class AbilityScreech extends AbilityHeld
 		@SubscribeEvent
 		public static void onRenderLayer(RenderSuperpowerLayerEvent e)
 		{
-			if (Minecraft.getMinecraft().player == null)
-				return;
-
 			EntityPlayer player = e.getPlayer();
 			AxisAlignedBB voxel = new AxisAlignedBB(-0.025, -0.025, -0.025, 0.025, 0.025, 0.025);
 
-			for (AbilityScreech ab : Ability.getAbilitiesFromClass(Ability.getCurrentAbilities(player), AbilityScreech.class))
+			for (AbilityScreech ab : Ability.getAbilitiesFromClass(Ability.getAbilities(player), AbilityScreech.class))
 			{
 				if (ab != null && ab.isUnlocked() && ab.isEnabled())
 				{
