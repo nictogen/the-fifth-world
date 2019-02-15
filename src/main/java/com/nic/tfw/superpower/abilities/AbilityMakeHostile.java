@@ -16,6 +16,7 @@ import java.util.stream.Collectors;
 /**
  * Created by Nictogen on 1/22/19.
  */
+//TODO brainwashing (basically choose tasks and target tasks)
 public class AbilityMakeHostile extends AbilityConstant
 {
 	public AbilityMakeHostile(EntityLivingBase player)

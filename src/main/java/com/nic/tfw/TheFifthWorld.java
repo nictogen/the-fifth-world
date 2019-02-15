@@ -50,7 +50,6 @@ public class TheFifthWorld
     @EventHandler
     public void preInit(FMLPreInitializationEvent event)
     {
-
     }
 
     @EventHandler
@@ -105,8 +104,14 @@ public class TheFifthWorld
 		event.getRegistry().register(new Ability.AbilityEntry(DefectDisable.class, new ResourceLocation(MODID, "defect_disable")));
 		event.getRegistry().register(new Ability.AbilityEntry(DefectEnable.class, new ResourceLocation(MODID, "defect_enable")));
 
-
 		event.getRegistry().register(new Ability.AbilityEntry(AbilityMakeHostile.class, new ResourceLocation(MODID, "make_hostile")));
+		event.getRegistry().register(new Ability.AbilityEntry(AbilityScreech.class, new ResourceLocation(MODID, "screech")));
+		event.getRegistry().register(new Ability.AbilityEntry(AbilityLayEgg.class, new ResourceLocation(MODID, "lay_egg")));
+		event.getRegistry().register(new Ability.AbilityEntry(AbilityEatBlock.class, new ResourceLocation(MODID, "eat_block")));
+		event.getRegistry().register(new Ability.AbilityEntry(AbilityPotionImmunity.class, new ResourceLocation(MODID, "potion_immunity")));
+		event.getRegistry().register(new Ability.AbilityEntry(AbilityExplode.class, new ResourceLocation(MODID, "explode")));
+		event.getRegistry().register(new Ability.AbilityEntry(AbilityMountable.class, new ResourceLocation(MODID, "mountable")));
+		event.getRegistry().register(new Ability.AbilityEntry(AbilityItemCreation.class, new ResourceLocation(MODID, "create_item")));
 
 	}
 

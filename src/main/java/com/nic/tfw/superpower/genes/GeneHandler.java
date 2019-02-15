@@ -14,6 +14,7 @@ import net.minecraft.entity.monster.*;
 import net.minecraft.entity.passive.*;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTBase;
@@ -67,7 +68,6 @@ public class GeneHandler
 		public static final Gene size_change = null;
 		public static final Gene teleport = null;
 		public static final Gene knockback_resistance = null;
-		//		public static final Gene potion_punch = null;
 		public static final Gene slowfall = null;
 		public static final Gene energy_blast = null;
 		public static final Gene fire_punch = null;
@@ -75,12 +75,52 @@ public class GeneHandler
 		public static final Gene water_breathing = null;
 		public static final Gene tough_lungs = null;
 		public static final Gene invisibility = null;
+
+		//Potion Punch
+		public static final Gene potion_punch_minecraft_poison = null;
+		public static final Gene potion_punch_minecraft_slowness = null;
+		public static final Gene potion_punch_minecraft_weakness = null;
+		public static final Gene potion_punch_minecraft_nausea = null;
+		public static final Gene potion_punch_minecraft_mining_fatigue = null;
+		public static final Gene potion_punch_minecraft_instant_health = null;
+		public static final Gene potion_punch_minecraft_blindness = null;
+		public static final Gene potion_punch_minecraft_hunger = null;
+		public static final Gene potion_punch_minecraft_wither = null;
+		public static final Gene potion_punch_minecraft_levitation = null;
 	}
 
 	@GameRegistry.ObjectHolder(TheFifthWorld.MODID)
 	public static class FifthWorldGenes
 	{
 		public static final Gene make_hostile = null;
+		public static final Gene screech = null;
+		public static final Gene eat_hay = null;
+		public static final Gene graze = null;
+		public static final Gene lay_egg = null;
+		public static final Gene explode = null;
+		public static final Gene mountable = null;
+
+		//Potion Immunity
+		public static final Gene potion_immunity_minecraft_poison = null;
+		public static final Gene potion_immunity_minecraft_slowness = null;
+		public static final Gene potion_immunity_minecraft_weakness = null;
+		public static final Gene potion_immunity_minecraft_nausea = null;
+		public static final Gene potion_immunity_minecraft_mining_fatigue = null;
+		public static final Gene potion_immunity_minecraft_instant_health = null;
+		public static final Gene potion_immunity_minecraft_blindness = null;
+		public static final Gene potion_immunity_minecraft_hunger = null;
+		public static final Gene potion_immunity_minecraft_wither = null;
+		public static final Gene potion_immunity_minecraft_levitation = null;
+
+		//Item Creation
+		public static final Gene create_item_minecraft_slime_ball = null;
+		public static final Gene create_item_minecraft_golden_sword = null;
+		public static final Gene create_item_minecraft_gold_nugget = null;
+		public static final Gene create_item_minecraft_ghast_tear = null;
+		public static final Gene create_item_minecraft_ender_pearl = null;
+		public static final Gene create_item_minecraft_snowball = null;
+
+
 	}
 
 	public static void populateGeneList()
@@ -106,20 +146,44 @@ public class GeneHandler
 		GENE_REGISTRY.register(new GenePotionPunch("Wither Punch", Potion.getPotionById(20), 400, 3));
 		GENE_REGISTRY.register(new GenePotionPunch("Levitation Punch", Potion.getPotionById(25), 250, 10));
 
+		GENE_REGISTRY.register(new GenePotionImmunity("Poison Immunity", Potion.getPotionById(19)));
+		GENE_REGISTRY.register(new GenePotionImmunity("Slowness Immunity", Potion.getPotionById(2)));
+		GENE_REGISTRY.register(new GenePotionImmunity("Weakness Immunity", Potion.getPotionById(18)));
+		GENE_REGISTRY.register(new GenePotionImmunity("Nausea Immunity", Potion.getPotionById(9)));
+		GENE_REGISTRY.register(new GenePotionImmunity("Fatigue Immunity", Potion.getPotionById(4)));
+		GENE_REGISTRY.register(new GenePotionImmunity("Blindness Immunity", Potion.getPotionById(15)));
+		GENE_REGISTRY.register(new GenePotionImmunity("Hunger Immunity", Potion.getPotionById(17)));
+		GENE_REGISTRY.register(new GenePotionImmunity("Wither Immunity", Potion.getPotionById(20)));
+		GENE_REGISTRY.register(new GenePotionImmunity("Levitation Immunity", Potion.getPotionById(25)));
+
 		GENE_REGISTRY.register(new GeneNoQuality(AbilityFireResistance.class, "Fire Resistance"));
 		GENE_REGISTRY.register(new GeneNoQuality(AbilitySlowfall.class, "Slowfall"));
 		GENE_REGISTRY.register(new GeneNoQuality(AbilityWaterBreathing.class, "Water Breathing"));
 		GENE_REGISTRY.register(new GeneNoQuality(AbilityToughLungs.class, "Tough Lungs"));
 		GENE_REGISTRY.register(new GeneNoQuality(AbilityInvisibility.class, "Invisibility"));
 		GENE_REGISTRY.register(new GeneNoQuality(AbilityMakeHostile.class, "Hostile"));
+		GENE_REGISTRY.register(new GeneNoQuality(AbilityMountable.class, "Mountable"));
 
 		GENE_REGISTRY.register(new GeneEnergyBlast("Energy Blast", 25));
 		GENE_REGISTRY.register(new GeneFlight(AbilityFlight.class, "Flight", 5));
 		GENE_REGISTRY.register(new GeneHealing("Healing Factor", 5f));
 		GENE_REGISTRY.register(new GeneTeleport("Teleportation", 50));
 		GENE_REGISTRY.register(new GeneFirePunch("Fire Punch", 50));
+		GENE_REGISTRY.register(new GeneScreech("Screech", 5f));
+		GENE_REGISTRY.register(new GeneLayEgg("Lay Egg", 600));
+		GENE_REGISTRY.register(new GeneExplode("Explode", 5f, 200));
 
-		//		GENE_REGISTRY.register(new Gene(AbilitySizeChange.class, new int[] { 0 }, new Object[] { 5 }, "Size Changing"));
+		GENE_REGISTRY.register(new GeneEatBlock("Graze", Blocks.GRASS.getDefaultState(), Blocks.DIRT.getDefaultState(), 8, 1f).setRegistryName(TheFifthWorld.MODID, "graze"));
+		GENE_REGISTRY.register(new GeneEatBlock("Eat Hay", Blocks.HAY_BLOCK.getDefaultState(), Blocks.AIR.getDefaultState(), 16, 2f).setRegistryName(TheFifthWorld.MODID, "eat_hay"));
+
+		GENE_REGISTRY.register(new GeneItemCreation("Create Slime",600, new ItemStack(Items.SLIME_BALL)));
+		GENE_REGISTRY.register(new GeneItemCreation("Create Golden Sword",600, new ItemStack(Items.GOLDEN_SWORD)));
+		GENE_REGISTRY.register(new GeneItemCreation("Create Gold Nugget",300, new ItemStack(Items.GOLD_NUGGET)));
+		GENE_REGISTRY.register(new GeneItemCreation("Create Ghast Tear",600, new ItemStack(Items.GHAST_TEAR)));
+		GENE_REGISTRY.register(new GeneItemCreation("Create Ender Pearl",300, new ItemStack(Items.ENDER_PEARL)));
+		GENE_REGISTRY.register(new GeneItemCreation("Create Snowballs",30, new ItemStack(Items.SNOWBALL)));
+
+		//	GENE_REGISTRY.register(new Gene(AbilitySizeChange.class, new int[] { 0 }, new Object[] { 5 }, "Size Changing"));
 
 		//Defects
 		GENE_REGISTRY.register(new GeneDefect(DefectExplosion.class, "Explodes").setAlwaysOnChance(0.1f));
@@ -142,69 +206,111 @@ public class GeneHandler
 		if (entity instanceof EntityBat)
 		{
 			set.addGene(entity, LucraftCoreGenes.flight, GeneStrength.LOW.chance, r);
+			set.addGene(entity, FifthWorldGenes.screech, GeneStrength.HIGH.chance, r);
+//			Nightvision
+//			Hang upside down
+//			Drain blood
+//			Bite
+//			Summon Bats
 		}
 		if (entity instanceof EntityChicken)
 		{
 			set.addGene(entity, LucraftCoreGenes.flight, GeneStrength.VERY_LOW.chance, r);
 			set.addGene(entity, LucraftCoreGenes.slowfall, GeneStrength.MID.chance, r);
-			set.addGene(entity, LucraftCoreGenes.resistance, GeneStrength.PERFECT.chance, r);
+			set.addGene(entity, LucraftCoreGenes.fall_resistance, GeneStrength.PERFECT.chance, r);
+			set.addGene(entity, FifthWorldGenes.lay_egg, GeneStrength.PERFECT.chance, r);
 		}
 		if (entity instanceof EntityCow)
 		{
 			set.addGene(entity, LucraftCoreGenes.health, GeneStrength.MID.chance, r);
 			set.addGene(entity, LucraftCoreGenes.healing, GeneStrength.MID.chance, r);
 			set.addGene(entity, LucraftCoreGenes.knockback_resistance, GeneStrength.MID.chance, r);
+//			Milking
+//			Charge
 		}
 		if (entity instanceof EntityMooshroom)
 		{
-
+			//Souping
+			//Bonemeal effect
+			//Shoot vines up until top of wall
+			//Psychotropic effect
+			//Grass to mycelium
 		}
 		if (entity instanceof EntityDonkey)
 		{
 			set.addGene(entity, LucraftCoreGenes.strength, GeneStrength.MID.chance, r);
 			set.addGene(entity, LucraftCoreGenes.jump_boost, GeneStrength.MID.chance, r);
+			set.addGene(entity, FifthWorldGenes.eat_hay, GeneStrength.HIGH.chance, r);
+			set.addGene(entity, FifthWorldGenes.mountable, 1.0f);
+			//Bite
 		}
 		else if (entity instanceof EntityMule)
 		{
 			set.addGene(entity, LucraftCoreGenes.strength, GeneStrength.HIGH.chance, r);
 			set.addGene(entity, LucraftCoreGenes.jump_boost, GeneStrength.LOW.chance, r);
+			set.addGene(entity, FifthWorldGenes.eat_hay, GeneStrength.HIGH.chance, r);
+			set.addGene(entity, FifthWorldGenes.mountable, 1.0f);
+			//Bite
 		}
 		else if (entity instanceof EntityHorse)
 		{
 			set.addGene(entity, LucraftCoreGenes.strength, GeneStrength.LOW.chance, r);
 			set.addGene(entity, LucraftCoreGenes.jump_boost, GeneStrength.MID.chance, r);
 			set.addGene(entity, LucraftCoreGenes.sprint, GeneStrength.MID.chance, r);
+			set.addGene(entity, FifthWorldGenes.eat_hay, GeneStrength.VERY_HIGH.chance, r);
+			set.addGene(entity, FifthWorldGenes.mountable, 1.0f);
+			//Bite
 		}
 		if (entity instanceof EntityOcelot)
 		{
 			set.addGene(entity, LucraftCoreGenes.sprint, GeneStrength.PERFECT.chance, r);
+			set.addGene(entity, LucraftCoreGenes.fall_resistance, GeneStrength.HIGH.chance, r);
+			set.addGene(entity, FifthWorldGenes.potion_immunity_minecraft_slowness, 1.0f);
+			//Predator Vision?
+			//Bite
+			//Stealth
+			//Pack Leader
 		}
 		if (entity instanceof EntityParrot)
 		{
 			set.addGene(entity, LucraftCoreGenes.flight, GeneStrength.HIGH.chance, r);
+			set.addGene(entity, LucraftCoreGenes.slowfall, GeneStrength.HIGH.chance, r);
+			//Power Mimicry
+			//Send messages as other player
 		}
 		if (entity instanceof EntityPig)
 		{
 			set.addGene(entity, LucraftCoreGenes.health, GeneStrength.MID.chance, r);
 			set.addGene(entity, LucraftCoreGenes.healing, GeneStrength.MID.chance, r);
 			set.addGene(entity, LucraftCoreGenes.knockback_resistance, GeneStrength.MID.chance, r);
+			//Eat anything?
+			set.addGene(entity, FifthWorldGenes.mountable, 1.0f);
 		}
 		if (entity instanceof EntityRabbit)
 		{
 			set.addGene(entity, LucraftCoreGenes.jump_boost, GeneStrength.PERFECT.chance, r);
 			set.addGene(entity, LucraftCoreGenes.sprint, GeneStrength.MID.chance, r);
+			//Burrowing
+			//Luck
+			//Hearing
 		}
 		if (entity instanceof EntitySheep)
 		{
 			set.addGene(entity, LucraftCoreGenes.health, GeneStrength.HIGH.chance, r);
+			set.addGene(entity, FifthWorldGenes.graze, GeneStrength.PERFECT.chance, r);
+			//Shearable
+			//Herding
 		}
 		if (entity instanceof EntitySquid)
 		{
-
+			//Ink Attack
+			//Ink Sac spawning
+			//Water attack?
 		}
 		if (entity instanceof EntityVillager)
 		{
-
+			//Looting/Fortune for free
+			//Smartness, eventually
 		}
 
 		/*
@@ -213,15 +319,23 @@ public class GeneHandler
 
 		if (entity instanceof EntityLlama)
 		{
-
+			set.addGene(entity, LucraftCoreGenes.step_assist, GeneStrength.PERFECT.chance, r);
+			//Spitting
 		}
 		if (entity instanceof EntityPolarBear)
 		{
-
+			set.addGene(entity, LucraftCoreGenes.strength, GeneStrength.VERY_HIGH.chance, r);
+			//Fish in water
+			//Claws
+			//Bite
 		}
 		if (entity instanceof EntityWolf)
 		{
 			set.addGene(entity, LucraftCoreGenes.strength, GeneStrength.PERFECT.chance, r);
+//			Bite
+//			Pack Leader?
+//			Predator Vision?
+//			Loyalty?
 		}
 
 		/*
@@ -229,86 +343,151 @@ public class GeneHandler
 		 */
 		if (entity instanceof EntityCaveSpider)
 		{
-			//TODO potion punch poison
+			set.addGene(entity, LucraftCoreGenes.potion_punch_minecraft_poison, GeneStrength.PERFECT.chance, r);
+			set.addGene(entity, FifthWorldGenes.potion_immunity_minecraft_poison, 1.0f);
+			//Bite
 		}
 		else if (entity instanceof EntitySpider)
 		{
-
+			//Wall Climbing
+			//Web Attack
+			//Bite
+			set.addGene(entity, LucraftCoreGenes.invisibility, 1.0f);
+			set.addGene(entity, FifthWorldGenes.mountable, 1.0f);
+			set.addGene(entity, FifthWorldGenes.potion_immunity_minecraft_poison, 1.0f);
 		}
 		if (entity instanceof EntityEnderman)
 		{
 			set.addGene(entity, LucraftCoreGenes.teleport, GeneStrength.PERFECT.chance, r);
+			set.addGene(entity, FifthWorldGenes.create_item_minecraft_ender_pearl, GeneStrength.VERY_HIGH.chance, r);
+			set.addGene(entity, FifthWorldGenes.potion_immunity_minecraft_nausea, 1.0f);
+//			Watcher detection
+//			Dimension jump
 		}
 		if (entity instanceof EntityPigZombie)
 		{
 			set.addGene(entity, LucraftCoreGenes.punch, GeneStrength.PERFECT.chance, r);
+			set.addGene(entity, FifthWorldGenes.create_item_minecraft_golden_sword, GeneStrength.VERY_HIGH.chance, r);
+			set.addGene(entity, FifthWorldGenes.create_item_minecraft_gold_nugget, GeneStrength.VERY_HIGH.chance, r);
+			//Lightning attacks?
+			//Summon zombie pigman
 		}
 		if (entity instanceof EntityBlaze)
 		{
 			set.addGene(entity, LucraftCoreGenes.fire_resistance, 1.0f);
 			set.addGene(entity, LucraftCoreGenes.fire_punch, GeneStrength.LOW.chance, r);
 			set.addGene(entity, LucraftCoreGenes.slowfall, GeneStrength.MID.chance, r);
+			// Fireball
+			// Fire blasts
+			// Smoke Form
+			// Smoke Cloud
 		}
 		if (entity instanceof EntityCreeper)
 		{
-
+			set.addGene(entity, FifthWorldGenes.explode, GeneStrength.PERFECT.chance, r);
+			//Explosion Punch
+			//Electricity absorbtion
 		}
 		if (entity instanceof EntityElderGuardian)
 		{
-
+			set.addGene(entity, LucraftCoreGenes.energy_blast, GeneStrength.PERFECT.chance, r);
+			set.addGene(entity, FifthWorldGenes.potion_immunity_minecraft_blindness, 1.0f);   //Visions
+			//Long Range Potion effect
 		}
 		else if (entity instanceof EntityGuardian)
 		{
-
+			set.addGene(entity, LucraftCoreGenes.energy_blast, GeneStrength.VERY_HIGH.chance, r);
+			set.addGene(entity, FifthWorldGenes.potion_immunity_minecraft_blindness, 1.0f);
+			//Thorn projectiles
+			//Predator Vision
+			//Thorn when attacked
+			//Lock on?
+			//Laser (sustained)
 		}
 		if (entity instanceof EntityEndermite)
 		{
-
+			set.addGene(entity, LucraftCoreGenes.teleport, GeneStrength.MID.chance, r);
 		}
 		if (entity instanceof EntityEvoker)
 		{
-
+			//weird behavior because of magic
+			//eventual sw genes
 		}
 		if (entity instanceof EntityGhast)
 		{
 			set.addGene(entity, LucraftCoreGenes.fire_resistance, 1.0f);
 			set.addGene(entity, LucraftCoreGenes.flight, GeneStrength.PERFECT.chance, r);
+			set.addGene(entity, FifthWorldGenes.create_item_minecraft_ghast_tear, GeneStrength.VERY_HIGH.chance, r);
+			// Fireball
+			// Wail
+			// Tentacles
+			// Crying attack?
+			// Eventual The Weeper powers?
 		}
 		if (entity instanceof EntityHusk)
 		{
-
+			set.addGene(entity, LucraftCoreGenes.potion_punch_minecraft_hunger, GeneStrength.PERFECT.chance, r);
 		}
-		else if (entity instanceof EntityZombie)
+		if (entity instanceof EntityZombie)
 		{
-
+			set.addGene(entity, LucraftCoreGenes.healing, GeneStrength.MID.chance, r);
+			set.addGene(entity, FifthWorldGenes.potion_immunity_minecraft_hunger, 1.0f);
+			set.addGene(entity, FifthWorldGenes.potion_immunity_minecraft_instant_health, 1.0f);
+			//Infect with superpower
+			//Bite
+			//Turn villagers into zombies
+			//Death touch?
+			//Immortality
+			//Kill surrounding plant life
+			//Kind of want to beat someone with my own limb?
+			//Summon more zombies 
 		}
 		if (entity instanceof EntityMagmaCube)
 		{
-
+			set.addGene(entity, LucraftCoreGenes.fire_resistance, 1.0f);
+			//Fire when hit
+			//Lava creation/attacks?
 		}
-		else if (entity instanceof EntitySlime)
+		if (entity instanceof EntitySlime)
 		{
-
+			set.addGene(entity, LucraftCoreGenes.jump_boost, GeneStrength.HIGH.chance, r);
+			set.addGene(entity, FifthWorldGenes.create_item_minecraft_slime_ball, GeneStrength.VERY_HIGH.chance, r);
+			//Reverse Knockback
+			//Splitting into multiple
+			//Create ooze?
+		}
+		if (entity instanceof EntityShulker)
+		{
+			set.addGene(entity, LucraftCoreGenes.teleport, GeneStrength.HIGH.chance, r);
+			set.addGene(entity, FifthWorldGenes.potion_immunity_minecraft_levitation, 1.0f);
+			//Fire bullet
+			//Become block?
+			//Shield
 		}
 		if (entity instanceof EntitySilverfish)
 		{
-
+			set.addGene(entity, FifthWorldGenes.potion_immunity_minecraft_mining_fatigue, 1.0f);
+			//Become block
+			//Summon silverfish
+			//Burrow
 		}
 		if (entity instanceof EntitySkeleton)
 		{
-
+			set.addGene(entity, FifthWorldGenes.potion_immunity_minecraft_weakness, 1.0f);
+			//Infinite arrows
+			//Remove need to eat?
+			//Any since magic?
 		}
 		if (entity instanceof EntityStray)
 		{
-
+			set.addGene(entity, LucraftCoreGenes.potion_punch_minecraft_slowness, GeneStrength.PERFECT.chance, r);
+			//Regular arrows -> slowness ones
 		}
 		if (entity instanceof EntityVex)
 		{
-
-		}
-		if (entity instanceof EntityStray)
-		{
-
+			set.addGene(entity, LucraftCoreGenes.flight, GeneStrength.HIGH.chance, r);
+			//Expiration date
+			//again, magic, so maybe mess up
 		}
 		if (entity instanceof EntityVindicator)
 		{
@@ -316,11 +495,27 @@ public class GeneHandler
 		}
 		if (entity instanceof EntityWitch)
 		{
+			set.addGene(entity, LucraftCoreGenes.potion_punch_minecraft_slowness, GeneStrength.VERY_HIGH.chance, r);
+			set.addGene(entity, LucraftCoreGenes.potion_punch_minecraft_hunger, GeneStrength.VERY_HIGH.chance, r);
+			set.addGene(entity, LucraftCoreGenes.potion_punch_minecraft_poison, GeneStrength.VERY_HIGH.chance, r);
+			set.addGene(entity, LucraftCoreGenes.potion_punch_minecraft_blindness, GeneStrength.VERY_HIGH.chance, r);
+			set.addGene(entity, LucraftCoreGenes.potion_punch_minecraft_instant_health, GeneStrength.VERY_HIGH.chance, r);
+			set.addGene(entity, LucraftCoreGenes.potion_punch_minecraft_levitation, GeneStrength.VERY_HIGH.chance, r);
+			set.addGene(entity, LucraftCoreGenes.potion_punch_minecraft_mining_fatigue, GeneStrength.VERY_HIGH.chance, r);
+			set.addGene(entity, LucraftCoreGenes.potion_punch_minecraft_nausea, GeneStrength.VERY_HIGH.chance, r);
+			set.addGene(entity, LucraftCoreGenes.potion_punch_minecraft_weakness, GeneStrength.VERY_HIGH.chance, r);
+			set.addGene(entity, LucraftCoreGenes.potion_punch_minecraft_wither, GeneStrength.VERY_HIGH.chance, r);
 
+			//Throw random potion
+			//Magic resistance
+			//mess up?
 		}
 		if (entity instanceof EntityWitherSkeleton)
 		{
-
+			set.addGene(entity, LucraftCoreGenes.fire_resistance, 1.0f);
+			set.addGene(entity, LucraftCoreGenes.potion_punch_minecraft_wither, GeneStrength.PERFECT.chance, r);
+			set.addGene(entity, FifthWorldGenes.potion_immunity_minecraft_wither, 1.0f);
+			//Fiery arrows
 		}
 
 		/*
@@ -328,11 +523,19 @@ public class GeneHandler
 		 */
 		if (entity instanceof EntityIronGolem)
 		{
-
+			set.addGene(entity, LucraftCoreGenes.health, GeneStrength.PERFECT.chance, r);
+			set.addGene(entity, LucraftCoreGenes.resistance, GeneStrength.PERFECT.chance, r);
+			//Colossus
+			//Pick up and throw
+			//Metal manipulation?
+			//Fling into air
 		}
 		if (entity instanceof EntitySnowman)
 		{
-
+			set.addGene(entity, FifthWorldGenes.create_item_minecraft_snowball, GeneStrength.VERY_HIGH.chance, r);
+			//Leave snow trail
+			//Throw snowballs
+			//Ice powers
 		}
 
 		/*
@@ -340,11 +543,19 @@ public class GeneHandler
 		 */
 		if (entity instanceof EntityDragon)
 		{
-
+			//Dragon Breath
 		}
 		if (entity instanceof EntityWither)
 		{
+			//Cannonball powers
+		}
 
+		//General
+		if(entity instanceof EntityWaterMob){
+			set.addGene(entity, LucraftCoreGenes.water_breathing, 1.0f);
+		}
+		if(entity instanceof EntityMob){
+			set.addGene(entity, FifthWorldGenes.make_hostile, 1.0f);
 		}
 	}
 
@@ -376,7 +587,7 @@ public class GeneHandler
 
 		int index = 0;
 
-		StringBuilder s2 = new StringBuilder("");
+		StringBuilder s2 = new StringBuilder();
 
 		index = addLine(s2, pages, "Genetic Abilities:", index);
 		for (NBTBase nbtBase : stack.getTagCompound().getCompoundTag(GeneSet.VIAL_DATA_TAG).getTagList(GeneSet.GENE_LIST_TAG, 10))

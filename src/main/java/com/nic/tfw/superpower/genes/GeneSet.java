@@ -57,6 +57,8 @@ public class GeneSet
 	{
 		this.type = SetType.SAMPLE;
 		GeneHandler.addSpeciesGenes(entityLivingBase, this);
+		Collections.shuffle(this.genes, getRandom());
+		this.genes = new ArrayList<>(this.genes.subList(0, (this.genes.size() < 3) ? this.genes.size() : 3));
 		originalDonor = entityLivingBase.getPersistentID();
 	}
 
