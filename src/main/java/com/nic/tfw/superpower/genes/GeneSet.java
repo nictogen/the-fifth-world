@@ -3,10 +3,11 @@ package com.nic.tfw.superpower.genes;
 import com.google.common.collect.Lists;
 import com.nic.tfw.TheFifthWorld;
 import com.nic.tfw.potion.PotionExplode;
-import com.nic.tfw.superpower.conditions.Condition;
+import com.nic.tfw.superpower.conditions.Conditions;
 import lucraft.mods.lucraftcore.karma.KarmaHandler;
 import lucraft.mods.lucraftcore.superpowers.SuperpowerHandler;
 import lucraft.mods.lucraftcore.superpowers.abilities.Ability;
+import lucraft.mods.lucraftcore.superpowers.abilities.predicates.AbilityCondition;
 import lucraft.mods.lucraftcore.superpowers.capabilities.ISuperpowerCapability;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.passive.EntityVillager;
@@ -271,14 +272,14 @@ public class GeneSet
 		{
 			float q = g.quality;
 			List<Gene> d = GeneHandler.GENE_REGISTRY.getValuesCollection().stream().filter(gene -> gene instanceof GeneDefect).collect(Collectors.toList());
-			List<Condition> conditions = new ArrayList<>(Condition.CONDITION_REGISTRY.getValuesCollection());
+			List<AbilityCondition.ConditionEntry> conditions = AbilityCondition.ConditionEntry.CONDITION_REGISTRY.getValuesCollection().stream().filter(conditionEntry -> Objects.requireNonNull(conditionEntry.getRegistryName()).getNamespace().equals(TheFifthWorld.MODID)).collect(Collectors.toList());
 
 			while (q > 0)
 			{
 				GeneDefect defect = (GeneDefect) d.get(r.nextInt(d.size()));
 				float chance = Math.min(100, q);
 				if (r.nextFloat() > (chance / 2.0f))
-					defects.add(new DefectData(defect, r.nextFloat() > defect.getAlwaysOnChance() ? conditions.get(r.nextInt(conditions.size())) : conditions.get(0)));
+					defects.add(new DefectData(defect, r.nextFloat() > defect.getAlwaysOnChance() ? conditions.get(r.nextInt(conditions.size())) : Conditions.TheFifthWorldConditions.always_on));
 				q -= chance;
 			}
 		}
@@ -355,9 +356,9 @@ public class GeneSet
 	public static class DefectData
 	{
 		public Gene gene;
-		public Condition condition;
+		public AbilityCondition.ConditionEntry condition;
 
-		public DefectData(Gene gene, Condition condition)
+		public DefectData(Gene gene, AbilityCondition.ConditionEntry condition)
 		{
 			this.gene = gene;
 			this.condition = condition;
@@ -366,7 +367,7 @@ public class GeneSet
 		public DefectData(NBTTagCompound compound)
 		{
 			this.gene = GeneHandler.GENE_REGISTRY.getValue(new ResourceLocation(compound.getString(GeneSet.GENE_REGISTRY_NAME_TAG)));
-			this.condition = Condition.CONDITION_REGISTRY.getValue(new ResourceLocation(compound.getString(CONDITION_TAG)));
+			this.condition = AbilityCondition.ConditionEntry.CONDITION_REGISTRY.getValue(new ResourceLocation(compound.getString(CONDITION_TAG)));
 		}
 
 		public NBTTagCompound serializeNBT()

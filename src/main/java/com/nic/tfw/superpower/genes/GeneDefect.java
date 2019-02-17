@@ -38,7 +38,9 @@ public class GeneDefect extends Gene
 	{
 		Ability a = ability.getAbilityClass().getConstructor(EntityLivingBase.class).newInstance(entity);
 		if(a instanceof IDefect)
-			((IDefect) a).setCondition(defectData.condition);
+		{
+			((IDefect) a).setCondition(defectData.condition.getConditionClass().newInstance());
+		}
 		return a;
 	}
 

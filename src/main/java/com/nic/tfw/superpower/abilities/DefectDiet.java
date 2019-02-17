@@ -1,8 +1,8 @@
 package com.nic.tfw.superpower.abilities;
 
-import com.nic.tfw.superpower.conditions.Condition;
 import lucraft.mods.lucraftcore.superpowers.abilities.Ability;
 import lucraft.mods.lucraftcore.superpowers.abilities.AbilityConstant;
+import lucraft.mods.lucraftcore.superpowers.abilities.predicates.AbilityCondition;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.item.ItemFood;
 import net.minecraftforge.event.entity.living.LivingEntityUseItemEvent;
@@ -14,7 +14,7 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
  */
 public class DefectDiet extends AbilityConstant implements IDefect
 {
-	private Condition condition;
+	private AbilityCondition condition;
 
 	public DefectDiet(EntityLivingBase player)
 	{
@@ -26,12 +26,12 @@ public class DefectDiet extends AbilityConstant implements IDefect
 
 	}
 
-	@Override public void setCondition(Condition condition)
+	@Override public void setCondition(AbilityCondition condition)
 	{
 		this.condition = condition;
 	}
 
-	@Override public Condition getCondition()
+	@Override public AbilityCondition getCondition()
 	{
 		return this.condition;
 	}
@@ -44,7 +44,7 @@ public class DefectDiet extends AbilityConstant implements IDefect
 			if(event.getItem().getItem() instanceof ItemFood){
 				for (Ability ability : Ability.getAbilities(event.getEntityLiving()))
 				{
-					if(ability instanceof DefectDiet && ((DefectDiet) ability).condition.isEnabled((EntityLivingBase) event.getEntity(), ability)){
+					if(ability instanceof DefectDiet && ((DefectDiet) ability).condition.test(ability)){
 						event.setCanceled(true);
 					}
 				}

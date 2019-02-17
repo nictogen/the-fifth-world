@@ -1,8 +1,8 @@
 package com.nic.tfw.superpower.abilities;
 
-import com.nic.tfw.superpower.AbilityDataBlock;
 import lucraft.mods.lucraftcore.superpowers.abilities.AbilityAction;
 import lucraft.mods.lucraftcore.superpowers.abilities.data.AbilityData;
+import lucraft.mods.lucraftcore.superpowers.abilities.data.AbilityDataBlock;
 import lucraft.mods.lucraftcore.superpowers.abilities.data.AbilityDataFloat;
 import lucraft.mods.lucraftcore.superpowers.abilities.data.AbilityDataInteger;
 import lucraft.mods.lucraftcore.superpowers.abilities.supplier.EnumSync;

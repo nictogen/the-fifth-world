@@ -1,13 +1,13 @@
 package com.nic.tfw.superpower.abilities;
 
-import com.nic.tfw.superpower.conditions.Condition;
+import lucraft.mods.lucraftcore.superpowers.abilities.predicates.AbilityCondition;
 
 /**
  * Created by Nictogen on 1/16/19.
  */
 public interface IDefect
 {
-	void setCondition(Condition condition);
+	void setCondition(AbilityCondition condition);
 
-	Condition getCondition();
+	AbilityCondition getCondition();
 }

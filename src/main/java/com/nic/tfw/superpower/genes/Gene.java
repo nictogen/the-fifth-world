@@ -7,6 +7,7 @@ import lucraft.mods.lucraftcore.superpowers.abilities.data.AbilityData;
 import lucraft.mods.lucraftcore.superpowers.abilities.data.AbilityDataManager;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraftforge.registries.IForgeRegistryEntry;
 
 import java.lang.reflect.InvocationTargetException;
@@ -72,6 +73,7 @@ public class Gene extends IForgeRegistryEntry.Impl<Gene>
 		{
 			Ability a = ability.getAbilityClass().getConstructor(EntityLivingBase.class).newInstance(entity);
 			AbilityDataManager abilityDataManager = a.getDataManager();
+			abilityDataManager.set(Ability.TITLE, new TextComponentTranslation(geneData.gene.displayName));
 			for (DataMod dataMod : dataMods)
 			{
 				if (abilityDataManager.has(dataMod.data))
@@ -132,10 +134,16 @@ public class Gene extends IForgeRegistryEntry.Impl<Gene>
 		{
 			if (isQualified)
 			{
-				T val = (!isReversed) ? (T) (Object) (((float) value) * geneData.quality) : (T) (Object) (((float) value) * (1f - geneData.quality));
-				if(val.getClass().equals(int.class) && (int) val == 0)
-					val = (T) (Object) 1;
-				return val;
+				if(value instanceof Integer){
+					Integer i = (!isReversed) ? new Integer((int) (((Integer) value).floatValue() * geneData.quality)) : new Integer((int) (((Integer) value).floatValue() *  (1f - geneData.quality)));
+					if(i < 1)
+						i = 1;
+					return (T) i;
+				} else if(value instanceof Double){
+					return (!isReversed) ? (T) new Double((int) (((Double) value).floatValue() * geneData.quality)) : (T) new Double((int) (((Double) value).floatValue() *  (1f - geneData.quality)));
+				} else if(value instanceof Float){
+					return (!isReversed) ? (T) new Float((int) ((Float) value * geneData.quality)) : (T) new Float((int) ((Float) value *  (1f - geneData.quality)));
+				}
 			}
 			return value;
 		}

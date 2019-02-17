@@ -12,3 +12,15 @@ the-fifth-world.abilities.defect_diet.name=Restricted Diet Defect
 the-fifth-world.abilities.defect_disable.name=Disabling Abilities Defect
 the-fifth-world.abilities.defect_enable.name=Enabling Abilities Defect
 potion.explode=Imminent Explosion
+
+condition.use_power=Use Power
+condition.always_on=Always On
+condition.sneaking=Sneaking
+condition.sleeping=Sleeping
+condition.swimming=Swimming
+
+condition.sprinting=Sprinting
+
+condition.falling=Falling
+
+condition.using_hand=Using Hand

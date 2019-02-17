@@ -20,7 +20,6 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.nbt.NBTTagString;
-import net.minecraft.potion.Potion;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextComponentString;
@@ -32,6 +31,7 @@ import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.registries.IForgeRegistry;
 import net.minecraftforge.registries.RegistryBuilder;
 
+import java.lang.reflect.Field;
 import java.util.Random;
 import java.util.UUID;
 
@@ -59,7 +59,7 @@ public class GeneHandler
 		public static final Gene health = new Gene(AbilityHealth.class, "Health Boost").addDataMod(new Gene.DataMod<>(AbilityAttributeModifier.AMOUNT, 20f)).addDataMod(new Gene.DataMod<>(AbilityAttributeModifier.UUID, RANDOM_UUID, false));
 		public static final Gene strength = new Gene(AbilityStrength.class, "Strength Boost").addDataMod(new Gene.DataMod<>(AbilityAttributeModifier.AMOUNT, 20f)).addDataMod(new Gene.DataMod<>(AbilityAttributeModifier.UUID, RANDOM_UUID, false));
 		public static final Gene punch = new Gene(AbilityPunch.class, "Punch Boost").addDataMod(new Gene.DataMod<>(AbilityAttributeModifier.AMOUNT, 20f)).addDataMod(new Gene.DataMod<>(AbilityAttributeModifier.UUID, RANDOM_UUID, false));
-		public static final Gene sprint = new Gene(AbilityHealth.class, "Sprint Boost").addDataMod(new Gene.DataMod<>(AbilityAttributeModifier.AMOUNT, 1f)).addDataMod(new Gene.DataMod<>(AbilityAttributeModifier.UUID, RANDOM_UUID, false));
+		public static final Gene sprint = new Gene(AbilitySprint.class, "Sprint Boost").addDataMod(new Gene.DataMod<>(AbilityAttributeModifier.AMOUNT, 1f)).addDataMod(new Gene.DataMod<>(AbilityAttributeModifier.UUID, RANDOM_UUID, false));
 		public static final Gene jump_boost = new Gene(AbilityJumpBoost.class, "Jump Boost").addDataMod(new Gene.DataMod<>(AbilityAttributeModifier.AMOUNT, 1f)).addDataMod(new Gene.DataMod<>(AbilityAttributeModifier.UUID, RANDOM_UUID, false));
 		public static final Gene resistance = new Gene(AbilityDamageResistance.class, "Resistance").addDataMod(new Gene.DataMod<>(AbilityAttributeModifier.AMOUNT, 35f)).addDataMod(new Gene.DataMod<>(AbilityAttributeModifier.UUID, RANDOM_UUID, false));
 		public static final Gene fall_resistance = new Gene(AbilityFallResistance.class, "Fall Resistance").addDataMod(new Gene.DataMod<>(AbilityAttributeModifier.AMOUNT, 35f)).addDataMod(new Gene.DataMod<>(AbilityAttributeModifier.UUID, RANDOM_UUID, false));
@@ -73,11 +73,11 @@ public class GeneHandler
 		public static final Gene potion_punch_minecraft_nausea = new GenePotionPunch("Nausea Punch", 9, 250, 1);
 		public static final Gene potion_punch_minecraft_mining_fatigue = new GenePotionPunch("Fatigue Punch", 4, 500, 1);
 
-		public static final Gene potion_punch_minecraft_instant_health = new Gene(AbilityPotionPunch.class, "Healing Punch").addDataMod(new Gene.DataMod<>(AbilityPotionPunch.POTION, Potion.getPotionById(6), false)).addDataMod(new Gene.DataMod<>(AbilityPotionPunch.DURATION, 1)).addDataMod(new Gene.DataMod<>(AbilityPotionPunch.AMPLIFIER, 10, false));
-		public static final Gene potion_punch_minecraft_blindness = new Gene(AbilityPotionPunch.class, "Blinding Punch").addDataMod(new Gene.DataMod<>(AbilityPotionPunch.POTION, Potion.getPotionById(15), false)).addDataMod(new Gene.DataMod<>(AbilityPotionPunch.DURATION, 250)).addDataMod(new Gene.DataMod<>(AbilityPotionPunch.AMPLIFIER, 1, false));
-		public static final Gene potion_punch_minecraft_hunger = new Gene(AbilityPotionPunch.class, "Hunger Punch").addDataMod(new Gene.DataMod<>(AbilityPotionPunch.POTION, Potion.getPotionById(17), false)).addDataMod(new Gene.DataMod<>(AbilityPotionPunch.DURATION, 500)).addDataMod(new Gene.DataMod<>(AbilityPotionPunch.AMPLIFIER, 10, false));
-		public static final Gene potion_punch_minecraft_wither = new Gene(AbilityPotionPunch.class, "Wither Punch").addDataMod(new Gene.DataMod<>(AbilityPotionPunch.POTION, Potion.getPotionById(20), false)).addDataMod(new Gene.DataMod<>(AbilityPotionPunch.DURATION, 400)).addDataMod(new Gene.DataMod<>(AbilityPotionPunch.AMPLIFIER, 3, false));
-		public static final Gene potion_punch_minecraft_levitation = new Gene(AbilityPotionPunch.class, "Levitation Punch").addDataMod(new Gene.DataMod<>(AbilityPotionPunch.POTION, Potion.getPotionById(25), false)).addDataMod(new Gene.DataMod<>(AbilityPotionPunch.DURATION, 250)).addDataMod(new Gene.DataMod<>(AbilityPotionPunch.AMPLIFIER, 10, false));
+		public static final Gene potion_punch_minecraft_instant_health = new GenePotionPunch("Healing Punch", 6, 1, 10);
+		public static final Gene potion_punch_minecraft_blindness = new GenePotionPunch("Blinding Punch", 15, 250, 1);
+		public static final Gene potion_punch_minecraft_hunger = new GenePotionPunch("Hunger Punch", 17, 500, 10);
+		public static final Gene potion_punch_minecraft_wither = new GenePotionPunch("Wither Punch", 20, 400, 3);
+		public static final Gene potion_punch_minecraft_levitation = new GenePotionPunch("Levitation Punch", 25, 250, 10);
 
 		//Misc
 		public static final Gene healing = new Gene(AbilityHealing.class, "Healing Factor").addDataMod(new Gene.DataMod<>(AbilityHealing.AMOUNT, 5f));
@@ -128,7 +128,29 @@ public class GeneHandler
 
 	public static void populateGeneList()
 	{
-		//TODO ^
+		for (Field field : LucraftCoreGenes.class.getFields())
+		{
+			try
+			{
+				GENE_REGISTRY.register((Gene) field.get(null));
+			}
+			catch (IllegalAccessException e)
+			{
+				e.printStackTrace();
+			}
+		}
+
+		for (Field field : FifthWorldGenes.class.getFields())
+		{
+			try
+			{
+				GENE_REGISTRY.register((Gene) field.get(null));
+			}
+			catch (IllegalAccessException e)
+			{
+				e.printStackTrace();
+			}
+		}
 
 		//Defects
 		GENE_REGISTRY.register(new GeneDefect(DefectExplosion.class, "Involuntarily Explodes").setAlwaysOnChance(0.1f));

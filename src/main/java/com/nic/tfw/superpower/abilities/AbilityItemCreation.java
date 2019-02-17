@@ -1,8 +1,8 @@
 package com.nic.tfw.superpower.abilities;
 
-import com.nic.tfw.superpower.AbilityDataItemStack;
 import lucraft.mods.lucraftcore.superpowers.abilities.AbilityAction;
 import lucraft.mods.lucraftcore.superpowers.abilities.data.AbilityData;
+import lucraft.mods.lucraftcore.superpowers.abilities.data.AbilityDataItemStack;
 import lucraft.mods.lucraftcore.superpowers.abilities.supplier.EnumSync;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Gui;

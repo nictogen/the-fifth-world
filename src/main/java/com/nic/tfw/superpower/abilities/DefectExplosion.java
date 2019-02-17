@@ -1,7 +1,7 @@
 package com.nic.tfw.superpower.abilities;
 
-import com.nic.tfw.superpower.conditions.Condition;
 import lucraft.mods.lucraftcore.superpowers.abilities.AbilityConstant;
+import lucraft.mods.lucraftcore.superpowers.abilities.predicates.AbilityCondition;
 import net.minecraft.entity.EntityLivingBase;
 
 /**
@@ -9,7 +9,7 @@ import net.minecraft.entity.EntityLivingBase;
  */
 public class DefectExplosion extends AbilityConstant implements IDefect
 {
-	private Condition condition;
+	private AbilityCondition condition;
 
 	public DefectExplosion(EntityLivingBase player)
 	{
@@ -18,16 +18,16 @@ public class DefectExplosion extends AbilityConstant implements IDefect
 
 	@Override public void updateTick()
 	{
-		if(!entity.world.isRemote && getCondition().isEnabled(entity, this))
+		if(!entity.world.isRemote && getCondition().test(this))
 			entity.world.createExplosion(null, entity.posX, entity.posY, entity.posZ, 5.0f, true);
 	}
 
-	@Override public void setCondition(Condition condition)
+	@Override public void setCondition(AbilityCondition condition)
 	{
 		this.condition = condition;
 	}
 
-	@Override public Condition getCondition()
+	@Override public AbilityCondition getCondition()
 	{
 		return this.condition;
 	}

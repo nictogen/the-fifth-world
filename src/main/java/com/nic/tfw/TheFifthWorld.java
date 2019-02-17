@@ -10,7 +10,6 @@ import com.nic.tfw.items.ItemVial;
 import com.nic.tfw.proxy.CommonProxy;
 import com.nic.tfw.superpower.SuperpowerGeneticallyModified;
 import com.nic.tfw.superpower.abilities.*;
-import com.nic.tfw.superpower.conditions.Condition;
 import com.nic.tfw.superpower.genes.GeneHandler;
 import lucraft.mods.lucraftcore.superpowers.Superpower;
 import lucraft.mods.lucraftcore.superpowers.abilities.AbilityEntry;
@@ -65,7 +64,6 @@ public class TheFifthWorld
 	public void postInit(FMLPostInitializationEvent event)
 	{
 		GeneHandler.populateGeneList();
-		Condition.populateConditionList();
 	}
 
 	@SubscribeEvent
