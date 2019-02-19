@@ -113,6 +113,8 @@ public class TheFifthWorld
 		event.getRegistry().register(new AbilityEntry(AbilityMountable.class, new ResourceLocation(MODID, "mountable")));
 		event.getRegistry().register(new AbilityEntry(AbilityItemCreation.class, new ResourceLocation(MODID, "create_item")));
 		event.getRegistry().register(new AbilityEntry(AbilityGivePotion.class, new ResourceLocation(MODID, "give_potion")));
+		event.getRegistry().register(new AbilityEntry(AbilityChangeItem.class, new ResourceLocation(MODID, "change_item")));
+		event.getRegistry().register(new AbilityEntry(AbilityBonemealArea.class, new ResourceLocation(MODID, "bonemeal_area")));
 
 	}
 

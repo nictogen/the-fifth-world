@@ -110,6 +110,7 @@ public class GeneHandler
 		public static final Gene lay_egg = new Gene(AbilityLayEgg.class, "Lay Egg");
 		public static final Gene explode = new Gene(AbilityExplode.class, "Explode").addDataMod(new Gene.DataMod<>(AbilityExplode.STRENGTH, 5f)).addDataMod(new Gene.DataMod<>(Ability.MAX_COOLDOWN, 200, true, true));
 		public static final Gene give_potion_minecraft_nightvision = new GeneGivePotion("Give Nightvision", Potion.getIdFromPotion(MobEffects.NIGHT_VISION), 1);
+		public static final Gene bonemeal = new Gene(AbilityBonemealArea.class, "Bonemeal Area").addDataMod(new Gene.DataMod<>(Ability.MAX_COOLDOWN, 300, true, true)).addDataMod(new Gene.DataMod<>(AbilityBonemealArea.RADIUS, 10));
 
 		//Potion Immunity
 		public static final Gene potion_immunity_minecraft_poison = new GenePotionImmunity("Poison Immunity", 19);
@@ -130,6 +131,11 @@ public class GeneHandler
 		public static final Gene create_item_minecraft_ender_pearl = new GeneItemCreation("Create Ender Pearl",300, new ItemStack(Items.ENDER_PEARL));
 		public static final Gene create_item_minecraft_snowball = new GeneItemCreation("Create Snowballs",30, new ItemStack(Items.SNOWBALL));
 		public static final Gene create_item_minecraft_arrow = new GeneItemCreation("Create Arrow",200, new ItemStack(Items.ARROW));
+
+		//Item Change
+		public static final Gene milk_entity = new Gene(AbilityChangeItem.class, "milk", true).setRegistryName(TheFifthWorld.MODID, "milk").addDataMod(new Gene.DataMod<>(Ability.MAX_COOLDOWN, 300, true, true)).addDataMod(new Gene.DataMod<>(AbilityChangeItem.FROM, new ItemStack(Items.BUCKET), false)).addDataMod(new Gene.DataMod<>(AbilityChangeItem.TO, new ItemStack(Items.MILK_BUCKET), false));
+		public static final Gene soup_entity = new Gene(AbilityChangeItem.class, "soup", true).setRegistryName(TheFifthWorld.MODID, "soup").addDataMod(new Gene.DataMod<>(Ability.MAX_COOLDOWN, 300, true, true)).addDataMod(new Gene.DataMod<>(AbilityChangeItem.FROM, new ItemStack(Items.BOWL), false)).addDataMod(new Gene.DataMod<>(AbilityChangeItem.TO, new ItemStack(Items.MUSHROOM_STEW), false));
+		public static final Gene lava_entity = new Gene(AbilityChangeItem.class, "lava", true).setRegistryName(TheFifthWorld.MODID, "lava").addDataMod(new Gene.DataMod<>(Ability.MAX_COOLDOWN, 400, true, true)).addDataMod(new Gene.DataMod<>(AbilityChangeItem.FROM, new ItemStack(Items.BUCKET), false)).addDataMod(new Gene.DataMod<>(AbilityChangeItem.TO, new ItemStack(Items.LAVA_BUCKET), false));
 
 		//Entity Summoning
 		public static final Gene summon_zombie = new GeneSummonEntity("Summon Zombie", "minecraft:zombie",5, 600);
@@ -188,13 +194,13 @@ public class GeneHandler
 			set.addGene(entity, LucraftCoreGenes.health, GeneStrength.MID.chance, r);
 			set.addGene(entity, LucraftCoreGenes.healing, GeneStrength.MID.chance, r);
 			set.addGene(entity, LucraftCoreGenes.knockback_resistance, GeneStrength.MID.chance, r);
-//			Milking
+			set.addGene(entity, FifthWorldGenes.milk_entity, GeneStrength.HIGH.chance, r);
 //			Charge
 		}
 		if (entity instanceof EntityMooshroom)
 		{
-			//Souping
-			//Bonemeal effect
+			set.addGene(entity, FifthWorldGenes.soup_entity, GeneStrength.HIGH.chance, r);
+			set.addGene(entity, FifthWorldGenes.bonemeal, GeneStrength.HIGH.chance, r);
 			//Shoot vines up until top of wall
 			//Psychotropic effect
 			//Grass to mycelium
@@ -289,7 +295,6 @@ public class GeneHandler
 		{
 			set.addGene(entity, LucraftCoreGenes.strength, GeneStrength.VERY_HIGH.chance, r);
 			//Fish in water
-			//Claws
 			//Bite
 		}
 		if (entity instanceof EntityWolf)
@@ -407,6 +412,7 @@ public class GeneHandler
 		if (entity instanceof EntityMagmaCube)
 		{
 			set.addGene(entity, LucraftCoreGenes.fire_resistance, 1.0f);
+			set.addGene(entity, FifthWorldGenes.lava_entity, GeneStrength.HIGH.chance, r);
 			//Fire when hit
 			//Lava creation/attacks?
 		}
@@ -539,7 +545,7 @@ public class GeneHandler
 		}
 	}
 
-	public static ItemStack createGeneDataBook(GeneSet geneSet, EntityLivingBase attacker)
+	static ItemStack createGeneDataBook(GeneSet geneSet, EntityLivingBase attacker)
 	{
 		ItemStack s = new ItemStack(Items.WRITTEN_BOOK);
 		NBTTagCompound nbt = new NBTTagCompound();
@@ -604,8 +610,6 @@ public class GeneHandler
 		stringBuilder.append("\n");
 		return index + 1;
 	}
-
-	//TODO use
 
 	public static KarmaStat TEST_SUBJECTS_EXPLODED;
 

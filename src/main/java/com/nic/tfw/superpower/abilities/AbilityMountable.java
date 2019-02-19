@@ -31,7 +31,7 @@ public class AbilityMountable extends AbilityConstant
 			{
 				for (Ability currentAbility : Ability.getAbilities((EntityLivingBase) event.getTarget()))
 				{
-					if(currentAbility instanceof AbilityMountable && currentAbility.isEnabled()){
+					if(currentAbility instanceof AbilityMountable && currentAbility.isUnlocked()){
 						event.getEntityLiving().startRiding(event.getTarget());
 					}
 				}
