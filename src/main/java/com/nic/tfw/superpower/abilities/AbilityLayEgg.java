@@ -9,6 +9,8 @@ import net.minecraft.init.Items;
 import net.minecraft.init.SoundEvents;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.SoundCategory;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 /**
  * Created by Nictogen on 2019-02-14.
@@ -34,6 +36,7 @@ public class AbilityLayEgg extends AbilityAction
 		return true;
 	}
 
+	@SideOnly(Side.CLIENT)
 	@Override public void drawIcon(Minecraft mc, Gui gui, int x, int y)
 	{
 		Minecraft.getMinecraft().getRenderItem().renderItemIntoGUI(new ItemStack(Items.EGG), x, y);

@@ -41,7 +41,7 @@ public class TheFifthWorld
     public static final String MODID = "the-fifth-world";
     public static final String NAME = "The Fifth World";
     public static final String VERSION = "0.3";
-	public static final String DEPENDENCIES = "required-after:lucraftcore@[1.12.2-2.3.4,)";
+	public static final String DEPENDENCIES = "required-after:lucraftcore@[1.12.2-2.4.0,)";
 
 
 	@SidedProxy(clientSide = "com.nic.tfw.proxy.ClientProxy", serverSide = "com.nic.tfw.proxy.CommonProxy")
@@ -115,6 +115,7 @@ public class TheFifthWorld
 		event.getRegistry().register(new AbilityEntry(AbilityGivePotion.class, new ResourceLocation(MODID, "give_potion")));
 		event.getRegistry().register(new AbilityEntry(AbilityChangeItem.class, new ResourceLocation(MODID, "change_item")));
 		event.getRegistry().register(new AbilityEntry(AbilityBonemealArea.class, new ResourceLocation(MODID, "bonemeal_area")));
+		event.getRegistry().register(new AbilityEntry(AbilitySummonEntity.class, new ResourceLocation(MODID, "summon_entity")));
 
 	}
 

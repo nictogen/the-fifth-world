@@ -30,7 +30,7 @@ public class SlotDNA extends Slot
 			GeneSet g = GeneSet.fromStack(getStack());
 
 			if(g != null){
-				for (int i = 0; i < g.genes.size() && i < 4; i++)
+				for (int i = 0; i < g.genes.size() && i < 3; i++)
 				{
 					ItemStack s = new ItemStack(TheFifthWorld.Items.vial);
 					ArrayList<ArrayList<GeneSet.GeneData>> list = new ArrayList<>();

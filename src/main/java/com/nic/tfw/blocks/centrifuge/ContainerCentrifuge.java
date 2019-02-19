@@ -42,21 +42,22 @@ public class ContainerCentrifuge extends Container
 
 	public ItemStack transferStackInSlot(EntityPlayer playerIn, int index)
 	{
-		ItemStack itemstack = ItemStack.EMPTY;
-		Slot slot = this.inventorySlots.get(index);
-
-		if (slot != null && slot.getHasStack())
-		{
-			ItemStack itemstack1 = slot.getStack();
-			if(index > 1 && index <= 40){
-				if(mergeItemStack(itemstack1, 0, 2, false))
-					slot.putStack(ItemStack.EMPTY);
-			} else if(index == 0 || index == 1){
-				if(mergeItemStack(itemstack1, 2, 39, false))
-					slot.putStack(ItemStack.EMPTY);
-			}
-		}
-		return itemstack;
+//		ItemStack itemstack = ItemStack.EMPTY;
+//		Slot slot = this.inventorySlots.get(index);
+//
+//		if (slot != null && slot.getHasStack())
+//		{
+//			ItemStack itemstack1 = slot.getStack();
+//			if(index > 1 && index <= 40){
+//				if(mergeItemStack(itemstack1, 0, 2, false))
+//					slot.putStack(ItemStack.EMPTY);
+//			} else if(index == 0 || index == 1){
+//				if(mergeItemStack(itemstack1, 2, 39, false))
+//					slot.putStack(ItemStack.EMPTY);
+//			}
+//		}
+//		return itemstack; TODO
+		return ItemStack.EMPTY;
 	}
 
 }

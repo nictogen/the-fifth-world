@@ -8,11 +8,13 @@ import lucraft.mods.lucraftcore.karma.KarmaHandler;
 import lucraft.mods.lucraftcore.superpowers.SuperpowerHandler;
 import lucraft.mods.lucraftcore.superpowers.abilities.Ability;
 import lucraft.mods.lucraftcore.superpowers.abilities.predicates.AbilityCondition;
+import lucraft.mods.lucraftcore.superpowers.capabilities.CapabilitySuperpower;
 import lucraft.mods.lucraftcore.superpowers.capabilities.ISuperpowerCapability;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.passive.EntityVillager;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Items;
+import net.minecraft.item.ItemDye;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.NBTTagCompound;
@@ -70,7 +72,15 @@ public class GeneSet
 	{
 		this.type = SetType.SAMPLE;
 		GeneHandler.addSpeciesGenes(entityLivingBase, this);
-		//TOOD add existing genes
+		if(SuperpowerHandler.hasSuperpower(entityLivingBase, TheFifthWorld.Superpowers.genetically_modified)){
+			ISuperpowerCapability cap = entityLivingBase.getCapability(CapabilitySuperpower.SUPERPOWER_CAP, null);
+			if(cap != null && cap.getData() != null)
+			{
+				GeneSet g = new GeneSet(cap.getData().getCompoundTag(VIAL_DATA_TAG));
+				if(!g.genes.isEmpty())
+				this.genes.add(g.genes.get(0));
+			}
+		}
 		Collections.shuffle(this.genes, getRandom());
 		originalDonor = entityLivingBase.getPersistentID();
 	}
@@ -127,6 +137,23 @@ public class GeneSet
 			return false;
 		if (!getDonors().contains(entity.getPersistentID()))
 			return false;
+
+		for (ArrayList<GeneData> gene : this.genes)
+		{
+			gene.removeIf(geneData -> {
+				if(geneData.gene instanceof GeneDefect){
+					float speciesChance = new Random(entity.getClass().getName().length()).nextFloat() * 0.5f;
+					float indivChance = new Random(entity.getUniqueID().getLeastSignificantBits() + entity.getUniqueID().getMostSignificantBits()).nextFloat() * 0.5f;
+					if(speciesChance + indivChance > 0.7f)
+					{
+						ItemDye.spawnBonemealParticles(entity.world, entity.getPosition(), 35);
+						return true;
+					}
+				}
+				return false;
+			});
+
+		}
 
 		ISuperpowerCapability capability = SuperpowerHandler.getSuperpowerCapability(entity);
 		capability.getData().setTag(VIAL_DATA_TAG, serializeNBT());

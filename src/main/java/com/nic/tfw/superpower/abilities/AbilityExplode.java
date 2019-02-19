@@ -9,6 +9,8 @@ import net.minecraft.client.gui.Gui;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 /**
  * Created by Nictogen on 2019-02-14.
@@ -35,6 +37,7 @@ public class AbilityExplode extends AbilityAction
 		return true;
 	}
 
+	@SideOnly(Side.CLIENT)
 	@Override public void drawIcon(Minecraft mc, Gui gui, int x, int y)
 	{
 		Minecraft.getMinecraft().getRenderItem().renderItemIntoGUI(new ItemStack(Blocks.TNT), x, y);

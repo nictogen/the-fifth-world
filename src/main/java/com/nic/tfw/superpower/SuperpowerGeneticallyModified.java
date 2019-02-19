@@ -50,4 +50,6 @@ public class SuperpowerGeneticallyModified extends Superpower
 	{
 		return false;
 	}
+
+
 }

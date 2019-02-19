@@ -14,6 +14,8 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.math.Vec3d;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 /**
  * Created by Nictogen on 2019-02-14.
@@ -44,6 +46,7 @@ public class AbilityEatBlock extends AbilityAction
 		return false;
 	}
 
+	@SideOnly(Side.CLIENT)
 	@Override public void drawIcon(Minecraft mc, Gui gui, int x, int y)
 	{
 		float zLevel = Minecraft.getMinecraft().getRenderItem().zLevel;

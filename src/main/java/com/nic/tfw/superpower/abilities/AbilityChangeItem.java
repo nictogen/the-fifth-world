@@ -13,6 +13,8 @@ import net.minecraft.util.EnumHand;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 /**
  * Created by Nictogen on 2019-02-18.
@@ -46,6 +48,7 @@ public class AbilityChangeItem extends AbilityAction
 		return false;
 	}
 
+	@SideOnly(Side.CLIENT)
 	@Override public void drawIcon(Minecraft mc, Gui gui, int x, int y)
 	{
 		float zLevel = Minecraft.getMinecraft().getRenderItem().zLevel;
