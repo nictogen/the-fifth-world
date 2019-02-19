@@ -1,12 +1,13 @@
 package com.nic.tfw.blocks.microscope;
 
-import com.google.common.collect.Lists;
 import com.nic.tfw.TheFifthWorld;
 import com.nic.tfw.items.ItemVial;
 import com.nic.tfw.superpower.genes.GeneSet;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
+
+import java.util.ArrayList;
 
 /**
  * Created by Nictogen on 1/11/19.
@@ -32,7 +33,9 @@ public class SlotDNA extends Slot
 				for (int i = 0; i < g.genes.size() && i < 4; i++)
 				{
 					ItemStack s = new ItemStack(TheFifthWorld.Items.vial);
-					new GeneSet(GeneSet.SetType.GENE, Lists.newArrayList(g.genes.get(i)), g.defects).addTo(s);
+					ArrayList<ArrayList<GeneSet.GeneData>> list = new ArrayList<>();
+					list.add(g.genes.get(i));
+					new GeneSet(GeneSet.SetType.GENE, list).addTo(s);
 					inventory.setInventorySlotContents(i + 1, s);
 				}
 			}

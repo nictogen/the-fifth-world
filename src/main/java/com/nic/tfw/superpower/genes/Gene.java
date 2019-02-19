@@ -5,6 +5,7 @@ import lucraft.mods.lucraftcore.superpowers.abilities.Ability;
 import lucraft.mods.lucraftcore.superpowers.abilities.AbilityEntry;
 import lucraft.mods.lucraftcore.superpowers.abilities.data.AbilityData;
 import lucraft.mods.lucraftcore.superpowers.abilities.data.AbilityDataManager;
+import lucraft.mods.lucraftcore.superpowers.abilities.predicates.AbilityCondition;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.text.TextComponentTranslation;
@@ -72,6 +73,8 @@ public class Gene extends IForgeRegistryEntry.Impl<Gene>
 		try
 		{
 			Ability a = ability.getAbilityClass().getConstructor(EntityLivingBase.class).newInstance(entity);
+			for (AbilityCondition.ConditionEntry condition : geneData.conditions)
+				a.addCondition(condition.getConditionClass().newInstance());
 			AbilityDataManager abilityDataManager = a.getDataManager();
 			abilityDataManager.set(Ability.TITLE, new TextComponentTranslation(geneData.gene.displayName));
 			for (DataMod dataMod : dataMods)
@@ -93,17 +96,18 @@ public class Gene extends IForgeRegistryEntry.Impl<Gene>
 
 	public GeneSet.GeneData combine(GeneSet.GeneData one, GeneSet.GeneData two)
 	{
-		ArrayList<UUID> donors = new ArrayList<>();
-
 		for (UUID donor : one.donors)
 			for (UUID uuid : two.donors)
 				if (uuid.equals(donor))
 					return one;
 
-		donors.addAll(one.donors);
+		ArrayList<UUID> donors = new ArrayList<>(one.donors);
 		donors.addAll(two.donors);
 
-		return new GeneSet.GeneData(one.gene, donors, one.quality + two.quality);
+		ArrayList<AbilityCondition.ConditionEntry> conditions = new ArrayList<>(one.conditions);
+		conditions.addAll(two.conditions);
+
+		return new GeneSet.GeneData(one.gene, donors, one.quality + two.quality, conditions);
 	}
 
 	public static class DataMod<T>

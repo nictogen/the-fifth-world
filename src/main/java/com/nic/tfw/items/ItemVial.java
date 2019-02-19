@@ -15,6 +15,7 @@ import net.minecraft.world.World;
 
 import javax.annotation.Nullable;
 import java.awt.*;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
@@ -56,21 +57,24 @@ public class ItemVial extends Item
 		if(g != null && g.type == GeneSet.SetType.GENE)
 		{
 			tooltip.add("Genes: ");
-			for (GeneSet.GeneData gene : g.genes)
+			for (ArrayList<GeneSet.GeneData> geneList : g.genes)
 			{
-				String s = "";
-				s += gene.gene.displayName;
-				s += ", ";
-				for (QualityRating qualityRating : QualityRating.values())
+				for (GeneSet.GeneData gene : geneList)
 				{
-					if (gene.quality >= qualityRating.minQuality)
+					String s = "";
+					s += gene.gene.displayName;
+					s += ", ";
+					for (QualityRating qualityRating : QualityRating.values())
 					{
-						s += qualityRating.displayName;
-						break;
+						if (gene.quality >= qualityRating.minQuality)
+						{
+							s += qualityRating.displayName;
+							break;
+						}
 					}
+					s += " Quality";
+					tooltip.add(s);
 				}
-				s += " Quality";
-				tooltip.add(s);
 			}
 		}
 	}

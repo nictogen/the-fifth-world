@@ -3,6 +3,10 @@ package com.nic.tfw.superpower.genes;
 import com.nic.tfw.TheFifthWorld;
 import com.nic.tfw.superpower.SuperpowerGeneticallyModified;
 import com.nic.tfw.superpower.abilities.*;
+import com.nic.tfw.superpower.abilities.defects.ButterFingers;
+import com.nic.tfw.superpower.abilities.defects.InvoluntaryExplosion;
+import com.nic.tfw.superpower.abilities.defects.RestrictiveDiet;
+import com.nic.tfw.superpower.abilities.defects.SetOnFire;
 import lucraft.mods.lucraftcore.LucraftCore;
 import lucraft.mods.lucraftcore.karma.KarmaStat;
 import lucraft.mods.lucraftcore.superpowers.SuperpowerHandler;
@@ -16,10 +20,12 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
+import net.minecraft.init.MobEffects;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.nbt.NBTTagString;
+import net.minecraft.potion.Potion;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextComponentString;
@@ -103,7 +109,7 @@ public class GeneHandler
 		public static final Gene graze = new GeneEatBlock("Graze", Blocks.GRASS, Blocks.DIRT, 8, 1f).setRegistryName(TheFifthWorld.MODID, "graze");
 		public static final Gene lay_egg = new Gene(AbilityLayEgg.class, "Lay Egg");
 		public static final Gene explode = new Gene(AbilityExplode.class, "Explode").addDataMod(new Gene.DataMod<>(AbilityExplode.STRENGTH, 5f)).addDataMod(new Gene.DataMod<>(Ability.MAX_COOLDOWN, 200, true, true));
-
+		public static final Gene give_potion_minecraft_nightvision = new GeneGivePotion("Give Nightvision", Potion.getIdFromPotion(MobEffects.NIGHT_VISION), 1);
 
 		//Potion Immunity
 		public static final Gene potion_immunity_minecraft_poison = new GenePotionImmunity("Poison Immunity", 19);
@@ -123,40 +129,30 @@ public class GeneHandler
 		public static final Gene create_item_minecraft_ghast_tear = new GeneItemCreation("Create Ghast Tear",600, new ItemStack(Items.GHAST_TEAR));
 		public static final Gene create_item_minecraft_ender_pearl = new GeneItemCreation("Create Ender Pearl",300, new ItemStack(Items.ENDER_PEARL));
 		public static final Gene create_item_minecraft_snowball = new GeneItemCreation("Create Snowballs",30, new ItemStack(Items.SNOWBALL));
+		public static final Gene create_item_minecraft_arrow = new GeneItemCreation("Create Arrow",200, new ItemStack(Items.ARROW));
+
+		//Entity Summoning
+		public static final Gene summon_zombie = new GeneSummonEntity("Summon Zombie", "minecraft:zombie",5, 600);
+		public static final Gene summon_bats = new GeneSummonEntity("Summon Bats", "minecraft:bat",15, 600);
 
 	}
 
 	public static void populateGeneList()
 	{
 		for (Field field : LucraftCoreGenes.class.getFields())
-		{
-			try
-			{
-				GENE_REGISTRY.register((Gene) field.get(null));
-			}
-			catch (IllegalAccessException e)
-			{
-				e.printStackTrace();
-			}
-		}
+			try { GENE_REGISTRY.register((Gene) field.get(null)); }
+			catch (IllegalAccessException e) { e.printStackTrace(); }
+
 
 		for (Field field : FifthWorldGenes.class.getFields())
-		{
-			try
-			{
-				GENE_REGISTRY.register((Gene) field.get(null));
-			}
-			catch (IllegalAccessException e)
-			{
-				e.printStackTrace();
-			}
-		}
+			try { GENE_REGISTRY.register((Gene) field.get(null)); }
+			catch (IllegalAccessException e) { e.printStackTrace(); }
 
 		//Defects
-		GENE_REGISTRY.register(new GeneDefect(DefectExplosion.class, "Involuntarily Explodes").setAlwaysOnChance(0.1f));
-		GENE_REGISTRY.register(new GeneDefect(DefectButterFingers.class, "Butter Fingers").setAlwaysOnChance(0.1f));
-		GENE_REGISTRY.register(new GeneDefect(DefectBurning.class, "Spontaneous Combustion").setAlwaysOnChance(0.2f));
-		GENE_REGISTRY.register(new GeneDefect(DefectDiet.class, "Can't Eat").setAlwaysOnChance(0.9f));
+		GENE_REGISTRY.register(new GeneDefect(InvoluntaryExplosion.class, "Involuntarily Explodes").setAlwaysOnChance(0.1f));
+		GENE_REGISTRY.register(new GeneDefect(ButterFingers.class, "Butter Fingers").setAlwaysOnChance(0.1f));
+		GENE_REGISTRY.register(new GeneDefect(SetOnFire.class, "Spontaneous Combustion").setAlwaysOnChance(0.2f));
+		GENE_REGISTRY.register(new GeneDefect(RestrictiveDiet.class, "Can't Eat").setAlwaysOnChance(0.9f));
 //		GENE_REGISTRY.register(new GeneDefect(DefectEnable.class, "Enabling Power").setAlwaysOnChance(0.0f));
 //		GENE_REGISTRY.register(new GeneDefect(DefectDisable.class, "Disabling Power").setAlwaysOnChance(0.0f));
 
@@ -174,11 +170,11 @@ public class GeneHandler
 		{
 			set.addGene(entity, LucraftCoreGenes.flight, GeneStrength.LOW.chance, r);
 			set.addGene(entity, FifthWorldGenes.screech, GeneStrength.HIGH.chance, r);
-//			Nightvision
+			set.addGene(entity, FifthWorldGenes.give_potion_minecraft_nightvision, 1.0f);
+			set.addGene(entity, FifthWorldGenes.summon_bats, GeneStrength.HIGH.chance, r);
 //			Hang upside down
 //			Drain blood
 //			Bite
-//			Summon Bats
 		}
 		if (entity instanceof EntityChicken)
 		{
@@ -399,6 +395,7 @@ public class GeneHandler
 		{
 			set.addGene(entity, LucraftCoreGenes.healing, GeneStrength.MID.chance, r);
 			set.addGene(entity, FifthWorldGenes.potion_immunity_minecraft_hunger, 1.0f);
+			set.addGene(entity, FifthWorldGenes.summon_zombie, GeneStrength.HIGH.chance, r);
 			//Infect with superpower
 			//Bite
 			//Turn villagers into zombies
@@ -406,7 +403,6 @@ public class GeneHandler
 			//Immortality
 			//Kill surrounding plant life
 			//Kind of want to beat someone with my own limb?
-			//Summon more zombies 
 		}
 		if (entity instanceof EntityMagmaCube)
 		{
@@ -440,7 +436,7 @@ public class GeneHandler
 		if (entity instanceof EntitySkeleton)
 		{
 			set.addGene(entity, FifthWorldGenes.potion_immunity_minecraft_weakness, 1.0f);
-			//Infinite arrows
+			set.addGene(entity, FifthWorldGenes.create_item_minecraft_arrow, GeneStrength.HIGH.chance, r);
 			//Remove need to eat?
 			//Any since magic?
 		}
@@ -556,20 +552,26 @@ public class GeneHandler
 		StringBuilder s2 = new StringBuilder();
 
 		index = addLine(s2, pages, "Genetic Abilities:", index);
-		for (GeneSet.GeneData gene : geneSet.genes)
+		for (GeneSet.GeneData gene : geneSet.genes.get(0))
 		{
-
+			if(!(gene.gene instanceof GeneDefect))
+			{
 				index = addLine(s2, pages, "", index);
 				index = addLine(s2, pages, gene.gene.displayName, index);
 				index = addLine(s2, pages, Math.round(gene.quality * 1000f) / 10.0 + "% Quality", index);
+			}
 		}
 		index = addLine(s2, pages, "", index);
 		index = addLine(s2, pages, "Genetic Defects", index);
 		index = addLine(s2, pages, "", index);
 
-		for (GeneSet.DefectData defect : geneSet.defects)
+
+		for (GeneSet.GeneData gene : geneSet.genes.get(0))
 		{
-			index = addLine(s2, pages, defect.gene.displayName, index);
+			if(gene.gene instanceof GeneDefect)
+			{
+				index = addLine(s2, pages, gene.gene.displayName, index);
+			}
 		}
 
 		pages.appendTag(new NBTTagString(s2.toString()));

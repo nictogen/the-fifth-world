@@ -35,18 +35,16 @@ import static com.nic.tfw.superpower.genes.GeneHandler.TEST_SUBJECTS_EXPLODED;
  */
 public class GeneSet
 {
-	public static final String CONDITION_TAG = "condition";
 	public static final String GENE_LIST_TAG = "genes";
-	public static final String DEFECT_LIST_TAG = "defects";
 	public static final String VIAL_TYPE_TAG = "full";
 	public static final String DONOR_LIST_TAG = "donors";
-	public static final String ORIGINAL_DONOR_TAG = "donors";
+	public static final String CONDITION_LIST_TAG = "conditions";
+	public static final String DONORS_TAG = "donors";
 	public static final String VIAL_DATA_TAG = "vial_data";
 	public static final String GENE_REGISTRY_NAME_TAG = "registry_name";
 	public static final String GENE_QUALITY_TAG = "quality";
 
-	public ArrayList<GeneData> genes = new ArrayList<>();
-	public HashSet<DefectData> defects = new HashSet<>();
+	public ArrayList<ArrayList<GeneData>> genes = new ArrayList<>();
 	public UUID originalDonor = UUID.randomUUID();
 	public SetType type;
 
@@ -54,38 +52,40 @@ public class GeneSet
 	 * Constructors/Converting from stuff
 	 */
 
-	//TODO superpower constructor
 	public GeneSet(NBTTagCompound nbt)
 	{
 		this.type = SetType.values()[nbt.getInteger(VIAL_TYPE_TAG)];
-		for (NBTBase nbtBase : nbt.getTagList(GENE_LIST_TAG, 10))
-			genes.add(new GeneData((NBTTagCompound) nbtBase));
-		for (NBTBase nbtBase : nbt.getTagList(DEFECT_LIST_TAG, 10))
-			defects.add(new DefectData((NBTTagCompound) nbtBase));
-		this.originalDonor = nbt.getUniqueId(ORIGINAL_DONOR_TAG);
+
+		for (NBTBase nbtBase : nbt.getTagList(GENE_LIST_TAG, 9))
+		{
+			ArrayList<GeneData> list = new ArrayList<>();
+			for (NBTBase base : ((NBTTagList) nbtBase))
+				list.add(new GeneData((NBTTagCompound) base));
+			genes.add(list);
+		}
+		this.originalDonor = nbt.getUniqueId(DONORS_TAG);
 	}
 
 	public GeneSet(EntityLivingBase entityLivingBase)
 	{
 		this.type = SetType.SAMPLE;
 		GeneHandler.addSpeciesGenes(entityLivingBase, this);
+		//TOOD add existing genes
 		Collections.shuffle(this.genes, getRandom());
-		this.genes = new ArrayList<>(this.genes.subList(0, (this.genes.size() < 3) ? this.genes.size() : 3));
 		originalDonor = entityLivingBase.getPersistentID();
 	}
 
-	public GeneSet(SetType type, ArrayList<GeneData> genes, HashSet<DefectData> defects)
+	public GeneSet(SetType type, ArrayList<ArrayList<GeneData>> genes)
 	{
 		this.type = type;
 		this.genes = genes;
-		this.defects = defects;
 	}
 
 	@Nullable public static GeneSet fromStack(ItemStack stack)
 	{
 		if (!stack.hasTagCompound())
 			return null;
-		if (!stack.getTagCompound().hasKey(GeneSet.VIAL_DATA_TAG))
+		if (!Objects.requireNonNull(stack.getTagCompound()).hasKey(GeneSet.VIAL_DATA_TAG))
 			return null;
 		return new GeneSet(stack.getTagCompound().getCompoundTag(GeneSet.VIAL_DATA_TAG));
 	}
@@ -98,15 +98,16 @@ public class GeneSet
 	{
 		NBTTagCompound compound = new NBTTagCompound();
 		NBTTagList geneList = new NBTTagList();
-		for (GeneData gene : genes)
-			geneList.appendTag(gene.serializeNBT());
+		for (ArrayList<GeneData> gene : genes)
+		{
+			NBTTagList gList = new NBTTagList();
+			for (GeneData geneData : gene)
+				gList.appendTag(geneData.serializeNBT());
+			geneList.appendTag(gList);
+		}
 		compound.setTag(GENE_LIST_TAG, geneList);
-		NBTTagList defectList = new NBTTagList();
-		for (DefectData defect : defects)
-			defectList.appendTag(defect.serializeNBT());
-		compound.setTag(DEFECT_LIST_TAG, defectList);
 		compound.setInteger(VIAL_TYPE_TAG, type.ordinal());
-		compound.setUniqueId(ORIGINAL_DONOR_TAG, originalDonor);
+		compound.setUniqueId(DONORS_TAG, originalDonor);
 		return compound;
 	}
 
@@ -114,6 +115,7 @@ public class GeneSet
 	{
 		if (!stack.hasTagCompound())
 			stack.setTagCompound(new NBTTagCompound());
+		assert stack.getTagCompound() != null;
 		stack.getTagCompound().setTag(VIAL_DATA_TAG, serializeNBT());
 	}
 
@@ -131,7 +133,7 @@ public class GeneSet
 
 		SuperpowerHandler.setSuperpower(entity, TheFifthWorld.Superpowers.genetically_modified);
 
-		if(injector != null && entity instanceof EntityVillager)
+		if (injector != null && entity instanceof EntityVillager)
 		{
 			//Villager stuff
 			ItemStack s = GeneHandler.createGeneDataBook(this, injector);
@@ -147,7 +149,7 @@ public class GeneSet
 			{
 				e.printStackTrace();
 			}
-			if(!this.defects.isEmpty())
+			if (this.genes.stream().anyMatch(geneData -> geneData.stream().anyMatch(g -> g.gene instanceof GeneDefect)))
 			{
 				entity.addPotionEffect(new PotionEffect(PotionExplode.POTION_EXPLODE, 5 * 20));
 				KarmaHandler.increaseKarmaStat(injector, TEST_SUBJECTS_EXPLODED);
@@ -158,28 +160,18 @@ public class GeneSet
 
 	public Ability.AbilityMap toAbilities(EntityLivingBase entityLivingBase)
 	{
-
 		Ability.AbilityMap abilityList = new Ability.AbilityMap();
-		for (GeneData gene : genes)
+		for (ArrayList<GeneData> gene : genes)
 		{
-			if (gene.gene != null)
+			for (GeneData geneData : gene)
 			{
-				Ability a = gene.gene.getAbility(entityLivingBase, gene);
-				if (a != null)
+				if (geneData.gene != null)
 				{
-					abilityList.put("gene_" + gene.gene.getRegistryName().toString(), a);
-				}
-			}
-		}
-
-		for (DefectData defect : defects)
-		{
-			if (defect.gene instanceof GeneDefect)
-			{
-				Ability a = ((GeneDefect) defect.gene).getAbility(entityLivingBase, defect);
-				if (a != null)
-				{
-					abilityList.put("defect_" + defect.gene.getRegistryName().toString(), a);
+					Ability a = geneData.gene.getAbility(entityLivingBase, geneData);
+					if (a != null)
+					{
+						abilityList.put("gene_" + Objects.requireNonNull(geneData.gene.getRegistryName()).toString(), a);
+					}
 				}
 			}
 		}
@@ -189,33 +181,33 @@ public class GeneSet
 
 	public GeneSet toSerum(GeneSet bloodSample)
 	{
-		ArrayList<GeneData> g = (ArrayList<GeneData>) genes.clone();
-		ArrayList<UUID> donor = Lists.newArrayList(bloodSample.getDonors().iterator().next());
-		for (GeneData gene : g)
-			gene.donors = donor;
+		@SuppressWarnings("unchecked") ArrayList<ArrayList<GeneData>> g = (ArrayList<ArrayList<GeneData>>) genes.clone();
 
-		return new GeneSet(SetType.SERUM, g, defects);
+		ArrayList<UUID> donor = Lists.newArrayList(bloodSample.getDonors().iterator().next());
+		for (ArrayList<GeneData> geneData : g)
+			for (GeneData geneDatum : geneData)
+				geneDatum.donors = donor;
+
+		return new GeneSet(SetType.SERUM, g);
 	}
 
-	public GeneSet combine(GeneSet otherSet)
+	@SuppressWarnings("unchecked") public GeneSet combine(GeneSet otherSet)
 	{
 
-		//Create final gene list
-		ArrayList<GeneData> finalGenes = new ArrayList<>();
+		//Create list of unique genes from set 1 and add to new final list
+		ArrayList<GeneData> set1Genes = (ArrayList<GeneData>) genes.get(0).clone();
+		set1Genes.removeIf(geneData1 -> otherSet.genes.get(0).stream().anyMatch(geneData2 -> geneData1.gene == geneData2.gene));
 
-		//Create list of unique genes from set 1 and add to final list
-		ArrayList<GeneData> set1Genes = (ArrayList<GeneData>) genes.clone();
-		set1Genes.removeIf(geneData1 -> otherSet.genes.stream().anyMatch(geneData2 -> geneData1.gene == geneData2.gene));
-		finalGenes.addAll(set1Genes);
+		ArrayList<GeneData> finalGenes = new ArrayList<>(set1Genes);
 
 		//Create list of unique genes from set 2 and add to final list
-		ArrayList<GeneData> set2Genes = (ArrayList<GeneData>) otherSet.genes.clone();
-		set2Genes.removeIf(geneData2 -> genes.stream().anyMatch(geneData1 -> geneData2.gene == geneData1.gene));
+		ArrayList<GeneData> set2Genes = (ArrayList<GeneData>) otherSet.genes.get(0).clone();
+		set2Genes.removeIf(geneData2 -> genes.get(0).stream().anyMatch(geneData1 -> geneData2.gene == geneData1.gene));
 		finalGenes.addAll(set2Genes);
 
 		//Create lists of non-unique genes from sets 1 and 2
-		set1Genes = (ArrayList<GeneData>) genes.clone();
-		set2Genes = (ArrayList<GeneData>) otherSet.genes.clone();
+		set1Genes = (ArrayList<GeneData>) genes.get(0).clone();
+		set2Genes = (ArrayList<GeneData>) otherSet.genes.get(0).clone();
 
 		set1Genes.removeIf(geneData1 -> finalGenes.stream().anyMatch(geneData2 -> geneData1.gene == geneData2.gene));
 		set2Genes.removeIf(geneData1 -> finalGenes.stream().anyMatch(geneData2 -> geneData1.gene == geneData2.gene));
@@ -225,13 +217,10 @@ public class GeneSet
 			for (GeneData set2Gene : set2Genes)
 				finalGenes.add(set1Gene.gene.combine(set1Gene, set2Gene));
 
-		//Combine defect lists
-		HashSet<DefectData> finalDefects = new HashSet<>();
-		finalDefects.addAll(defects);
-		finalDefects.addAll(otherSet.defects);
-
+		ArrayList<ArrayList<GeneData>> finalList = new ArrayList<>();
+		finalList.add(finalGenes);
 		//Create the new gene set with that information
-		GeneSet finalSet = new GeneSet(type, finalGenes, finalDefects);
+		GeneSet finalSet = new GeneSet(type, finalList);
 
 		//For each gene combined, give a chance of adding a new defect
 		finalSet.createDefects();
@@ -245,12 +234,12 @@ public class GeneSet
 
 	public void addGene(UUID donor, Gene g, float quality)
 	{
-		this.genes.add(new GeneData(g, Lists.newArrayList(donor), quality));
+		this.genes.add(Lists.newArrayList(new GeneData(g, Lists.newArrayList(donor), quality)));
 	}
 
 	public void addGene(UUID donor, Gene g, float qualityMax, Random random)
 	{
-		this.genes.add(new GeneData(g, Lists.newArrayList(donor), random.nextFloat() * qualityMax));
+		this.genes.add(Lists.newArrayList(new GeneData(g, Lists.newArrayList(donor), random.nextFloat() * qualityMax)));
 	}
 
 	public void addGene(EntityLivingBase donor, Gene g, float quality)
@@ -268,18 +257,28 @@ public class GeneSet
 	{
 		Random r = getRandom();
 
-		for (GeneData g : genes)
+		for (GeneData g : genes.get(0))
 		{
 			float q = g.quality;
 			List<Gene> d = GeneHandler.GENE_REGISTRY.getValuesCollection().stream().filter(gene -> gene instanceof GeneDefect).collect(Collectors.toList());
-			List<AbilityCondition.ConditionEntry> conditions = AbilityCondition.ConditionEntry.CONDITION_REGISTRY.getValuesCollection().stream().filter(conditionEntry -> Objects.requireNonNull(conditionEntry.getRegistryName()).getNamespace().equals(TheFifthWorld.MODID)).collect(Collectors.toList());
+			List<AbilityCondition.ConditionEntry> conditions = AbilityCondition.ConditionEntry.CONDITION_REGISTRY.getValuesCollection().stream()
+					.filter(conditionEntry -> Objects.requireNonNull(conditionEntry.getRegistryName()).getNamespace().equals(TheFifthWorld.MODID))
+					.collect(Collectors.toList());
 
 			while (q > 0)
 			{
 				GeneDefect defect = (GeneDefect) d.get(r.nextInt(d.size()));
 				float chance = Math.min(100, q);
 				if (r.nextFloat() > (chance / 2.0f))
-					defects.add(new DefectData(defect, r.nextFloat() > defect.getAlwaysOnChance() ? conditions.get(r.nextInt(conditions.size())) : Conditions.TheFifthWorldConditions.always_on));
+				{
+					ArrayList<AbilityCondition.ConditionEntry> list = new ArrayList<>();
+					AbilityCondition.ConditionEntry condition = r.nextFloat() > defect.getAlwaysOnChance() ?
+							conditions.get(r.nextInt(conditions.size())) :
+							Conditions.TheFifthWorldConditions.always_on;
+					list.add(condition);
+
+					genes.get(0).add(new GeneData(defect, g.donors, 1.0f, list));
+				}
 				q -= chance;
 			}
 		}
@@ -289,8 +288,9 @@ public class GeneSet
 	{
 		HashSet<UUID> donors = new HashSet<>();
 		donors.add(originalDonor);
-		for (GeneData gene : genes)
-			donors.addAll(gene.donors);
+		for (ArrayList<GeneData> gene : genes)
+			for (GeneData geneData : gene)
+				donors.addAll(geneData.donors);
 		return donors;
 	}
 
@@ -303,10 +303,9 @@ public class GeneSet
 			a += uuid.getLeastSignificantBits() + uuid.getMostSignificantBits();
 		}
 
-		for (GeneData gene : genes)
-		{
-			a -= gene.gene.getRegistryName().toString().length();
-		}
+		for (ArrayList<GeneData> gene : genes)
+			for ( GeneData g : gene)
+				a -= Objects.requireNonNull(g.gene.getRegistryName()).toString().length();
 
 		return new Random(a);
 	}
@@ -317,22 +316,31 @@ public class GeneSet
 	public static class GeneData
 	{
 		public ArrayList<UUID> donors = new ArrayList<>();
+		public ArrayList<AbilityCondition.ConditionEntry> conditions = new ArrayList<>();
 		public float quality;
 		public Gene gene;
 		public NBTTagCompound extra;
 
-		public GeneData(Gene gene, ArrayList<UUID> donors, float quality)
+		public GeneData(Gene gene, ArrayList<UUID> donors, float quality, ArrayList<AbilityCondition.ConditionEntry> conditions)
 		{
 			this.gene = gene;
 			this.donors.addAll(donors);
 			this.quality = quality;
 			this.extra = new NBTTagCompound();
+			this.conditions = conditions;
+		}
+
+		public GeneData(Gene gene, ArrayList<UUID> donors, float quality)
+		{
+			this(gene, donors, quality, new ArrayList<>());
 		}
 
 		public GeneData(NBTTagCompound compound)
 		{
 			for (NBTBase nbtBase : compound.getTagList(GeneSet.DONOR_LIST_TAG, 8))
 				donors.add(UUID.fromString(((NBTTagString) nbtBase).getString()));
+			for (NBTBase nbtBase : compound.getTagList(GeneSet.CONDITION_LIST_TAG, 8))
+				conditions.add(AbilityCondition.ConditionEntry.CONDITION_REGISTRY.getValue(new ResourceLocation(((NBTTagString) nbtBase).getString())));
 			this.quality = compound.getFloat(GeneSet.GENE_QUALITY_TAG);
 			this.gene = GeneHandler.GENE_REGISTRY.getValue(new ResourceLocation(compound.getString(GeneSet.GENE_REGISTRY_NAME_TAG)));
 			this.extra = compound;
@@ -346,44 +354,19 @@ public class GeneSet
 			NBTTagList list = new NBTTagList();
 			for (UUID donor : donors)
 				list.appendTag(new NBTTagString(donor.toString()));
+			for (AbilityCondition.ConditionEntry condition : conditions)
+				list.appendTag(new NBTTagString(condition.toString()));
 			compound.setTag(GeneSet.DONOR_LIST_TAG, list);
 			gene.serializeExtra(this, compound);
 			return compound;
 		}
 
-	}
-
-	public static class DefectData
-	{
-		public Gene gene;
-		public AbilityCondition.ConditionEntry condition;
-
-		public DefectData(Gene gene, AbilityCondition.ConditionEntry condition)
-		{
-			this.gene = gene;
-			this.condition = condition;
-		}
-
-		public DefectData(NBTTagCompound compound)
-		{
-			this.gene = GeneHandler.GENE_REGISTRY.getValue(new ResourceLocation(compound.getString(GeneSet.GENE_REGISTRY_NAME_TAG)));
-			this.condition = AbilityCondition.ConditionEntry.CONDITION_REGISTRY.getValue(new ResourceLocation(compound.getString(CONDITION_TAG)));
-		}
-
-		public NBTTagCompound serializeNBT()
-		{
-			NBTTagCompound compound = new NBTTagCompound();
-			compound.setString(GeneSet.GENE_REGISTRY_NAME_TAG, gene.getRegistryName().toString());
-			compound.setString(CONDITION_TAG, condition.getRegistryName().toString());
-			return compound;
-		}
-
 		@Override public boolean equals(Object obj)
 		{
-			if (obj instanceof DefectData)
+			if (obj instanceof GeneData)
 			{
-				DefectData ob = (DefectData) obj;
-				return ob.condition == condition && ob.gene == gene;
+				GeneData ob = (GeneData) obj;
+				return ob.gene == gene && ob.conditions.equals(conditions);
 			}
 			else
 				return super.equals(obj);

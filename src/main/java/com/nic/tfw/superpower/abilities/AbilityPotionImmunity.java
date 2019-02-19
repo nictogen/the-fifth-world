@@ -22,9 +22,8 @@ public class AbilityPotionImmunity extends AbilityConstant
 
 	@Override public void updateTick()
 	{
-		if(this.entity.isPotionActive(this.dataManager.get(POTION))){
+		if(this.entity.isPotionActive(this.dataManager.get(POTION)))
 			this.entity.removePotionEffect(this.dataManager.get(POTION));
-		}
 	}
 
 	@Override

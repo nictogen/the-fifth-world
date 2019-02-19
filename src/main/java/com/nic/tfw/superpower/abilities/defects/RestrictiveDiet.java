@@ -1,8 +1,7 @@
-package com.nic.tfw.superpower.abilities;
+package com.nic.tfw.superpower.abilities.defects;
 
 import lucraft.mods.lucraftcore.superpowers.abilities.Ability;
 import lucraft.mods.lucraftcore.superpowers.abilities.AbilityConstant;
-import lucraft.mods.lucraftcore.superpowers.abilities.predicates.AbilityCondition;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.item.ItemFood;
 import net.minecraftforge.event.entity.living.LivingEntityUseItemEvent;
@@ -12,11 +11,9 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 /**
  * Created by Nictogen on 1/17/19.
  */
-public class DefectDiet extends AbilityConstant implements IDefect
+public class RestrictiveDiet extends AbilityConstant
 {
-	private AbilityCondition condition;
-
-	public DefectDiet(EntityLivingBase player)
+	public RestrictiveDiet(EntityLivingBase player)
 	{
 		super(player);
 	}
@@ -24,16 +21,6 @@ public class DefectDiet extends AbilityConstant implements IDefect
 	@Override public void updateTick()
 	{
 
-	}
-
-	@Override public void setCondition(AbilityCondition condition)
-	{
-		this.condition = condition;
-	}
-
-	@Override public AbilityCondition getCondition()
-	{
-		return this.condition;
 	}
 
 	//TODO some available foods?
@@ -44,7 +31,7 @@ public class DefectDiet extends AbilityConstant implements IDefect
 			if(event.getItem().getItem() instanceof ItemFood){
 				for (Ability ability : Ability.getAbilities(event.getEntityLiving()))
 				{
-					if(ability instanceof DefectDiet && ((DefectDiet) ability).condition.test(ability)){
+					if(ability instanceof RestrictiveDiet && ability.isEnabled()){
 						event.setCanceled(true);
 					}
 				}
