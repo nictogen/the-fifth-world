@@ -283,8 +283,8 @@ public class GeneSet
 	public void createDefects()
 	{
 		Random r = getRandom();
-
-		for (GeneData g : genes.get(0))
+		ArrayList<GeneData> listCopy = new ArrayList<>(genes.get(0));
+		for (GeneData g : listCopy)
 		{
 			float q = g.quality;
 			List<Gene> d = GeneHandler.GENE_REGISTRY.getValuesCollection().stream().filter(gene -> gene instanceof GeneDefect).collect(Collectors.toList());
@@ -296,7 +296,7 @@ public class GeneSet
 			{
 				GeneDefect defect = (GeneDefect) d.get(r.nextInt(d.size()));
 				float chance = Math.min(100, q);
-				if (r.nextFloat() > (chance / 2.0f))
+				if (r.nextFloat() > (chance / 3.0f))
 				{
 					ArrayList<AbilityCondition.ConditionEntry> list = new ArrayList<>();
 					AbilityCondition.ConditionEntry condition = r.nextFloat() > defect.getAlwaysOnChance() ?
@@ -381,9 +381,11 @@ public class GeneSet
 			NBTTagList list = new NBTTagList();
 			for (UUID donor : donors)
 				list.appendTag(new NBTTagString(donor.toString()));
+			compound.setTag(GeneSet.DONOR_LIST_TAG, list);
+			list = new NBTTagList();
 			for (AbilityCondition.ConditionEntry condition : conditions)
 				list.appendTag(new NBTTagString(condition.toString()));
-			compound.setTag(GeneSet.DONOR_LIST_TAG, list);
+			compound.setTag(GeneSet.CONDITION_LIST_TAG, list);
 			gene.serializeExtra(this, compound);
 			return compound;
 		}

@@ -1,6 +1,7 @@
 package com.nic.tfw.items;
 
 import com.nic.tfw.TheFifthWorld;
+import com.nic.tfw.superpower.genes.GeneDefect;
 import com.nic.tfw.superpower.genes.GeneSet;
 import net.minecraft.client.renderer.color.IItemColor;
 import net.minecraft.client.util.ITooltipFlag;
@@ -61,19 +62,22 @@ public class ItemVial extends Item
 			{
 				for (GeneSet.GeneData gene : geneList)
 				{
-					String s = "";
-					s += gene.gene.displayName;
-					s += ", ";
-					for (QualityRating qualityRating : QualityRating.values())
+					if(!(gene.gene instanceof GeneDefect))
 					{
-						if (gene.quality >= qualityRating.minQuality)
+						String s = "";
+						s += gene.gene.displayName;
+						s += ", ";
+						for (QualityRating qualityRating : QualityRating.values())
 						{
-							s += qualityRating.displayName;
-							break;
+							if (gene.quality >= qualityRating.minQuality)
+							{
+								s += qualityRating.displayName;
+								break;
+							}
 						}
+						s += " Quality";
+						tooltip.add(s);
 					}
-					s += " Quality";
-					tooltip.add(s);
 				}
 			}
 		}
