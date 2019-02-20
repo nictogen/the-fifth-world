@@ -40,7 +40,7 @@ public class TheFifthWorld
 {
     public static final String MODID = "the-fifth-world";
     public static final String NAME = "The Fifth World";
-    public static final String VERSION = "0.3";
+    public static final String VERSION = "0.3.2";
 	public static final String DEPENDENCIES = "required-after:lucraftcore@[1.12.2-2.4.0,)";
 
 

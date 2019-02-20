@@ -14,16 +14,17 @@ import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.passive.EntityVillager;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Items;
-import net.minecraft.item.ItemDye;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.nbt.NBTTagString;
 import net.minecraft.potion.PotionEffect;
+import net.minecraft.util.EnumParticleTypes;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.village.MerchantRecipe;
 import net.minecraft.village.MerchantRecipeList;
+import net.minecraft.world.WorldServer;
 
 import javax.annotation.Nullable;
 import java.lang.reflect.Field;
@@ -72,13 +73,14 @@ public class GeneSet
 	{
 		this.type = SetType.SAMPLE;
 		GeneHandler.addSpeciesGenes(entityLivingBase, this);
-		if(SuperpowerHandler.hasSuperpower(entityLivingBase, TheFifthWorld.Superpowers.genetically_modified)){
+		if (SuperpowerHandler.hasSuperpower(entityLivingBase, TheFifthWorld.Superpowers.genetically_modified))
+		{
 			ISuperpowerCapability cap = entityLivingBase.getCapability(CapabilitySuperpower.SUPERPOWER_CAP, null);
-			if(cap != null && cap.getData() != null)
+			if (cap != null && cap.getData() != null)
 			{
 				GeneSet g = new GeneSet(cap.getData().getCompoundTag(VIAL_DATA_TAG));
-				if(!g.genes.isEmpty())
-				this.genes.add(g.genes.get(0));
+				if (!g.genes.isEmpty())
+					this.genes.add(g.genes.get(0));
 			}
 		}
 		Collections.shuffle(this.genes, getRandom());
@@ -141,12 +143,18 @@ public class GeneSet
 		for (ArrayList<GeneData> gene : this.genes)
 		{
 			gene.removeIf(geneData -> {
-				if(geneData.gene instanceof GeneDefect){
+				if (geneData.gene instanceof GeneDefect)
+				{
 					float speciesChance = new Random(entity.getClass().getName().length()).nextFloat() * 0.5f;
-					float indivChance = new Random(entity.getUniqueID().getLeastSignificantBits() + entity.getUniqueID().getMostSignificantBits()).nextFloat() * 0.5f;
-					if(speciesChance + indivChance > 0.7f)
+					float indivChance =
+							new Random(entity.getUniqueID().getLeastSignificantBits() + entity.getUniqueID().getMostSignificantBits()).nextFloat() * 0.5f;
+					if (speciesChance + indivChance > 0.75f)
 					{
-						ItemDye.spawnBonemealParticles(entity.world, entity.getPosition(), 35);
+						Random r = entity.getRNG();
+						if (entity.world instanceof WorldServer)
+							for (int i = 0; i < 20; i++)
+								((WorldServer)entity.world).spawnParticle(EnumParticleTypes.VILLAGER_HAPPY, entity.posX + r.nextGaussian() * 0.2, entity.posY + r.nextGaussian(),
+										entity.posZ + r.nextGaussian() * 0.2, 1, 0.0, 0.0, 0.0, 0.0);
 						return true;
 					}
 				}
@@ -296,7 +304,7 @@ public class GeneSet
 			{
 				GeneDefect defect = (GeneDefect) d.get(r.nextInt(d.size()));
 				float chance = Math.min(100, q);
-				if (r.nextFloat() > (chance / 3.0f))
+				if (r.nextFloat() < (chance / 2.0f))
 				{
 					ArrayList<AbilityCondition.ConditionEntry> list = new ArrayList<>();
 					AbilityCondition.ConditionEntry condition = r.nextFloat() > defect.getAlwaysOnChance() ?
@@ -331,7 +339,7 @@ public class GeneSet
 		}
 
 		for (ArrayList<GeneData> gene : genes)
-			for ( GeneData g : gene)
+			for (GeneData g : gene)
 				a -= Objects.requireNonNull(g.gene.getRegistryName()).toString().length();
 
 		return new Random(a);
@@ -367,7 +375,12 @@ public class GeneSet
 			for (NBTBase nbtBase : compound.getTagList(GeneSet.DONOR_LIST_TAG, 8))
 				donors.add(UUID.fromString(((NBTTagString) nbtBase).getString()));
 			for (NBTBase nbtBase : compound.getTagList(GeneSet.CONDITION_LIST_TAG, 8))
-				conditions.add(AbilityCondition.ConditionEntry.CONDITION_REGISTRY.getValue(new ResourceLocation(((NBTTagString) nbtBase).getString())));
+			{
+				AbilityCondition.ConditionEntry conditionEntry = AbilityCondition.ConditionEntry.CONDITION_REGISTRY
+						.getValue(new ResourceLocation(((NBTTagString) nbtBase).getString()));
+				if (conditionEntry != null)
+					conditions.add(conditionEntry);
+			}
 			this.quality = compound.getFloat(GeneSet.GENE_QUALITY_TAG);
 			this.gene = GeneHandler.GENE_REGISTRY.getValue(new ResourceLocation(compound.getString(GeneSet.GENE_REGISTRY_NAME_TAG)));
 			this.extra = compound;
@@ -384,7 +397,7 @@ public class GeneSet
 			compound.setTag(GeneSet.DONOR_LIST_TAG, list);
 			list = new NBTTagList();
 			for (AbilityCondition.ConditionEntry condition : conditions)
-				list.appendTag(new NBTTagString(condition.toString()));
+				list.appendTag(new NBTTagString(condition.getRegistryName().toString()));
 			compound.setTag(GeneSet.CONDITION_LIST_TAG, list);
 			gene.serializeExtra(this, compound);
 			return compound;
