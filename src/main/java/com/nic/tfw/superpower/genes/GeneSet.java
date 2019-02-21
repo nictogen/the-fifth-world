@@ -27,8 +27,10 @@ import net.minecraft.village.MerchantRecipeList;
 import net.minecraft.world.WorldServer;
 
 import javax.annotation.Nullable;
+import java.awt.*;
 import java.lang.reflect.Field;
 import java.util.*;
+import java.util.List;
 import java.util.stream.Collectors;
 
 import static com.nic.tfw.superpower.genes.GeneHandler.TEST_SUBJECTS_EXPLODED;
@@ -46,6 +48,7 @@ public class GeneSet
 	public static final String VIAL_DATA_TAG = "vial_data";
 	public static final String GENE_REGISTRY_NAME_TAG = "registry_name";
 	public static final String GENE_QUALITY_TAG = "quality";
+	public static final String COLOR_TAG = "color";
 
 	public ArrayList<ArrayList<GeneData>> genes = new ArrayList<>();
 	public UUID originalDonor = UUID.randomUUID();
@@ -129,6 +132,9 @@ public class GeneSet
 			stack.setTagCompound(new NBTTagCompound());
 		assert stack.getTagCompound() != null;
 		stack.getTagCompound().setTag(VIAL_DATA_TAG, serializeNBT());
+		Random r = getRandom();
+		Color c = new Color(r.nextFloat(), r.nextFloat(), r.nextFloat());
+		stack.getTagCompound().setIntArray(COLOR_TAG, new int[] {c.getRed(), c.getGreen(), c.getBlue()});
 	}
 
 	public boolean giveTo(EntityLivingBase entity, @Nullable EntityPlayer injector)
@@ -153,8 +159,9 @@ public class GeneSet
 						Random r = entity.getRNG();
 						if (entity.world instanceof WorldServer)
 							for (int i = 0; i < 20; i++)
-								((WorldServer)entity.world).spawnParticle(EnumParticleTypes.VILLAGER_HAPPY, entity.posX + r.nextGaussian() * 0.2, entity.posY + r.nextGaussian(),
-										entity.posZ + r.nextGaussian() * 0.2, 1, 0.0, 0.0, 0.0, 0.0);
+								((WorldServer) entity.world)
+										.spawnParticle(EnumParticleTypes.VILLAGER_HAPPY, entity.posX + r.nextGaussian() * 0.2, entity.posY + r.nextGaussian(),
+												entity.posZ + r.nextGaussian() * 0.2, 1, 0.0, 0.0, 0.0, 0.0);
 						return true;
 					}
 				}
@@ -340,8 +347,11 @@ public class GeneSet
 
 		for (ArrayList<GeneData> gene : genes)
 			for (GeneData g : gene)
-				a -= Objects.requireNonNull(g.gene.getRegistryName()).toString().length();
-
+			{
+				ResourceLocation r = g.gene.getRegistryName();
+				if (r != null)
+					a -= r.toString().length();
+			}
 		return new Random(a);
 	}
 

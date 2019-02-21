@@ -2,7 +2,6 @@ package com.nic.tfw.items;
 
 import com.nic.tfw.TheFifthWorld;
 import com.nic.tfw.superpower.genes.GeneSet;
-import net.minecraft.client.renderer.color.IItemColor;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
@@ -14,9 +13,6 @@ import net.minecraft.util.EnumActionResult;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
-
-import java.awt.*;
-import java.util.Random;
 
 /**
  * Created by Nictogen on 1/14/19.
@@ -102,21 +98,4 @@ public class ItemInjectionGun extends Item
 		}
 		return super.onItemRightClick(worldIn, playerIn, handIn);
 	}
-
-	public static class InjectionGeneColor implements IItemColor
-	{
-		@Override public int colorMultiplier(ItemStack stack, int tintIndex)
-		{
-			Color c = new Color(1.0f, 1.0f, 1.0f, 1.0f);
-			GeneSet g = GeneSet.fromStack(stack);
-			if (tintIndex == 1 && g != null)
-			{
-				Random r = g.getRandom();
-				c = new Color(r.nextFloat(), r.nextFloat(), r.nextFloat());
-			}
-			return c.getRGB();
-		}
-	}
-
-
 }

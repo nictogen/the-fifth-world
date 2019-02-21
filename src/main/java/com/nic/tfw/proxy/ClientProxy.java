@@ -1,7 +1,6 @@
 package com.nic.tfw.proxy;
 
 import com.nic.tfw.TheFifthWorld;
-import com.nic.tfw.items.ItemInjectionGun;
 import com.nic.tfw.items.ItemVial;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
@@ -30,8 +29,7 @@ public class ClientProxy extends CommonProxy
 	{
 		super.onInit(event);
 		Minecraft.getMinecraft().getItemColors().registerItemColorHandler(new ItemVial.GeneColor(), TheFifthWorld.Items.vial);
-		Minecraft.getMinecraft().getItemColors().registerItemColorHandler(new ItemInjectionGun.InjectionGeneColor(), TheFifthWorld.Items.injection_gun);
-
+		Minecraft.getMinecraft().getItemColors().registerItemColorHandler(new ItemVial.GeneColor(), TheFifthWorld.Items.injection_gun);
 	}
 
 	@SubscribeEvent

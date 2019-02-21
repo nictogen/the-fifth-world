@@ -18,7 +18,6 @@ import javax.annotation.Nullable;
 import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
 
 /**
  * Created by Nictogen on 1/11/19.
@@ -39,12 +38,10 @@ public class ItemVial extends Item
 		@Override public int colorMultiplier(ItemStack stack, int tintIndex)
 		{
 			Color c = new Color(1.0f, 1.0f, 1.0f, 1.0f);
-
-			GeneSet g = GeneSet.fromStack(stack);
-			if (tintIndex == 1 && g != null)
+			if (tintIndex == 1 && stack.getTagCompound() != null && stack.getTagCompound().hasKey(GeneSet.COLOR_TAG))
 			{
-				Random r = g.getRandom();
-				c = new Color(r.nextFloat(), r.nextFloat(), r.nextFloat());
+				int[] color = stack.getTagCompound().getIntArray(GeneSet.COLOR_TAG);
+				c = new Color(color[0], color[1], color[2]);
 			}
 			return c.getRGB();
 		}
