@@ -17,10 +17,9 @@ import net.minecraftforge.fml.relauncher.SideOnly;
  */
 public class AbilityLayEgg extends AbilityAction
 {
-	public AbilityLayEgg(EntityLivingBase player, int cd)
+	public AbilityLayEgg(EntityLivingBase player)
 	{
 		super(player);
-		this.setMaxCooldown(cd);
 	}
 
 	@Override public boolean action()

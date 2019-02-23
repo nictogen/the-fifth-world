@@ -18,11 +18,9 @@ public class AbilityItemCreation extends AbilityAction
 {
 	public static AbilityData<ItemStack> ITEM = new AbilityDataItemStack("item").disableSaving().setSyncType(EnumSync.SELF).enableSetting("item", "Sets the itemstack to create");
 
-	public AbilityItemCreation(EntityLivingBase player, ItemStack item, int cooldown)
+	public AbilityItemCreation(EntityLivingBase player)
 	{
 		super(player);
-		setMaxCooldown(cooldown);
-		dataManager.set(ITEM, item);
 	}
 
 	@Override
