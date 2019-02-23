@@ -33,7 +33,7 @@ public class GeneEnergyBlast extends Gene
 	{
 		Ability a = super.getAbility(entity, geneData);
 		int[] color = getColor(geneData);
-		a.getDataManager().set(AbilityEnergyBlast.COLOR, new Color(color[0], color[1], color[2]));
+		a.getDataManager().set(AbilityEnergyBlast.COLOR, new Color(Math.min(255, Math.max(color[0], 0)), Math.min(255, Math.max(color[1], 0)), Math.min(255, Math.max(color[2], 0))));
 		return a;
 	}
 
