@@ -25,6 +25,12 @@ public class AbilityBonemealArea extends AbilityAction
 		super(entity);
 	}
 
+	@Override public void registerData()
+	{
+		super.registerData();
+		getDataManager().register(RADIUS, 1);
+	}
+
 	@Override public boolean action()
 	{
 		for (int x = -getDataManager().get(RADIUS); x < getDataManager().get(RADIUS); x++)

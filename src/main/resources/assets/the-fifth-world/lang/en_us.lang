@@ -24,3 +24,7 @@ condition.sprinting=Sprinting
 condition.falling=Falling
 
 condition.using_hand=Using Hand
+
+condition.daytime=Is Daytime
+
+condition.nighttime=Is Nighttime

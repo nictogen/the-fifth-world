@@ -1,5 +1,6 @@
 package com.nic.tfw.proxy;
 
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 
@@ -12,6 +13,10 @@ public class CommonProxy
 
 	}
 	public void onInit(FMLInitializationEvent event){
+
+	}
+
+	public void stopSounds(EntityPlayer player){
 
 	}
 }

@@ -29,8 +29,8 @@ import net.minecraft.world.WorldServer;
 import javax.annotation.Nullable;
 import java.awt.*;
 import java.lang.reflect.Field;
-import java.util.*;
 import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static com.nic.tfw.superpower.genes.GeneHandler.TEST_SUBJECTS_EXPLODED;
@@ -69,6 +69,7 @@ public class GeneSet
 				list.add(new GeneData((NBTTagCompound) base));
 			genes.add(list);
 		}
+
 		this.originalDonor = nbt.getUniqueId(DONORS_TAG);
 	}
 
@@ -86,8 +87,8 @@ public class GeneSet
 					this.genes.add(g.genes.get(0));
 			}
 		}
+		this.originalDonor = entityLivingBase.getPersistentID();
 		Collections.shuffle(this.genes, getRandom());
-		originalDonor = entityLivingBase.getPersistentID();
 	}
 
 	public GeneSet(SetType type, ArrayList<ArrayList<GeneData>> genes)
@@ -122,7 +123,6 @@ public class GeneSet
 		}
 		compound.setTag(GENE_LIST_TAG, geneList);
 		compound.setInteger(VIAL_TYPE_TAG, type.ordinal());
-		compound.setUniqueId(DONORS_TAG, originalDonor);
 		return compound;
 	}
 
@@ -134,7 +134,8 @@ public class GeneSet
 		stack.getTagCompound().setTag(VIAL_DATA_TAG, serializeNBT());
 		Random r = getRandom();
 		Color c = new Color(r.nextFloat(), r.nextFloat(), r.nextFloat());
-		stack.getTagCompound().setIntArray(COLOR_TAG, new int[] {c.getRed(), c.getGreen(), c.getBlue()});
+		stack.getTagCompound().setIntArray(COLOR_TAG, new int[] { c.getRed(), c.getGreen(), c.getBlue() });
+		stack.getTagCompound().setBoolean("updated", true);
 	}
 
 	public boolean giveTo(EntityLivingBase entity, @Nullable EntityPlayer injector)
@@ -143,7 +144,7 @@ public class GeneSet
 			return false;
 		if (SuperpowerHandler.hasSuperpower(entity))
 			return false;
-		if (!getDonors().contains(entity.getPersistentID()))
+		if (getDonors().isEmpty() || !getDonors().toArray()[0].equals(entity.getPersistentID()))
 			return false;
 
 		for (ArrayList<GeneData> gene : this.genes)
@@ -228,46 +229,65 @@ public class GeneSet
 		ArrayList<UUID> donor = Lists.newArrayList(bloodSample.getDonors().iterator().next());
 		for (ArrayList<GeneData> geneData : g)
 			for (GeneData geneDatum : geneData)
-				geneDatum.donors = donor;
+			{
+				ArrayList<UUID> donors = new ArrayList<>(donor);
+				donors.addAll(geneDatum.donors);
+				geneDatum.donors = donors;
+			}
 
 		return new GeneSet(SetType.SERUM, g);
 	}
 
-	@SuppressWarnings("unchecked") public GeneSet combine(GeneSet otherSet)
+	@SuppressWarnings("unchecked") public GeneSet mixSets(GeneSet otherSet)
 	{
+		//Combine
+		ArrayList<GeneData> finalGenes = combine(otherSet);
 
-		//Create list of unique genes from set 1 and add to new final list
-		ArrayList<GeneData> set1Genes = (ArrayList<GeneData>) genes.get(0).clone();
-		set1Genes.removeIf(geneData1 -> otherSet.genes.get(0).stream().anyMatch(geneData2 -> geneData1.gene == geneData2.gene));
+		//Create defects if anything's changed
+		if (!genes.get(0).containsAll(finalGenes) && !otherSet.genes.get(0).containsAll(finalGenes))
+			createDefects();
 
-		ArrayList<GeneData> finalGenes = new ArrayList<>(set1Genes);
-
-		//Create list of unique genes from set 2 and add to final list
-		ArrayList<GeneData> set2Genes = (ArrayList<GeneData>) otherSet.genes.get(0).clone();
-		set2Genes.removeIf(geneData2 -> genes.get(0).stream().anyMatch(geneData1 -> geneData2.gene == geneData1.gene));
-		finalGenes.addAll(set2Genes);
-
-		//Create lists of non-unique genes from sets 1 and 2
-		set1Genes = (ArrayList<GeneData>) genes.get(0).clone();
-		set2Genes = (ArrayList<GeneData>) otherSet.genes.get(0).clone();
-
-		set1Genes.removeIf(geneData1 -> finalGenes.stream().anyMatch(geneData2 -> geneData1.gene == geneData2.gene));
-		set2Genes.removeIf(geneData1 -> finalGenes.stream().anyMatch(geneData2 -> geneData1.gene == geneData2.gene));
-
-		//Combine non-unique genes
-		for (GeneData set1Gene : set1Genes)
-			for (GeneData set2Gene : set2Genes)
-				finalGenes.add(set1Gene.gene.combine(set1Gene, set2Gene));
+		//Combine again, in order to combine defects
+		finalGenes = combine(otherSet);
 
 		ArrayList<ArrayList<GeneData>> finalList = new ArrayList<>();
 		finalList.add(finalGenes);
-		//Create the new gene set with that information
-		GeneSet finalSet = new GeneSet(type, finalList);
+		return new GeneSet(type, finalList);
+	}
 
-		//For each gene combined, give a chance of adding a new defect
-		finalSet.createDefects();
+	public ArrayList<GeneData> combine(GeneSet otherSet)
+	{
+		ArrayList<GeneData> allGenes = new ArrayList<>(genes.get(0));
+		ArrayList<GeneData> finalGenes = new ArrayList<>();
+		allGenes.addAll(otherSet.genes.get(0));
 
-		return finalSet;
+		for (GeneData geneData : allGenes)
+		{
+			if (finalGenes.stream().noneMatch(g -> geneData.gene == g.gene))
+			{
+				ArrayList<GeneData> alikeGenes = new ArrayList<>(allGenes);
+				alikeGenes.removeIf(g -> g.gene != geneData.gene);
+				GeneData g = geneData;
+				for (GeneData alikeGene : alikeGenes)
+				{
+					boolean b = true;
+					//Check if it's from the same donor, in the case of non-defect genes
+					if (!(g.gene instanceof GeneDefect))
+						for (UUID donor : alikeGene.donors)
+						{
+							for (UUID uuid : g.donors)
+							{
+								if (uuid.equals(donor))
+									b = false;
+							}
+						}
+					if (b)
+						g = g.gene.combine(g, alikeGene);
+				}
+				finalGenes.add(g);
+			}
+		}
+		return finalGenes;
 	}
 
 	/**
@@ -276,12 +296,14 @@ public class GeneSet
 
 	public void addGene(UUID donor, Gene g, float quality)
 	{
-		this.genes.add(Lists.newArrayList(new GeneData(g, Lists.newArrayList(donor), quality)));
+		if (g != null)
+			this.genes.add(Lists.newArrayList(new GeneData(g, Lists.newArrayList(donor), quality)));
 	}
 
 	public void addGene(UUID donor, Gene g, float qualityMax, Random random)
 	{
-		this.genes.add(Lists.newArrayList(new GeneData(g, Lists.newArrayList(donor), random.nextFloat() * qualityMax)));
+		if (g != null)
+			this.genes.add(Lists.newArrayList(new GeneData(g, Lists.newArrayList(donor), random.nextFloat() * qualityMax)));
 	}
 
 	public void addGene(EntityLivingBase donor, Gene g, float quality)
@@ -307,18 +329,17 @@ public class GeneSet
 					.filter(conditionEntry -> Objects.requireNonNull(conditionEntry.getRegistryName()).getNamespace().equals(TheFifthWorld.MODID))
 					.collect(Collectors.toList());
 
-			while (q > 0)
+			for (int i = 0; q > 0; i++)
 			{
 				GeneDefect defect = (GeneDefect) d.get(r.nextInt(d.size()));
 				float chance = Math.min(100, q);
-				if (r.nextFloat() < (chance / 2.0f))
+				if (r.nextFloat() < (chance / Math.max(1.0f, 2f - 0.5f * i)))
 				{
-					ArrayList<AbilityCondition.ConditionEntry> list = new ArrayList<>();
+					HashSet<AbilityCondition.ConditionEntry> list = new HashSet<>();
 					AbilityCondition.ConditionEntry condition = r.nextFloat() > defect.getAlwaysOnChance() ?
 							conditions.get(r.nextInt(conditions.size())) :
 							Conditions.TheFifthWorldConditions.always_on;
 					list.add(condition);
-
 					genes.get(0).add(new GeneData(defect, g.donors, 1.0f, list));
 				}
 				q -= chance;
@@ -341,9 +362,7 @@ public class GeneSet
 		long a = 0;
 
 		for (UUID uuid : getDonors())
-		{
 			a += uuid.getLeastSignificantBits() + uuid.getMostSignificantBits();
-		}
 
 		for (ArrayList<GeneData> gene : genes)
 			for (GeneData g : gene)
@@ -361,12 +380,12 @@ public class GeneSet
 	public static class GeneData
 	{
 		public ArrayList<UUID> donors = new ArrayList<>();
-		public ArrayList<AbilityCondition.ConditionEntry> conditions = new ArrayList<>();
+		public Set<AbilityCondition.ConditionEntry> conditions = new HashSet<>();
 		public float quality;
 		public Gene gene;
 		public NBTTagCompound extra;
 
-		public GeneData(Gene gene, ArrayList<UUID> donors, float quality, ArrayList<AbilityCondition.ConditionEntry> conditions)
+		public GeneData(Gene gene, ArrayList<UUID> donors, float quality, Set<AbilityCondition.ConditionEntry> conditions)
 		{
 			this.gene = gene;
 			this.donors.addAll(donors);
@@ -377,7 +396,7 @@ public class GeneSet
 
 		public GeneData(Gene gene, ArrayList<UUID> donors, float quality)
 		{
-			this(gene, donors, quality, new ArrayList<>());
+			this(gene, donors, quality, new HashSet<>());
 		}
 
 		public GeneData(NBTTagCompound compound)
@@ -415,13 +434,7 @@ public class GeneSet
 
 		@Override public boolean equals(Object obj)
 		{
-			if (obj instanceof GeneData)
-			{
-				GeneData ob = (GeneData) obj;
-				return ob.gene == gene && ob.conditions.equals(conditions);
-			}
-			else
-				return super.equals(obj);
+			return super.equals(obj);
 		}
 	}
 

@@ -80,6 +80,20 @@ public class ItemVial extends Item
 		}
 	}
 
+	public NBTTagCompound getNBTShareTag(ItemStack stack)
+	{
+		if(stack.getTagCompound() != null && !stack.getTagCompound().hasKey("updated"))
+		{
+			GeneSet g = GeneSet.fromStack(stack);
+			if(g != null)
+			{
+				g = g.mixSets(g);
+				g.addTo(stack);
+			}
+		}
+		return stack.getTagCompound();
+	}
+
 	@Override public ActionResult<ItemStack> onItemRightClick(World worldIn, EntityPlayer playerIn, EnumHand handIn)
 	{
 		EnumHand off = handIn == EnumHand.MAIN_HAND ? EnumHand.OFF_HAND : EnumHand.MAIN_HAND;

@@ -1,12 +1,10 @@
 package com.nic.tfw.superpower.genes;
 
 import com.nic.tfw.TheFifthWorld;
+import com.nic.tfw.he.HEGenes;
 import com.nic.tfw.superpower.SuperpowerGeneticallyModified;
 import com.nic.tfw.superpower.abilities.*;
-import com.nic.tfw.superpower.abilities.defects.ButterFingers;
-import com.nic.tfw.superpower.abilities.defects.InvoluntaryExplosion;
-import com.nic.tfw.superpower.abilities.defects.RestrictiveDiet;
-import com.nic.tfw.superpower.abilities.defects.SetOnFire;
+import com.nic.tfw.superpower.abilities.defects.*;
 import lucraft.mods.lucraftcore.LucraftCore;
 import lucraft.mods.lucraftcore.karma.KarmaStat;
 import lucraft.mods.lucraftcore.superpowers.SuperpowerHandler;
@@ -31,6 +29,7 @@ import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextComponentString;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.event.entity.living.LivingDeathEvent;
+import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.registry.GameRegistry;
@@ -57,20 +56,19 @@ public class GeneHandler
 
 	public static final UUID RANDOM_UUID = UUID.fromString("dc7bfdde-5e0e-44b8-ae43-20063182cd8b");
 
-
 	@SuppressWarnings("WeakerAccess")
 	public static class LucraftCoreGenes
 	{
 		//Attribute Modifier
-		public static final Gene health = new Gene(AbilityHealth.class, "Health Boost").addDataMod(new Gene.DataMod<>(AbilityAttributeModifier.AMOUNT, 20f)).addDataMod(new Gene.DataMod<>(AbilityAttributeModifier.UUID, RANDOM_UUID, false));
-		public static final Gene strength = new Gene(AbilityStrength.class, "Strength Boost").addDataMod(new Gene.DataMod<>(AbilityAttributeModifier.AMOUNT, 20f)).addDataMod(new Gene.DataMod<>(AbilityAttributeModifier.UUID, RANDOM_UUID, false));
-		public static final Gene punch = new Gene(AbilityPunch.class, "Punch Boost").addDataMod(new Gene.DataMod<>(AbilityAttributeModifier.AMOUNT, 20f)).addDataMod(new Gene.DataMod<>(AbilityAttributeModifier.UUID, RANDOM_UUID, false));
-		public static final Gene sprint = new Gene(AbilitySprint.class, "Sprint Boost").addDataMod(new Gene.DataMod<>(AbilityAttributeModifier.AMOUNT, 1f)).addDataMod(new Gene.DataMod<>(AbilityAttributeModifier.UUID, RANDOM_UUID, false));
-		public static final Gene jump_boost = new Gene(AbilityJumpBoost.class, "Jump Boost").addDataMod(new Gene.DataMod<>(AbilityAttributeModifier.AMOUNT, 1f)).addDataMod(new Gene.DataMod<>(AbilityAttributeModifier.UUID, RANDOM_UUID, false));
+		public static final Gene health = new Gene(AbilityHealth.class, "Health Boost").addDataMod(new Gene.DataMod<>(AbilityAttributeModifier.AMOUNT, 5f)).addDataMod(new Gene.DataMod<>(AbilityAttributeModifier.UUID, RANDOM_UUID, false));
+		public static final Gene strength = new Gene(AbilityStrength.class, "Strength Boost").addDataMod(new Gene.DataMod<>(AbilityAttributeModifier.AMOUNT, 5f)).addDataMod(new Gene.DataMod<>(AbilityAttributeModifier.UUID, RANDOM_UUID, false));
+		public static final Gene punch = new Gene(AbilityPunch.class, "Punch Boost").addDataMod(new Gene.DataMod<>(AbilityAttributeModifier.AMOUNT, 5f)).addDataMod(new Gene.DataMod<>(AbilityAttributeModifier.UUID, RANDOM_UUID, false));
+		public static final Gene sprint = new Gene(AbilitySprint.class, "Sprint Boost").addDataMod(new Gene.DataMod<>(AbilityAttributeModifier.AMOUNT, 0.3f)).addDataMod(new Gene.DataMod<>(AbilityAttributeModifier.UUID, RANDOM_UUID, false));
+		public static final Gene jump_boost = new Gene(AbilityJumpBoost.class, "Jump Boost").addDataMod(new Gene.DataMod<>(AbilityAttributeModifier.AMOUNT, 0.3f)).addDataMod(new Gene.DataMod<>(AbilityAttributeModifier.UUID, RANDOM_UUID, false));
 		public static final Gene resistance = new Gene(AbilityDamageResistance.class, "Resistance").addDataMod(new Gene.DataMod<>(AbilityAttributeModifier.AMOUNT, 35f)).addDataMod(new Gene.DataMod<>(AbilityAttributeModifier.UUID, RANDOM_UUID, false));
-		public static final Gene fall_resistance = new Gene(AbilityFallResistance.class, "Fall Resistance").addDataMod(new Gene.DataMod<>(AbilityAttributeModifier.AMOUNT, 35f)).addDataMod(new Gene.DataMod<>(AbilityAttributeModifier.UUID, RANDOM_UUID, false));
-		public static final Gene knockback_resistance = new Gene(AbilityKnockbackResistance.class, "Knockback Resistance").addDataMod(new Gene.DataMod<>(AbilityAttributeModifier.AMOUNT, 35f)).addDataMod(new Gene.DataMod<>(AbilityAttributeModifier.UUID, RANDOM_UUID, false));
-		public static final Gene step_assist = new Gene(AbilityStepAssist.class, "Step Assist").addDataMod(new Gene.DataMod<>(AbilityAttributeModifier.AMOUNT, 10f)).addDataMod(new Gene.DataMod<>(AbilityAttributeModifier.UUID, RANDOM_UUID, false));
+		public static final Gene fall_resistance = new Gene(AbilityFallResistance.class, "Fall Resistance").addDataMod(new Gene.DataMod<>(AbilityAttributeModifier.AMOUNT, 8f)).addDataMod(new Gene.DataMod<>(AbilityAttributeModifier.UUID, RANDOM_UUID, false));
+		public static final Gene knockback_resistance = new Gene(AbilityKnockbackResistance.class, "Knockback Resistance").addDataMod(new Gene.DataMod<>(AbilityAttributeModifier.AMOUNT, 8f)).addDataMod(new Gene.DataMod<>(AbilityAttributeModifier.UUID, RANDOM_UUID, false));
+		public static final Gene step_assist = new Gene(AbilityStepAssist.class, "Step Assist").addDataMod(new Gene.DataMod<>(AbilityAttributeModifier.AMOUNT, 2f)).addDataMod(new Gene.DataMod<>(AbilityAttributeModifier.UUID, RANDOM_UUID, false));
 
 		//Potion Punch
 		public static final Gene potion_punch_minecraft_poison = new GenePotionPunch("Poison Punch", 19, 500, 3);
@@ -86,14 +84,14 @@ public class GeneHandler
 		public static final Gene potion_punch_minecraft_levitation = new GenePotionPunch("Levitation Punch", 25, 250, 10);
 
 		//Misc
-		public static final Gene healing = new Gene(AbilityHealing.class, "Healing Factor").addDataMod(new Gene.DataMod<>(AbilityHealing.AMOUNT, 5f));
+		public static final Gene healing = new Gene(AbilityHealing.class, "Healing Factor").addDataMod(new Gene.DataMod<>(AbilityHealing.AMOUNT, 2.5f));
 		public static final Gene fire_resistance = new Gene(AbilityFireResistance.class, "Fire Resistance");
 		//		public static final Gene size_change = null;
-		public static final Gene teleport = new Gene(AbilityTeleport.class, "Teleportation").addDataMod(new Gene.DataMod<>(AbilityTeleport.DISTANCE, 50f)).addDataMod(new Gene.DataMod<>(Ability.MAX_COOLDOWN, 300, true, true));
+		public static final Gene teleport = new Gene(AbilityTeleport.class, "Teleportation").addDataMod(new Gene.DataMod<>(AbilityTeleport.DISTANCE, 50f)).addDataMod(new Gene.DataMod<>(Ability.MAX_COOLDOWN, 600, true, true));
 		public static final Gene slowfall = new Gene(AbilitySlowfall.class, "Slow Falling");
-		public static final Gene energy_blast = new GeneEnergyBlast("Energy Blast", 5f);
+		public static final Gene energy_blast = new GeneEnergyBlast("Energy Blast", 8f);
 		public static final Gene fire_punch = new Gene(AbilityFirePunch.class, "Fire Punch").addDataMod(new Gene.DataMod<>(AbilityFirePunch.DURATION, 50));
-		public static final Gene flight = new Gene(AbilityFlight.class, "Flight").addDataMod(new Gene.DataMod<>(AbilityFlight.SPEED, 1f)).addDataMod(new Gene.DataMod<>(AbilityFlight.SPRINT_SPEED, 2f));
+		public static final Gene flight = new Gene(AbilityFlight.class, "Flight").addDataMod(new Gene.DataMod<>(AbilityFlight.SPEED, 0.4f)).addDataMod(new Gene.DataMod<>(AbilityFlight.SPRINT_SPEED, 2f));
 		public static final Gene water_breathing = new Gene(AbilityWaterBreathing.class, "Water Breathing");
 		public static final Gene tough_lungs = new Gene(AbilityToughLungs.class, "Tough Lungs");
 		public static final Gene invisibility = new Gene(AbilityInvisibility.class, "Invisibility");
@@ -107,10 +105,10 @@ public class GeneHandler
 		public static final Gene screech = new Gene(AbilityScreech.class, "Screech").addDataMod(new Gene.DataMod<>(AbilityScreech.DAMAGE, 5f));
 		public static final Gene eat_hay = new GeneEatBlock("Eat Hay", Blocks.HAY_BLOCK, Blocks.AIR, 16, 2f).setRegistryName(TheFifthWorld.MODID, "eat_hay");
 		public static final Gene graze = new GeneEatBlock("Graze", Blocks.GRASS, Blocks.DIRT, 8, 1f).setRegistryName(TheFifthWorld.MODID, "graze");
-		public static final Gene lay_egg = new Gene(AbilityLayEgg.class, "Lay Egg");
-		public static final Gene explode = new Gene(AbilityExplode.class, "Explode").addDataMod(new Gene.DataMod<>(AbilityExplode.STRENGTH, 5f)).addDataMod(new Gene.DataMod<>(Ability.MAX_COOLDOWN, 200, true, true));
+		public static final Gene lay_egg = new Gene(AbilityLayEgg.class, "Lay Egg").addDataMod(new Gene.DataMod<>(Ability.MAX_COOLDOWN, 600, true, true));
+		public static final Gene explode = new Gene(AbilityExplode.class, "Explode").addDataMod(new Gene.DataMod<>(AbilityExplode.STRENGTH, 5f)).addDataMod(new Gene.DataMod<>(Ability.MAX_COOLDOWN, 1000, true, true));
 		public static final Gene give_potion_minecraft_nightvision = new GeneGivePotion("Give Nightvision", Potion.getIdFromPotion(MobEffects.NIGHT_VISION), 1);
-		public static final Gene bonemeal = new Gene(AbilityBonemealArea.class, "Bonemeal Area").addDataMod(new Gene.DataMod<>(Ability.MAX_COOLDOWN, 300, true, true)).addDataMod(new Gene.DataMod<>(AbilityBonemealArea.RADIUS, 10));
+		public static final Gene bonemeal = new Gene(AbilityBonemealArea.class, "Bonemeal Area").addDataMod(new Gene.DataMod<>(Ability.MAX_COOLDOWN, 1000, true, true)).addDataMod(new Gene.DataMod<>(AbilityBonemealArea.RADIUS, 10));
 
 		//Potion Immunity
 		public static final Gene potion_immunity_minecraft_poison = new GenePotionImmunity("Poison Immunity", 19);
@@ -133,13 +131,13 @@ public class GeneHandler
 		public static final Gene create_item_minecraft_arrow = new GeneItemCreation("Create Arrow",200, new ItemStack(Items.ARROW));
 
 		//Item Change
-		public static final Gene milk_entity = new Gene(AbilityChangeItem.class, "Milk Extraction", true).setRegistryName(TheFifthWorld.MODID, "milk").addDataMod(new Gene.DataMod<>(Ability.MAX_COOLDOWN, 300, true, true)).addDataMod(new Gene.DataMod<>(AbilityChangeItem.FROM, new ItemStack(Items.BUCKET), false)).addDataMod(new Gene.DataMod<>(AbilityChangeItem.TO, new ItemStack(Items.MILK_BUCKET), false));
-		public static final Gene soup_entity = new Gene(AbilityChangeItem.class, "Soup Extraction", true).setRegistryName(TheFifthWorld.MODID, "soup").addDataMod(new Gene.DataMod<>(Ability.MAX_COOLDOWN, 300, true, true)).addDataMod(new Gene.DataMod<>(AbilityChangeItem.FROM, new ItemStack(Items.BOWL), false)).addDataMod(new Gene.DataMod<>(AbilityChangeItem.TO, new ItemStack(Items.MUSHROOM_STEW), false));
-		public static final Gene lava_entity = new Gene(AbilityChangeItem.class, "Lava Extraction", true).setRegistryName(TheFifthWorld.MODID, "lava").addDataMod(new Gene.DataMod<>(Ability.MAX_COOLDOWN, 400, true, true)).addDataMod(new Gene.DataMod<>(AbilityChangeItem.FROM, new ItemStack(Items.BUCKET), false)).addDataMod(new Gene.DataMod<>(AbilityChangeItem.TO, new ItemStack(Items.LAVA_BUCKET), false));
+		public static final Gene milk_entity = new Gene(AbilityChangeItem.class, "Milk Extraction", true).setRegistryName(TheFifthWorld.MODID, "milk").addDataMod(new Gene.DataMod<>(Ability.MAX_COOLDOWN, 600, true, true)).addDataMod(new Gene.DataMod<>(AbilityChangeItem.FROM, new ItemStack(Items.BUCKET), false)).addDataMod(new Gene.DataMod<>(AbilityChangeItem.TO, new ItemStack(Items.MILK_BUCKET), false));
+		public static final Gene soup_entity = new Gene(AbilityChangeItem.class, "Soup Extraction", true).setRegistryName(TheFifthWorld.MODID, "soup").addDataMod(new Gene.DataMod<>(Ability.MAX_COOLDOWN, 600, true, true)).addDataMod(new Gene.DataMod<>(AbilityChangeItem.FROM, new ItemStack(Items.BOWL), false)).addDataMod(new Gene.DataMod<>(AbilityChangeItem.TO, new ItemStack(Items.MUSHROOM_STEW), false));
+		public static final Gene lava_entity = new Gene(AbilityChangeItem.class, "Lava Extraction", true).setRegistryName(TheFifthWorld.MODID, "lava").addDataMod(new Gene.DataMod<>(Ability.MAX_COOLDOWN, 1000, true, true)).addDataMod(new Gene.DataMod<>(AbilityChangeItem.FROM, new ItemStack(Items.BUCKET), false)).addDataMod(new Gene.DataMod<>(AbilityChangeItem.TO, new ItemStack(Items.LAVA_BUCKET), false));
 
 		//Entity Summoning
-		public static final Gene summon_zombie = new GeneSummonEntity("Summon Zombie", "minecraft:zombie",5, 600);
-		public static final Gene summon_bats = new GeneSummonEntity("Summon Bats", "minecraft:bat",15, 600);
+		public static final Gene summon_zombie = new GeneSummonEntity("Summon Zombie", "minecraft:zombie",5, 2000);
+		public static final Gene summon_bats = new GeneSummonEntity("Summon Bats", "minecraft:bat",15, 2000);
 
 	}
 
@@ -154,11 +152,16 @@ public class GeneHandler
 			try { GENE_REGISTRY.register((Gene) field.get(null)); }
 			catch (IllegalAccessException e) { e.printStackTrace(); }
 
+		if(Loader.isModLoaded("heroesexpansion")) HEGenes.populateGeneList();
+
 		//Defects
 		GENE_REGISTRY.register(new GeneDefect(InvoluntaryExplosion.class, "Involuntarily Explodes").setAlwaysOnChance(0.1f));
 		GENE_REGISTRY.register(new GeneDefect(ButterFingers.class, "Butter Fingers").setAlwaysOnChance(0.1f));
 		GENE_REGISTRY.register(new GeneDefect(SetOnFire.class, "Spontaneous Combustion").setAlwaysOnChance(0.2f));
 		GENE_REGISTRY.register(new GeneDefect(RestrictiveDiet.class, "Can't Eat").setAlwaysOnChance(0.9f));
+		GENE_REGISTRY.register(new GeneDefect(Deafness.class, "Deaf"));
+		GENE_REGISTRY.register(new GeneDefect(LightningRod.class, "Lightning Rod"));
+		GENE_REGISTRY.register(new GeneDefect(Starving.class, "Starving"));
 //		GENE_REGISTRY.register(new GeneDefect(DefectEnable.class, "Enabling Power").setAlwaysOnChance(0.0f));
 //		GENE_REGISTRY.register(new GeneDefect(DefectDisable.class, "Disabling Power").setAlwaysOnChance(0.0f));
 
@@ -178,6 +181,7 @@ public class GeneHandler
 			set.addGene(entity, FifthWorldGenes.screech, GeneStrength.HIGH.chance, r);
 			set.addGene(entity, FifthWorldGenes.give_potion_minecraft_nightvision, 1.0f);
 			set.addGene(entity, FifthWorldGenes.summon_bats, GeneStrength.HIGH.chance, r);
+			set.addGene(entity, HEGenes.wall_crawling, 1.0f);
 //			Hang upside down
 //			Drain blood
 //			Bite
@@ -280,6 +284,8 @@ public class GeneHandler
 		{
 			//Looting/Fortune for free
 			//Smartness, eventually
+			if(r.nextFloat() < 0.1f)
+				set.addGene(entity, HEGenes.blindness, 1.0f);
 		}
 
 		/*
@@ -289,6 +295,7 @@ public class GeneHandler
 		if (entity instanceof EntityLlama)
 		{
 			set.addGene(entity, LucraftCoreGenes.step_assist, GeneStrength.PERFECT.chance, r);
+			set.addGene(entity, FifthWorldGenes.mountable, 1.0f);
 			//Spitting
 		}
 		if (entity instanceof EntityPolarBear)
@@ -313,16 +320,20 @@ public class GeneHandler
 		{
 			set.addGene(entity, LucraftCoreGenes.potion_punch_minecraft_poison, GeneStrength.PERFECT.chance, r);
 			set.addGene(entity, FifthWorldGenes.potion_immunity_minecraft_poison, 1.0f);
+			set.addGene(entity, HEGenes.web_wings, 1.0f);
+			set.addGene(entity, HEGenes.spider_sense, 1.0f);
 			//Bite
 		}
 		else if (entity instanceof EntitySpider)
 		{
-			//Wall Climbing
 			//Web Attack
 			//Bite
 			set.addGene(entity, LucraftCoreGenes.invisibility, 1.0f);
 			set.addGene(entity, FifthWorldGenes.mountable, 1.0f);
 			set.addGene(entity, FifthWorldGenes.potion_immunity_minecraft_poison, 1.0f);
+			set.addGene(entity, HEGenes.wall_crawling, 1.0f);
+			set.addGene(entity, HEGenes.spider_sense, 1.0f);
+
 		}
 		if (entity instanceof EntityEnderman)
 		{
@@ -334,7 +345,7 @@ public class GeneHandler
 		}
 		if (entity instanceof EntityPigZombie)
 		{
-			set.addGene(entity, LucraftCoreGenes.punch, GeneStrength.PERFECT.chance, r);
+//			set.addGene(entity, LucraftCoreGenes.punch, GeneStrength.PERFECT.chance, r);
 			set.addGene(entity, FifthWorldGenes.create_item_minecraft_golden_sword, GeneStrength.VERY_HIGH.chance, r);
 			set.addGene(entity, FifthWorldGenes.create_item_minecraft_gold_nugget, GeneStrength.VERY_HIGH.chance, r);
 			//Lightning attacks?
@@ -345,6 +356,7 @@ public class GeneHandler
 			set.addGene(entity, LucraftCoreGenes.fire_resistance, 1.0f);
 			set.addGene(entity, LucraftCoreGenes.fire_punch, GeneStrength.LOW.chance, r);
 			set.addGene(entity, LucraftCoreGenes.slowfall, GeneStrength.MID.chance, r);
+			set.addGene(entity, HEGenes.heat_vision, GeneStrength.PERFECT.chance, r);
 			// Fireball
 			// Fire blasts
 			// Smoke Form
@@ -353,24 +365,29 @@ public class GeneHandler
 		if (entity instanceof EntityCreeper)
 		{
 			set.addGene(entity, FifthWorldGenes.explode, GeneStrength.PERFECT.chance, r);
+			set.addGene(entity, HEGenes.energy_absorption, GeneStrength.PERFECT.chance, r);
+			set.addGene(entity, HEGenes.lightning_attack, GeneStrength.PERFECT.chance, r);
+			set.addGene(entity, HEGenes.lightning_strike, GeneStrength.PERFECT.chance, r);
 			//Explosion Punch
 			//Electricity absorbtion
 		}
 		if (entity instanceof EntityElderGuardian)
 		{
 			set.addGene(entity, LucraftCoreGenes.energy_blast, GeneStrength.PERFECT.chance, r);
+			set.addGene(entity, HEGenes.photon_blast, GeneStrength.PERFECT.chance, r);
 			set.addGene(entity, FifthWorldGenes.potion_immunity_minecraft_blindness, 1.0f);   //Visions
+			set.addGene(entity, HEGenes.precision, 1.0f);
 			//Long Range Potion effect
 		}
 		else if (entity instanceof EntityGuardian)
 		{
 			set.addGene(entity, LucraftCoreGenes.energy_blast, GeneStrength.VERY_HIGH.chance, r);
+			set.addGene(entity, HEGenes.photon_blast, GeneStrength.VERY_HIGH.chance, r);
 			set.addGene(entity, FifthWorldGenes.potion_immunity_minecraft_blindness, 1.0f);
 			//Thorn projectiles
 			//Predator Vision
 			//Thorn when attacked
 			//Lock on?
-			//Laser (sustained)
 		}
 		if (entity instanceof EntityEndermite)
 		{
@@ -443,6 +460,7 @@ public class GeneHandler
 		{
 			set.addGene(entity, FifthWorldGenes.potion_immunity_minecraft_weakness, 1.0f);
 			set.addGene(entity, FifthWorldGenes.create_item_minecraft_arrow, GeneStrength.HIGH.chance, r);
+			set.addGene(entity, HEGenes.precision, 1.0f);
 			//Remove need to eat?
 			//Any since magic?
 		}
@@ -516,6 +534,7 @@ public class GeneHandler
 		if (entity instanceof EntityWither)
 		{
 			//Cannonball powers
+			set.addGene(entity, HEGenes.god_mode, GeneStrength.PERFECT.chance, r);
 		}
 
 		//General
@@ -617,7 +636,7 @@ public class GeneHandler
 	public static void onRegisterKarmaStats(RegistryEvent.Register<KarmaStat> e)
 	{
 		e.getRegistry()
-				.register(TEST_SUBJECTS_EXPLODED = new KarmaStat("test_subjects_exploded", -25).setRegistryName(TheFifthWorld.MODID, "test_subjects_exploded"));
+				.register(TEST_SUBJECTS_EXPLODED = new KarmaStat("test_subjects_exploded", -75).setRegistryName(TheFifthWorld.MODID, "test_subjects_exploded"));
 	}
 
 	@SubscribeEvent

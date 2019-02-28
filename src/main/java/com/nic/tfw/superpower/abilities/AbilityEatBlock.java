@@ -11,6 +11,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Gui;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.math.Vec3d;
@@ -30,6 +31,15 @@ public class AbilityEatBlock extends AbilityAction
 	public AbilityEatBlock(EntityLivingBase player)
 	{
 		super(player);
+	}
+
+	@Override public void registerData()
+	{
+		super.registerData();
+		getDataManager().register(SATURATION, 1f);
+		getDataManager().register(FOOD, 1);
+		getDataManager().register(FROM, Blocks.AIR);
+		getDataManager().register(TO, Blocks.AIR);
 	}
 
 	@Override public boolean action()

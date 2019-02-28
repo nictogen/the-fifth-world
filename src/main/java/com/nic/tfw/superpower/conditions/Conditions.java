@@ -23,6 +23,8 @@ public class Conditions
 		public static final AbilityCondition.ConditionEntry sprinting = null;
 		public static final AbilityCondition.ConditionEntry swimming = null;
 		public static final AbilityCondition.ConditionEntry using_hand = null;
+		public static final AbilityCondition.ConditionEntry day = null;
+		public static final AbilityCondition.ConditionEntry night = null;
 	}
 
 	@SubscribeEvent
@@ -34,6 +36,8 @@ public class Conditions
 		e.getRegistry().register(new AbilityCondition.ConditionEntry(SprintingCondition.class, new ResourceLocation(TheFifthWorld.MODID, "sprinting")));
 		e.getRegistry().register(new AbilityCondition.ConditionEntry(SwimmingCondition.class, new ResourceLocation(TheFifthWorld.MODID, "swimming")));
 		e.getRegistry().register(new AbilityCondition.ConditionEntry(UsingHandCondition.class, new ResourceLocation(TheFifthWorld.MODID, "using_hand")));
+		e.getRegistry().register(new AbilityCondition.ConditionEntry(NightCondition.class, new ResourceLocation(TheFifthWorld.MODID, "is_night")));
+		e.getRegistry().register(new AbilityCondition.ConditionEntry(DayCondition.class, new ResourceLocation(TheFifthWorld.MODID, "is_day")));
 	}
 
 }

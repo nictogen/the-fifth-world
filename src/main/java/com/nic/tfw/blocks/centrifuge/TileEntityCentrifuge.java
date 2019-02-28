@@ -17,6 +17,8 @@ import net.minecraft.util.NonNullList;
 
 import javax.annotation.Nullable;
 
+import static com.nic.tfw.superpower.genes.GeneSet.COLOR_TAG;
+
 /**
  * Created by Nictogen on 1/11/19.
  */
@@ -111,13 +113,14 @@ public class TileEntityCentrifuge extends TileEntityLockableLoot implements ITic
 					if (type1 == GeneSet.SetType.GENE && type2 == GeneSet.SetType.GENE)
 					{
 						//Combine
-						set1.combine(set2).addTo(stack2);
+						set1.mixSets(set2).addTo(stack2);
 						setInventorySlotContents(0, new ItemStack(TheFifthWorld.Items.vial));
 					}
 					else if (type1 == GeneSet.SetType.GENE && type2 == GeneSet.SetType.EMPTY)
 					{
 						//Copy
 						set1.addTo(stack2);
+						stack2.getTagCompound().setIntArray(COLOR_TAG, stack1.getTagCompound().getIntArray(COLOR_TAG));
 					}
 					else if (type1 == GeneSet.SetType.GENE && type2 == GeneSet.SetType.SAMPLE)
 					{

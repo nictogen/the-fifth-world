@@ -10,10 +10,7 @@ import com.nic.tfw.items.ItemVial;
 import com.nic.tfw.proxy.CommonProxy;
 import com.nic.tfw.superpower.SuperpowerGeneticallyModified;
 import com.nic.tfw.superpower.abilities.*;
-import com.nic.tfw.superpower.abilities.defects.ButterFingers;
-import com.nic.tfw.superpower.abilities.defects.InvoluntaryExplosion;
-import com.nic.tfw.superpower.abilities.defects.RestrictiveDiet;
-import com.nic.tfw.superpower.abilities.defects.SetOnFire;
+import com.nic.tfw.superpower.abilities.defects.*;
 import com.nic.tfw.superpower.genes.GeneHandler;
 import lucraft.mods.lucraftcore.superpowers.Superpower;
 import lucraft.mods.lucraftcore.superpowers.abilities.AbilityEntry;
@@ -40,9 +37,8 @@ public class TheFifthWorld
 {
     public static final String MODID = "the-fifth-world";
     public static final String NAME = "The Fifth World";
-    public static final String VERSION = "0.3.5";
+    public static final String VERSION = "0.4";
 	public static final String DEPENDENCIES = "required-after:lucraftcore@[1.12.2-2.4.1,)";
-
 
 	@SidedProxy(clientSide = "com.nic.tfw.proxy.ClientProxy", serverSide = "com.nic.tfw.proxy.CommonProxy")
 	public static CommonProxy proxy;
@@ -103,7 +99,9 @@ public class TheFifthWorld
 		event.getRegistry().register(new AbilityEntry(SetOnFire.class, new ResourceLocation(MODID, "set_on_fire")));
 		event.getRegistry().register(new AbilityEntry(ButterFingers.class, new ResourceLocation(MODID, "butter_fingers")));
 		event.getRegistry().register(new AbilityEntry(RestrictiveDiet.class, new ResourceLocation(MODID, "restrictive_diet")));
-
+		event.getRegistry().register(new AbilityEntry(Deafness.class, new ResourceLocation(MODID, "deafness")));
+		event.getRegistry().register(new AbilityEntry(LightningRod.class, new ResourceLocation(MODID, "lightning_rod")));
+		event.getRegistry().register(new AbilityEntry(Starving.class, new ResourceLocation(MODID, "starving")));
 		event.getRegistry().register(new AbilityEntry(AbilityMakeHostile.class, new ResourceLocation(MODID, "make_hostile")));
 		event.getRegistry().register(new AbilityEntry(AbilityScreech.class, new ResourceLocation(MODID, "screech")));
 		event.getRegistry().register(new AbilityEntry(AbilityLayEgg.class, new ResourceLocation(MODID, "lay_egg")));
@@ -116,7 +114,6 @@ public class TheFifthWorld
 		event.getRegistry().register(new AbilityEntry(AbilityChangeItem.class, new ResourceLocation(MODID, "change_item")));
 		event.getRegistry().register(new AbilityEntry(AbilityBonemealArea.class, new ResourceLocation(MODID, "bonemeal_area")));
 		event.getRegistry().register(new AbilityEntry(AbilitySummonEntity.class, new ResourceLocation(MODID, "summon_entity")));
-
 	}
 
     @GameRegistry.ObjectHolder(MODID)

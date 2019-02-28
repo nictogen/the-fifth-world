@@ -4,6 +4,7 @@ import com.nic.tfw.TheFifthWorld;
 import com.nic.tfw.items.ItemVial;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraftforge.client.event.ModelRegistryEvent;
 import net.minecraftforge.client.model.ModelLoader;
@@ -41,4 +42,8 @@ public class ClientProxy extends CommonProxy
 
 	}
 
+	public void stopSounds(EntityPlayer player){
+		if(player == null || Minecraft.getMinecraft().player == player)
+		Minecraft.getMinecraft().getSoundHandler().stopSounds();
+	}
 }

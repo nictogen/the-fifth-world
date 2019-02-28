@@ -15,6 +15,7 @@ public class InvoluntaryExplosion extends AbilityConstant
 
 	@Override public void updateTick()
 	{
+		if(!entity.world.isRemote)
 		entity.world.createExplosion(null, entity.posX, entity.posY, entity.posZ, 5.0f, true);
 	}
 

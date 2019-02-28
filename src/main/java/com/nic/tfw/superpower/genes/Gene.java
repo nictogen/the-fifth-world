@@ -13,6 +13,7 @@ import net.minecraftforge.registries.IForgeRegistryEntry;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.Random;
 import java.util.UUID;
 
@@ -68,7 +69,12 @@ public class Gene extends IForgeRegistryEntry.Impl<Gene>
 		return this;
 	}
 
-	Ability getAbility(EntityLivingBase entity, GeneSet.GeneData geneData)
+	public Gene addCooldown(int fairCooldown){
+		this.dataMods.add(new Gene.DataMod<>(Ability.MAX_COOLDOWN, (int) ((float) fairCooldown / 0.15f), true, true));
+		return this;
+	}
+
+	public Ability getAbility(EntityLivingBase entity, GeneSet.GeneData geneData)
 	{
 		try
 		{
@@ -96,18 +102,13 @@ public class Gene extends IForgeRegistryEntry.Impl<Gene>
 
 	public GeneSet.GeneData combine(GeneSet.GeneData one, GeneSet.GeneData two)
 	{
-		for (UUID donor : one.donors)
-			for (UUID uuid : two.donors)
-				if (uuid.equals(donor))
-					return one;
-
 		ArrayList<UUID> donors = new ArrayList<>(one.donors);
 		donors.addAll(two.donors);
 
-		ArrayList<AbilityCondition.ConditionEntry> conditions = new ArrayList<>(one.conditions);
+		HashSet<AbilityCondition.ConditionEntry> conditions = new HashSet<>(one.conditions);
 		conditions.addAll(two.conditions);
 
-		return new GeneSet.GeneData(one.gene, donors, one.quality + two.quality, conditions);
+		return new GeneSet.GeneData(one.gene, donors, one.gene instanceof GeneDefect ? one.quality : one.quality + two.quality, conditions);
 	}
 
 	public static class DataMod<T>
@@ -139,14 +140,14 @@ public class Gene extends IForgeRegistryEntry.Impl<Gene>
 			if (isQualified)
 			{
 				if(value instanceof Integer){
-					Integer i = (!isReversed) ? new Integer((int) (((Integer) value).floatValue() * geneData.quality)) : new Integer((int) (((Integer) value).floatValue() *  (1f - geneData.quality)));
+					Integer i = (!isReversed) ? new Integer((int) (((Integer) value).floatValue() * geneData.quality)) : new Integer((int) (((Integer) value).floatValue() *  (1f - geneData.quality/3.5f)));
 					if(i < 1)
 						i = 1;
 					return (T) i;
 				} else if(value instanceof Double){
-					return (!isReversed) ? (T) new Double((int) (((Double) value).floatValue() * geneData.quality)) : (T) new Double((int) (((Double) value).floatValue() *  (1f - geneData.quality)));
+					return (!isReversed) ? (T) new Double((int) (((Double) value).floatValue() * geneData.quality)) : (T) new Double((int) (((Double) value).floatValue() *  (1f - geneData.quality/3.5f)));
 				} else if(value instanceof Float){
-					return (!isReversed) ? (T) new Float((int) ((Float) value * geneData.quality)) : (T) new Float((int) ((Float) value *  (1f - geneData.quality)));
+					return (!isReversed) ? (T) new Float((int) ((Float) value * geneData.quality)) : (T) new Float((int) ((Float) value *  (1f - geneData.quality/3.5f)));
 				}
 			}
 			return value;

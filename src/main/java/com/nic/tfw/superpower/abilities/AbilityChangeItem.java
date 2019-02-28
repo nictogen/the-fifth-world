@@ -40,7 +40,7 @@ public class AbilityChangeItem extends AbilityAction
 
 	@Override public boolean action()
 	{
-		if (entity.getHeldItemMainhand().equals(getDataManager().get(FROM)))
+		if (ItemStack.areItemStacksEqual(entity.getHeldItemMainhand(), getDataManager().get(FROM)))
 		{
 			entity.setHeldItem(EnumHand.MAIN_HAND, getDataManager().get(TO).copy());
 			return true;
@@ -67,7 +67,7 @@ public class AbilityChangeItem extends AbilityAction
 			if (event.getTarget() instanceof EntityLivingBase)
 				for (Ability currentAbility : Ability.getAbilities((EntityLivingBase) event.getTarget()))
 					if (currentAbility instanceof AbilityChangeItem && currentAbility.isUnlocked())
-						if (((EntityLivingBase) event.getTarget()).getHeldItemMainhand().equals(currentAbility.getDataManager().get(FROM)))
+						if (ItemStack.areItemStacksEqual(((EntityLivingBase) event.getTarget()).getHeldItemMainhand(), currentAbility.getDataManager().get(FROM)))
 						{
 							((EntityLivingBase) event.getTarget()).setHeldItem(EnumHand.MAIN_HAND, currentAbility.getDataManager().get(TO).copy());
 							currentAbility.setCooldown(currentAbility.getMaxCooldown());
