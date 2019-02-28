@@ -38,7 +38,7 @@ public class TheFifthWorld
     public static final String MODID = "the-fifth-world";
     public static final String NAME = "The Fifth World";
     public static final String VERSION = "0.4";
-	public static final String DEPENDENCIES = "required-after:lucraftcore@[1.12.2-2.4.1,)";
+	public static final String DEPENDENCIES = "required-after:lucraftcore@[1.12.2-2.4.1,); after:heroesexpansion@[1.12.2-1.3.2,)";
 
 	@SidedProxy(clientSide = "com.nic.tfw.proxy.ClientProxy", serverSide = "com.nic.tfw.proxy.CommonProxy")
 	public static CommonProxy proxy;

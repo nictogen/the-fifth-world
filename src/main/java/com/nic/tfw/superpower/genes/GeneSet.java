@@ -84,7 +84,10 @@ public class GeneSet
 			{
 				GeneSet g = new GeneSet(cap.getData().getCompoundTag(VIAL_DATA_TAG));
 				if (!g.genes.isEmpty())
+				{
+					g.createDefects();
 					this.genes.add(g.genes.get(0));
+				}
 			}
 		}
 		this.originalDonor = entityLivingBase.getPersistentID();
