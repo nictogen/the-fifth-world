@@ -29,13 +29,13 @@ public class ClientProxy extends CommonProxy
 	@Override public void onInit(FMLInitializationEvent event)
 	{
 		super.onInit(event);
-		Minecraft.getMinecraft().getItemColors().registerItemColorHandler(new ItemVial.GeneColor(), TheFifthWorld.Items.vial);
+		Minecraft.getMinecraft().getItemColors().registerItemColorHandler(new ItemVial.GeneColor(), TheFifthWorld.Items.glass_vial);
 		Minecraft.getMinecraft().getItemColors().registerItemColorHandler(new ItemVial.GeneColor(), TheFifthWorld.Items.injection_gun);
 	}
 
 	@SubscribeEvent
 	public static void onRegisterModels(ModelRegistryEvent e) {
-		ModelLoader.setCustomModelResourceLocation(TheFifthWorld.Items.vial, 0, new ModelResourceLocation(TheFifthWorld.Items.vial.getRegistryName(), "inventory"));
+		ModelLoader.setCustomModelResourceLocation(TheFifthWorld.Items.glass_vial, 0, new ModelResourceLocation(TheFifthWorld.Items.glass_vial.getRegistryName(), "inventory"));
 		ModelLoader.setCustomModelResourceLocation(TheFifthWorld.Items.injection_gun, 0, new ModelResourceLocation(TheFifthWorld.Items.injection_gun.getRegistryName(), "inventory"));
 		ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(TheFifthWorld.Blocks.centrifuge), 0, new ModelResourceLocation(TheFifthWorld.Blocks.centrifuge.getRegistryName(), "inventory"));
 		ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(TheFifthWorld.Blocks.microscope), 0, new ModelResourceLocation(TheFifthWorld.Blocks.microscope.getRegistryName(), "inventory"));

@@ -3,6 +3,7 @@ package com.nic.tfw.items;
 import com.nic.tfw.TheFifthWorld;
 import com.nic.tfw.superpower.genes.GeneDefect;
 import com.nic.tfw.superpower.genes.GeneSet;
+import lucraft.mods.lucraftcore.LucraftCore;
 import net.minecraft.client.renderer.color.IItemColor;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.player.EntityPlayer;
@@ -26,11 +27,12 @@ public class ItemVial extends Item
 {
 	public ItemVial()
 	{
-		setRegistryName(TheFifthWorld.MODID, "vial");
-		setTranslationKey("vial");
+		setRegistryName(TheFifthWorld.MODID, "glass_vial");
+		setTranslationKey("glass_vial");
 		addPropertyOverride(new ResourceLocation("full"), (stack, worldIn, entityIn) -> stack.hasTagCompound() && stack.getTagCompound().hasKey(GeneSet.VIAL_DATA_TAG) ? stack.getTagCompound().getCompoundTag(
 				GeneSet.VIAL_DATA_TAG).getInteger(GeneSet.VIAL_TYPE_TAG) : 0);
 		setMaxStackSize(1);
+		this.setCreativeTab(LucraftCore.CREATIVE_TAB);
 	}
 
 	public static class GeneColor implements IItemColor
@@ -78,20 +80,6 @@ public class ItemVial extends Item
 				}
 			}
 		}
-	}
-
-	public NBTTagCompound getNBTShareTag(ItemStack stack)
-	{
-		if(stack.getTagCompound() != null && !stack.getTagCompound().hasKey("updated"))
-		{
-			GeneSet g = GeneSet.fromStack(stack);
-			if(g != null)
-			{
-				g = g.mixSets(g);
-				g.addTo(stack);
-			}
-		}
-		return stack.getTagCompound();
 	}
 
 	@Override public ActionResult<ItemStack> onItemRightClick(World worldIn, EntityPlayer playerIn, EnumHand handIn)

@@ -12,10 +12,7 @@ import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraftforge.registries.IForgeRegistryEntry;
 
 import java.lang.reflect.InvocationTargetException;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.Random;
-import java.util.UUID;
+import java.util.*;
 
 /**
  * Created by Nictogen on 1/12/19.
@@ -102,7 +99,7 @@ public class Gene extends IForgeRegistryEntry.Impl<Gene>
 
 	public GeneSet.GeneData combine(GeneSet.GeneData one, GeneSet.GeneData two)
 	{
-		ArrayList<UUID> donors = new ArrayList<>(one.donors);
+		Set<UUID> donors = new HashSet<>(one.donors);
 		donors.addAll(two.donors);
 
 		HashSet<AbilityCondition.ConditionEntry> conditions = new HashSet<>(one.conditions);

@@ -122,13 +122,13 @@ public class GeneHandler
 		public static final Gene potion_immunity_minecraft_levitation = new GenePotionImmunity("Levitation Immunity", 25);
 
 		//Item Creation
-		public static final Gene create_item_minecraft_slime_ball = new GeneItemCreation("Create Slime",600, new ItemStack(Items.SLIME_BALL));
-		public static final Gene create_item_minecraft_golden_sword = new GeneItemCreation("Create Golden Sword",600, new ItemStack(Items.GOLDEN_SWORD));
-		public static final Gene create_item_minecraft_gold_nugget = new GeneItemCreation("Create Gold Nugget",300, new ItemStack(Items.GOLD_NUGGET));
-		public static final Gene create_item_minecraft_ghast_tear = new GeneItemCreation("Create Ghast Tear",600, new ItemStack(Items.GHAST_TEAR));
-		public static final Gene create_item_minecraft_ender_pearl = new GeneItemCreation("Create Ender Pearl",300, new ItemStack(Items.ENDER_PEARL));
-		public static final Gene create_item_minecraft_snowball = new GeneItemCreation("Create Snowballs",30, new ItemStack(Items.SNOWBALL));
-		public static final Gene create_item_minecraft_arrow = new GeneItemCreation("Create Arrow",200, new ItemStack(Items.ARROW));
+		public static final Gene create_item_minecraft_slime_ball = new GeneItemCreation("Create Slime",1000, new ItemStack(Items.SLIME_BALL));
+		public static final Gene create_item_minecraft_golden_sword = new GeneItemCreation("Create Golden Sword",1000, new ItemStack(Items.GOLDEN_SWORD));
+		public static final Gene create_item_minecraft_gold_nugget = new GeneItemCreation("Create Gold Nugget",700, new ItemStack(Items.GOLD_NUGGET));
+		public static final Gene create_item_minecraft_ghast_tear = new GeneItemCreation("Create Ghast Tear",1000, new ItemStack(Items.GHAST_TEAR));
+		public static final Gene create_item_minecraft_ender_pearl = new GeneItemCreation("Create Ender Pearl",500, new ItemStack(Items.ENDER_PEARL));
+		public static final Gene create_item_minecraft_snowball = new GeneItemCreation("Create Snowballs",300, new ItemStack(Items.SNOWBALL));
+		public static final Gene create_item_minecraft_arrow = new GeneItemCreation("Create Arrow",500, new ItemStack(Items.ARROW));
 
 		//Item Change
 		public static final Gene milk_entity = new Gene(AbilityChangeItem.class, "Milk Extraction", true).setRegistryName(TheFifthWorld.MODID, "milk").addDataMod(new Gene.DataMod<>(Ability.MAX_COOLDOWN, 600, true, true)).addDataMod(new Gene.DataMod<>(AbilityChangeItem.FROM, new ItemStack(Items.BUCKET), false)).addDataMod(new Gene.DataMod<>(AbilityChangeItem.TO, new ItemStack(Items.MILK_BUCKET), false));

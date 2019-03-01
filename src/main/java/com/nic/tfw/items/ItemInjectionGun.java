@@ -2,6 +2,7 @@ package com.nic.tfw.items;
 
 import com.nic.tfw.TheFifthWorld;
 import com.nic.tfw.superpower.genes.GeneSet;
+import lucraft.mods.lucraftcore.LucraftCore;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
@@ -26,6 +27,7 @@ public class ItemInjectionGun extends Item
 		addPropertyOverride(new ResourceLocation("full"), (stack, worldIn, entityIn) -> stack.hasTagCompound() && stack.getTagCompound().hasKey(GeneSet.VIAL_DATA_TAG) ? stack.getTagCompound().getCompoundTag(
 				GeneSet.VIAL_DATA_TAG).getInteger(GeneSet.VIAL_TYPE_TAG) : -1);
 		setMaxStackSize(1);
+		this.setCreativeTab(LucraftCore.CREATIVE_TAB);
 	}
 
 	@Override public boolean onEntitySwing(EntityLivingBase entityLiving, ItemStack stack)
@@ -90,7 +92,7 @@ public class ItemInjectionGun extends Item
 		}
 		else if (stackOff.isEmpty() && set != null)
 		{
-			ItemStack vial = new ItemStack(TheFifthWorld.Items.vial);
+			ItemStack vial = new ItemStack(TheFifthWorld.Items.glass_vial);
 			set.addTo(vial);
 			playerIn.setHeldItem(off, vial);
 			stack.getTagCompound().removeTag(GeneSet.VIAL_DATA_TAG);

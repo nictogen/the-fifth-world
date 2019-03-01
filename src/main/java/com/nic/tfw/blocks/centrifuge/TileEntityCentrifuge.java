@@ -114,7 +114,7 @@ public class TileEntityCentrifuge extends TileEntityLockableLoot implements ITic
 					{
 						//Combine
 						set1.mixSets(set2).addTo(stack2);
-						setInventorySlotContents(0, new ItemStack(TheFifthWorld.Items.vial));
+						setInventorySlotContents(0, new ItemStack(TheFifthWorld.Items.glass_vial));
 					}
 					else if (type1 == GeneSet.SetType.GENE && type2 == GeneSet.SetType.EMPTY)
 					{
@@ -125,7 +125,7 @@ public class TileEntityCentrifuge extends TileEntityLockableLoot implements ITic
 					else if (type1 == GeneSet.SetType.GENE && type2 == GeneSet.SetType.SAMPLE)
 					{
 						//Finish
-						setInventorySlotContents(0, new ItemStack(TheFifthWorld.Items.vial));
+						setInventorySlotContents(0, new ItemStack(TheFifthWorld.Items.glass_vial));
 						set1.toSerum(set2).addTo(stack2);
 					}
 				}

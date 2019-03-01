@@ -1,4 +1,4 @@
-item.vial.name=Vial
+item.glass_vial.name=Vial
 item.injection_gun.name=Injection Gun
 block.centrifuge.name=Centrifuge
 tile.centrifuge.name=Centrifuge

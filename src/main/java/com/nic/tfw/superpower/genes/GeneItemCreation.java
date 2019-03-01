@@ -12,7 +12,7 @@ public class GeneItemCreation extends Gene
 	{
 		super(AbilityItemCreation.class, displayName, true);
 		setRegistryName(ability.getRegistryName() + "_" + item.getItem().getRegistryName().toString().replace(":", "_"));
-		addDataMod(new DataMod<>(AbilityItemCreation.COOLDOWN, maxCooldown));
+		addCooldown(maxCooldown);
 		addDataMod(new DataMod<>(AbilityItemCreation.ITEM, item));
 	}
 }

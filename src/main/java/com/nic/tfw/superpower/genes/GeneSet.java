@@ -1,6 +1,7 @@
 package com.nic.tfw.superpower.genes;
 
 import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
 import com.nic.tfw.TheFifthWorld;
 import com.nic.tfw.potion.PotionExplode;
 import com.nic.tfw.superpower.conditions.Conditions;
@@ -124,6 +125,7 @@ public class GeneSet
 				gList.appendTag(geneData.serializeNBT());
 			geneList.appendTag(gList);
 		}
+		compound.setUniqueId(DONORS_TAG, originalDonor);
 		compound.setTag(GENE_LIST_TAG, geneList);
 		compound.setInteger(VIAL_TYPE_TAG, type.ordinal());
 		return compound;
@@ -138,7 +140,7 @@ public class GeneSet
 		Random r = getRandom();
 		Color c = new Color(r.nextFloat(), r.nextFloat(), r.nextFloat());
 		stack.getTagCompound().setIntArray(COLOR_TAG, new int[] { c.getRed(), c.getGreen(), c.getBlue() });
-		stack.getTagCompound().setBoolean("updated", true);
+		stack.getTagCompound().setBoolean("updated_versions", true);
 	}
 
 	public boolean giveTo(EntityLivingBase entity, @Nullable EntityPlayer injector)
@@ -147,7 +149,7 @@ public class GeneSet
 			return false;
 		if (SuperpowerHandler.hasSuperpower(entity))
 			return false;
-		if (getDonors().isEmpty() || !getDonors().toArray()[0].equals(entity.getPersistentID()))
+		if (!originalDonor.equals(entity.getPersistentID()))
 			return false;
 
 		for (ArrayList<GeneData> gene : this.genes)
@@ -227,18 +229,9 @@ public class GeneSet
 
 	public GeneSet toSerum(GeneSet bloodSample)
 	{
-		@SuppressWarnings("unchecked") ArrayList<ArrayList<GeneData>> g = (ArrayList<ArrayList<GeneData>>) genes.clone();
-
-		ArrayList<UUID> donor = Lists.newArrayList(bloodSample.getDonors().iterator().next());
-		for (ArrayList<GeneData> geneData : g)
-			for (GeneData geneDatum : geneData)
-			{
-				ArrayList<UUID> donors = new ArrayList<>(donor);
-				donors.addAll(geneDatum.donors);
-				geneDatum.donors = donors;
-			}
-
-		return new GeneSet(SetType.SERUM, g);
+		GeneSet g = new GeneSet(SetType.SERUM, new ArrayList<>(genes));
+		g.originalDonor = bloodSample.originalDonor;
+		return g;
 	}
 
 	@SuppressWarnings("unchecked") public GeneSet mixSets(GeneSet otherSet)
@@ -300,13 +293,13 @@ public class GeneSet
 	public void addGene(UUID donor, Gene g, float quality)
 	{
 		if (g != null)
-			this.genes.add(Lists.newArrayList(new GeneData(g, Lists.newArrayList(donor), quality)));
+			this.genes.add(Lists.newArrayList(new GeneData(g, Sets.newHashSet(donor), quality)));
 	}
 
 	public void addGene(UUID donor, Gene g, float qualityMax, Random random)
 	{
 		if (g != null)
-			this.genes.add(Lists.newArrayList(new GeneData(g, Lists.newArrayList(donor), random.nextFloat() * qualityMax)));
+			this.genes.add(Lists.newArrayList(new GeneData(g, Sets.newHashSet(donor), random.nextFloat() * qualityMax)));
 	}
 
 	public void addGene(EntityLivingBase donor, Gene g, float quality)
@@ -382,13 +375,13 @@ public class GeneSet
 	 */
 	public static class GeneData
 	{
-		public ArrayList<UUID> donors = new ArrayList<>();
+		public Set<UUID> donors = new HashSet<>();
 		public Set<AbilityCondition.ConditionEntry> conditions = new HashSet<>();
 		public float quality;
 		public Gene gene;
 		public NBTTagCompound extra;
 
-		public GeneData(Gene gene, ArrayList<UUID> donors, float quality, Set<AbilityCondition.ConditionEntry> conditions)
+		public GeneData(Gene gene, Set<UUID> donors, float quality, Set<AbilityCondition.ConditionEntry> conditions)
 		{
 			this.gene = gene;
 			this.donors.addAll(donors);
@@ -397,7 +390,7 @@ public class GeneSet
 			this.conditions = conditions;
 		}
 
-		public GeneData(Gene gene, ArrayList<UUID> donors, float quality)
+		public GeneData(Gene gene, Set<UUID> donors, float quality)
 		{
 			this(gene, donors, quality, new HashSet<>());
 		}

@@ -32,7 +32,7 @@ public class SlotDNA extends Slot
 			if(g != null){
 				for (int i = 0; i < g.genes.size() && i < 3; i++)
 				{
-					ItemStack s = new ItemStack(TheFifthWorld.Items.vial);
+					ItemStack s = new ItemStack(TheFifthWorld.Items.glass_vial);
 					ArrayList<ArrayList<GeneSet.GeneData>> list = new ArrayList<>();
 					list.add(g.genes.get(i));
 					new GeneSet(GeneSet.SetType.GENE, list).addTo(s);

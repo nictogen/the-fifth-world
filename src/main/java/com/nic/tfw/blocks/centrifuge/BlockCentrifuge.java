@@ -1,13 +1,13 @@
 package com.nic.tfw.blocks.centrifuge;
 
 import com.nic.tfw.TheFifthWorld;
+import lucraft.mods.lucraftcore.LucraftCore;
 import net.minecraft.block.BlockContainer;
 import net.minecraft.block.BlockDirectional;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.PropertyDirection;
 import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
-import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.InventoryHelper;
@@ -35,7 +35,7 @@ public class BlockCentrifuge extends BlockContainer
 		setTranslationKey("centrifuge");
 		setHardness(2.0f).setResistance(10.0f);
 		this.setDefaultState(this.blockState.getBaseState().withProperty(FACING, EnumFacing.NORTH));
-		this.setCreativeTab(CreativeTabs.REDSTONE);
+		this.setCreativeTab(LucraftCore.CREATIVE_TAB);
 	}
 
 	public void onBlockAdded(World worldIn, BlockPos pos, IBlockState state)
