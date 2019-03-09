@@ -102,6 +102,7 @@ public class TheFifthWorld
 		event.getRegistry().register(new AbilityEntry(Deafness.class, new ResourceLocation(MODID, "deafness")));
 		event.getRegistry().register(new AbilityEntry(LightningRod.class, new ResourceLocation(MODID, "lightning_rod")));
 		event.getRegistry().register(new AbilityEntry(Starving.class, new ResourceLocation(MODID, "starving")));
+
 		event.getRegistry().register(new AbilityEntry(AbilityMakeHostile.class, new ResourceLocation(MODID, "make_hostile")));
 		event.getRegistry().register(new AbilityEntry(AbilityScreech.class, new ResourceLocation(MODID, "screech")));
 		event.getRegistry().register(new AbilityEntry(AbilityLayEgg.class, new ResourceLocation(MODID, "lay_egg")));

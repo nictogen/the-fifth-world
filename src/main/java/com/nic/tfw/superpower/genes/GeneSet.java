@@ -45,6 +45,7 @@ public class GeneSet
 	public static final String VIAL_TYPE_TAG = "full";
 	public static final String DONOR_LIST_TAG = "donors";
 	public static final String CONDITION_LIST_TAG = "conditions";
+	public static final String INVERTED_CONDITIONS_TAG = "inverted";
 	public static final String ORIGINAL_DONOR_UUID_TAG = "donors";
 	public static final String ORIGINAL_DONOR_NAME_TAG = "donor_name";
 	public static final String COLOR_TAG = "color";
@@ -233,6 +234,10 @@ public class GeneSet
 			}
 		}
 
+		for (ArrayList<GeneData> gene : genes)
+			for (GeneData geneData : gene)
+				if (geneData.gene != null)
+					geneData.gene.postAbilityCreation(abilityList, geneData);
 		return abilityList;
 	}
 
@@ -346,7 +351,7 @@ public class GeneSet
 							conditions.get(r.nextInt(conditions.size())) :
 							Conditions.TheFifthWorldConditions.always_on;
 					list.add(condition);
-					genes.get(0).add(new GeneData(defect, g.donors, 1.0f, list));
+					genes.get(0).add(new GeneData(defect, g.donors, 1.0f, list, (condition != Conditions.TheFifthWorldConditions.always_on) && r.nextBoolean()));
 				}
 				q -= chance;
 			}
@@ -390,6 +395,7 @@ public class GeneSet
 		public float quality;
 		public Gene gene;
 		public NBTTagCompound extra;
+		public boolean invertedConditions = false;
 
 		public GeneData(Gene gene, Set<UUID> donors, float quality, Set<AbilityCondition.ConditionEntry> conditions)
 		{
@@ -398,6 +404,12 @@ public class GeneSet
 			this.quality = quality;
 			this.extra = new NBTTagCompound();
 			this.conditions = conditions;
+		}
+
+		public GeneData(Gene gene, Set<UUID> donors, float quality, Set<AbilityCondition.ConditionEntry> conditions, boolean invertedConditions)
+		{
+			this(gene, donors, quality, conditions);
+			this.invertedConditions = invertedConditions;
 		}
 
 		public GeneData(Gene gene, Set<UUID> donors, float quality)
@@ -419,6 +431,7 @@ public class GeneSet
 			this.quality = compound.getFloat(GeneSet.GENE_QUALITY_TAG);
 			this.gene = GeneHandler.GENE_REGISTRY.getValue(new ResourceLocation(compound.getString(GeneSet.GENE_REGISTRY_NAME_TAG)));
 			this.extra = compound;
+			this.invertedConditions = compound.getBoolean(INVERTED_CONDITIONS_TAG);
 		}
 
 		public NBTTagCompound serializeNBT()
@@ -435,6 +448,7 @@ public class GeneSet
 				list.appendTag(new NBTTagString(condition.getRegistryName().toString()));
 			compound.setTag(GeneSet.CONDITION_LIST_TAG, list);
 			gene.serializeExtra(this, compound);
+			compound.setBoolean(INVERTED_CONDITIONS_TAG, this.invertedConditions);
 			return compound;
 		}
 

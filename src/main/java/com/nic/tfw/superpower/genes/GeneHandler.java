@@ -202,9 +202,7 @@ public class GeneHandler
 		GENE_REGISTRY.register(new GeneDefect(Deafness.class, "Deaf").setAlwaysOnChance(0.1f));
 		GENE_REGISTRY.register(new GeneDefect(LightningRod.class, "Lightning Rod").setAlwaysOnChance(0.1f));
 		GENE_REGISTRY.register(new GeneDefect(Starving.class, "Starving").setAlwaysOnChance(0.3f));
-		//		GENE_REGISTRY.register(new GeneDefect(DefectEnable.class, "Enabling Power").setAlwaysOnChance(0.0f));
-		//		GENE_REGISTRY.register(new GeneDefect(DefectDisable.class, "Disabling Power").setAlwaysOnChance(0.0f));
-
+		GENE_REGISTRY.register(new GeneDisableDefect().setAlwaysOnChance(0.0f));
 	}
 
 	public static void addSpeciesGenes(EntityLivingBase entity, GeneSet set)

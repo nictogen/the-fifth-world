@@ -1,11 +1,13 @@
 package com.nic.tfw.superpower.genes;
 
+import com.nic.tfw.superpower.conditions.Conditions;
 import com.nic.tfw.util.ListUtil;
 import lucraft.mods.lucraftcore.superpowers.abilities.Ability;
 import lucraft.mods.lucraftcore.superpowers.abilities.AbilityEntry;
 import lucraft.mods.lucraftcore.superpowers.abilities.data.AbilityData;
 import lucraft.mods.lucraftcore.superpowers.abilities.data.AbilityDataManager;
 import lucraft.mods.lucraftcore.superpowers.abilities.predicates.AbilityCondition;
+import lucraft.mods.lucraftcore.superpowers.abilities.predicates.AbilityConditionNot;
 import lucraft.mods.lucraftcore.superpowers.abilities.predicates.AbilityConditionOr;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.nbt.NBTTagCompound;
@@ -44,6 +46,7 @@ public class Gene extends IForgeRegistryEntry.Impl<Gene>
 			if(dataMod.isQualified) return true;
 		return false;
 	}
+
 	float getQuality(Ability ability, Random r)
 	{
 		float quality = 0f;
@@ -84,7 +87,7 @@ public class Gene extends IForgeRegistryEntry.Impl<Gene>
 			Ability a = ability.getAbilityClass().getConstructor(EntityLivingBase.class).newInstance(entity);
 			ArrayList<AbilityCondition> list = new ArrayList<>();
 			for (AbilityCondition.ConditionEntry condition : geneData.conditions)
-				list.add(condition.getConditionClass().newInstance());
+				list.add((geneData.invertedConditions) ? new AbilityConditionNot(condition.getConditionClass().newInstance()) :  condition.getConditionClass().newInstance());
 			if(!list.isEmpty())
 				a.addCondition(new AbilityConditionOr(list.toArray(new AbilityCondition[0])));
 			AbilityDataManager abilityDataManager = a.getDataManager();
@@ -106,6 +109,8 @@ public class Gene extends IForgeRegistryEntry.Impl<Gene>
 		}
 	}
 
+	public void postAbilityCreation(Ability.AbilityMap abilityList, GeneSet.GeneData data){}
+
 	public GeneSet.GeneData combine(GeneSet.GeneData one, GeneSet.GeneData two)
 	{
 		Set<UUID> donors = new HashSet<>(one.donors);
@@ -114,7 +119,16 @@ public class Gene extends IForgeRegistryEntry.Impl<Gene>
 		HashSet<AbilityCondition.ConditionEntry> conditions = new HashSet<>(one.conditions);
 		conditions.addAll(two.conditions);
 
-		return new GeneSet.GeneData(one.gene, donors, one.gene instanceof GeneDefect ? one.quality : one.quality + two.quality, conditions);
+		boolean f = false;
+		if ((one.invertedConditions || two.invertedConditions) && !conditions.contains(Conditions.TheFifthWorldConditions.always_on)){
+			if(one.invertedConditions && two.invertedConditions){
+				f = true;
+			} else {
+				f = new Random().nextBoolean();
+			}
+		}
+
+		return new GeneSet.GeneData(one.gene, donors, one.gene instanceof GeneDefect ? one.quality : one.quality + two.quality, conditions, f);
 	}
 
 	public static class DataMod<T>
