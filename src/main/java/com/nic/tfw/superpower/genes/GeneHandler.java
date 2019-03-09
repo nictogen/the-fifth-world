@@ -182,7 +182,6 @@ public class GeneHandler
 			set.addGene(entity, FifthWorldGenes.give_potion_minecraft_nightvision, 1.0f);
 			set.addGene(entity, FifthWorldGenes.summon_bats, GeneStrength.HIGH.chance, r);
 			set.addGene(entity, HEGenes.wall_crawling, 1.0f);
-//			Hang upside down
 //			Drain blood
 //			Bite
 		}

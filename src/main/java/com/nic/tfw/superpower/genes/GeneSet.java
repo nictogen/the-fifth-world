@@ -86,7 +86,8 @@ public class GeneSet
 				GeneSet g = new GeneSet(cap.getData().getCompoundTag(VIAL_DATA_TAG));
 				if (!g.genes.isEmpty())
 				{
-					g.createDefects();
+					if(entityLivingBase instanceof EntityPlayer)
+						g.createDefects();
 					this.genes.add(g.genes.get(0));
 				}
 			}
@@ -160,7 +161,7 @@ public class GeneSet
 					float speciesChance = new Random(entity.getClass().getName().length()).nextFloat() * 0.5f;
 					float indivChance =
 							new Random(entity.getUniqueID().getLeastSignificantBits() + entity.getUniqueID().getMostSignificantBits()).nextFloat() * 0.5f;
-					if (speciesChance + indivChance > 0.75f)
+					if (speciesChance + indivChance >= 0.95f)
 					{
 						Random r = entity.getRNG();
 						if (entity.world instanceof WorldServer)
@@ -328,8 +329,8 @@ public class GeneSet
 			for (int i = 0; q > 0; i++)
 			{
 				GeneDefect defect = (GeneDefect) d.get(r.nextInt(d.size()));
-				float chance = Math.min(100, q);
-				if (r.nextFloat() < (chance / Math.max(1.0f, 2f - 0.5f * i)))
+				float chance = Math.min(1, q);
+				if (r.nextFloat() <= (chance / Math.max(1.0f, 2f - 0.5f * i)))
 				{
 					HashSet<AbilityCondition.ConditionEntry> list = new HashSet<>();
 					AbilityCondition.ConditionEntry condition = r.nextFloat() > defect.getAlwaysOnChance() ?

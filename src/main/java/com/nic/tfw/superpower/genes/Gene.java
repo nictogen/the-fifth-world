@@ -6,6 +6,7 @@ import lucraft.mods.lucraftcore.superpowers.abilities.AbilityEntry;
 import lucraft.mods.lucraftcore.superpowers.abilities.data.AbilityData;
 import lucraft.mods.lucraftcore.superpowers.abilities.data.AbilityDataManager;
 import lucraft.mods.lucraftcore.superpowers.abilities.predicates.AbilityCondition;
+import lucraft.mods.lucraftcore.superpowers.abilities.predicates.AbilityConditionOr;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.text.TextComponentTranslation;
@@ -76,8 +77,11 @@ public class Gene extends IForgeRegistryEntry.Impl<Gene>
 		try
 		{
 			Ability a = ability.getAbilityClass().getConstructor(EntityLivingBase.class).newInstance(entity);
+			ArrayList<AbilityCondition> list = new ArrayList<>();
 			for (AbilityCondition.ConditionEntry condition : geneData.conditions)
-				a.addCondition(condition.getConditionClass().newInstance());
+				list.add(condition.getConditionClass().newInstance());
+			if(!list.isEmpty())
+				a.addCondition(new AbilityConditionOr(list.toArray(new AbilityCondition[0])));
 			AbilityDataManager abilityDataManager = a.getDataManager();
 			abilityDataManager.set(Ability.TITLE, new TextComponentTranslation(geneData.gene.displayName));
 			for (DataMod dataMod : dataMods)
