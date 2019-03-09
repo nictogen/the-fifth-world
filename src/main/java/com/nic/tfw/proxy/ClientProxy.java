@@ -2,6 +2,7 @@ package com.nic.tfw.proxy;
 
 import com.nic.tfw.TheFifthWorld;
 import com.nic.tfw.items.ItemVial;
+import com.nic.tfw.superpower.abilities.defects.ApplyShader;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.entity.player.EntityPlayer;
@@ -45,5 +46,9 @@ public class ClientProxy extends CommonProxy
 	public void stopSounds(EntityPlayer player){
 		if(player == null || Minecraft.getMinecraft().player == player)
 		Minecraft.getMinecraft().getSoundHandler().stopSounds();
+	}
+
+	public void loadShader(String shader){
+		ApplyShader.Handler.shader = shader;
 	}
 }

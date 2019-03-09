@@ -19,4 +19,8 @@ public class CommonProxy
 	public void stopSounds(EntityPlayer player){
 
 	}
+
+	public void loadShader(String shader){
+
+	}
 }

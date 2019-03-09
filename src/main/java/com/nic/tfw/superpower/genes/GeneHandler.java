@@ -99,7 +99,7 @@ public class GeneHandler
 		public static final Gene potion_punch_minecraft_levitation = new GenePotionPunch("Levitation Punch", 25, 250, 10);
 
 		//Misc
-		public static final Gene healing = new Gene(AbilityHealing.class, "Healing Factor").addDataMod(new Gene.DataMod<>(AbilityHealing.AMOUNT, 2.5f));
+		public static final Gene healing = new Gene(AbilityHealing.class, "Healing Factor").addDataMod(new Gene.DataMod<>(AbilityHealing.AMOUNT, 1f));
 		public static final Gene fire_resistance = new Gene(AbilityFireResistance.class, "Fire Resistance");
 		//		public static final Gene size_change = null;
 		public static final Gene teleport = new Gene(AbilityTeleport.class, "Teleportation").addDataMod(new Gene.DataMod<>(AbilityTeleport.DISTANCE, 50f))
@@ -202,6 +202,16 @@ public class GeneHandler
 		GENE_REGISTRY.register(new GeneDefect(Deafness.class, "Deaf").setAlwaysOnChance(0.1f));
 		GENE_REGISTRY.register(new GeneDefect(LightningRod.class, "Lightning Rod").setAlwaysOnChance(0.1f));
 		GENE_REGISTRY.register(new GeneDefect(Starving.class, "Starving").setAlwaysOnChance(0.3f));
+		GENE_REGISTRY.register(new GeneDefect(ApplyShader.class, "Apply Flip", true).setAlwaysOnChance(0.1f).setRegistryName(TheFifthWorld.MODID, "apply_flip").addDataMod(new Gene.DataMod<>(ApplyShader.SHADER, "minecraft:shaders/post/flip.json", false)));
+		GENE_REGISTRY.register(new GeneDefect(ApplyShader.class, "Apply Art", true).setAlwaysOnChance(0.3f).setRegistryName(TheFifthWorld.MODID, "apply_art").addDataMod(new Gene.DataMod<>(ApplyShader.SHADER, "minecraft:shaders/post/art.json", false)));
+		GENE_REGISTRY.register(new GeneDefect(ApplyShader.class, "Apply Pencil", true).setAlwaysOnChance(0.5f).setRegistryName(TheFifthWorld.MODID, "apply_pencil").addDataMod(new Gene.DataMod<>(ApplyShader.SHADER, "minecraft:shaders/post/pencil.json", false)));
+		GENE_REGISTRY.register(new GeneDefect(ApplyShader.class, "Apply Invert", true).setAlwaysOnChance(0.3f).setRegistryName(TheFifthWorld.MODID, "apply_invert").addDataMod(new Gene.DataMod<>(ApplyShader.SHADER, "minecraft:shaders/post/invert.json", false)));
+		GENE_REGISTRY.register(new GeneDefect(ApplyShader.class, "Apply Bits", true).setAlwaysOnChance(0.3f).setRegistryName(TheFifthWorld.MODID, "apply_bits").addDataMod(new Gene.DataMod<>(ApplyShader.SHADER, "minecraft:shaders/post/bits.json", false)));
+		GENE_REGISTRY.register(new GeneDefect(ApplyShader.class, "Apply Blur", true).setAlwaysOnChance(0.2f).setRegistryName(TheFifthWorld.MODID, "apply_blur").addDataMod(new Gene.DataMod<>(ApplyShader.SHADER, "minecraft:shaders/post/blur.json", false)));
+		GENE_REGISTRY.register(new GeneDefect(ApplyShader.class, "Apply Wobble", true).setAlwaysOnChance(0.3f).setRegistryName(TheFifthWorld.MODID, "apply_wobble").addDataMod(new Gene.DataMod<>(ApplyShader.SHADER, "minecraft:shaders/post/wobble.json", false)));
+		GENE_REGISTRY.register(new GeneDefect(ApplyShader.class, "Apply Creeper", true).setAlwaysOnChance(0.3f).setRegistryName(TheFifthWorld.MODID, "apply_creeper").addDataMod(new Gene.DataMod<>(ApplyShader.SHADER, "minecraft:shaders/post/creeper.json", false)));
+		GENE_REGISTRY.register(new GeneDefect(ApplyShader.class, "Apply Spider", true).setAlwaysOnChance(0.3f).setRegistryName(TheFifthWorld.MODID, "apply_spider").addDataMod(new Gene.DataMod<>(ApplyShader.SHADER, "minecraft:shaders/post/spider.json", false)));
+
 		GENE_REGISTRY.register(new GeneDisableDefect().setAlwaysOnChance(0.0f));
 	}
 

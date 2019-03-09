@@ -93,7 +93,7 @@ public class GeneSet
 				GeneSet g = new GeneSet(cap.getData().getCompoundTag(VIAL_DATA_TAG));
 				if (!g.genes.isEmpty())
 				{
-					if(entityLivingBase instanceof EntityPlayer)
+					if (entityLivingBase instanceof EntityPlayer)
 						g.createDefects();
 					this.genes.add(g.genes.get(0));
 				}
@@ -342,7 +342,9 @@ public class GeneSet
 
 			for (int i = 0; q > 0; i++)
 			{
-				GeneDefect defect = (GeneDefect) d.get(r.nextInt(d.size()));
+				GeneDefect defect = null;
+				while (defect == null || hasConflictingGene(defect, genes.get(0)))
+					defect = (GeneDefect) d.get(r.nextInt(d.size()));
 				float chance = Math.min(1, q);
 				if (r.nextFloat() <= (chance / Math.max(1.0f, 2f - 0.5f * i)))
 				{
@@ -351,11 +353,20 @@ public class GeneSet
 							conditions.get(r.nextInt(conditions.size())) :
 							Conditions.TheFifthWorldConditions.always_on;
 					list.add(condition);
-					genes.get(0).add(new GeneData(defect, g.donors, 1.0f, list, (condition != Conditions.TheFifthWorldConditions.always_on) && r.nextBoolean()));
+					genes.get(0)
+							.add(new GeneData(defect, g.donors, 1.0f, list, (condition != Conditions.TheFifthWorldConditions.always_on) && r.nextBoolean()));
 				}
 				q -= chance;
 			}
 		}
+	}
+
+	private boolean hasConflictingGene(Gene gene, ArrayList<GeneData> list)
+	{
+		for (GeneData geneData : list)
+			if (geneData.gene != gene && gene.ability == geneData.gene.ability)
+				return true;
+		return false;
 	}
 
 	public Set<UUID> getDonors()

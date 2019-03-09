@@ -16,6 +16,11 @@ public class GeneDefect extends Gene
 		super(c, displayName);
 	}
 
+	public GeneDefect(Class<? extends Ability> c, String displayName, boolean dontRegister)
+	{
+		super(c, displayName, dontRegister);
+	}
+
 	GeneDefect setAlwaysOnChance(float chance)
 	{
 		alwaysOnChance = chance;

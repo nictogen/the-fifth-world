@@ -1,5 +1,6 @@
 package com.nic.tfw.superpower.genes;
 
+import com.nic.tfw.TheFifthWorld;
 import lucraft.mods.lucraftcore.superpowers.abilities.Ability;
 import lucraft.mods.lucraftcore.superpowers.abilities.predicates.AbilityCondition;
 import lucraft.mods.lucraftcore.superpowers.abilities.predicates.AbilityConditionNot;
@@ -15,7 +16,8 @@ public class GeneDisableDefect extends GeneDefect
 {
 	public GeneDisableDefect()
 	{
-		super(null, "Power Disabling");
+		super(null, "Power Disabling", true);
+		setRegistryName(TheFifthWorld.MODID, "disable_power");
 	}
 
 	@Override public Ability getAbility(EntityLivingBase entity, GeneSet.GeneData geneData)
