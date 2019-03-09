@@ -51,11 +51,13 @@ public class GeneSet
 	public static final String VIAL_DATA_TAG = "vial_data";
 	public static final String GENE_REGISTRY_NAME_TAG = "registry_name";
 	public static final String GENE_QUALITY_TAG = "quality";
+	public static final String SHOW_DEFECTS_TAG = "show_defects";
 
 	public ArrayList<ArrayList<GeneData>> genes = new ArrayList<>();
 	public UUID originalDonor = UUID.randomUUID();
 	public String originalDonorName = "";
 	public SetType type;
+	public boolean showDefects = false;
 
 	/**
 	 * Constructors/Converting from stuff
@@ -75,6 +77,7 @@ public class GeneSet
 
 		this.originalDonor = nbt.getUniqueId(ORIGINAL_DONOR_UUID_TAG);
 		this.originalDonorName = nbt.getString(ORIGINAL_DONOR_NAME_TAG);
+		this.showDefects = nbt.getBoolean(SHOW_DEFECTS_TAG);
 	}
 
 	public GeneSet(EntityLivingBase entityLivingBase)
@@ -134,6 +137,7 @@ public class GeneSet
 		compound.setString(ORIGINAL_DONOR_NAME_TAG, originalDonorName);
 		compound.setTag(GENE_LIST_TAG, geneList);
 		compound.setInteger(VIAL_TYPE_TAG, type.ordinal());
+		compound.setBoolean(SHOW_DEFECTS_TAG, showDefects);
 		return compound;
 	}
 

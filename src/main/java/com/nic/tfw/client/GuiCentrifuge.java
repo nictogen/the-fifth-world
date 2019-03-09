@@ -19,13 +19,11 @@ public class GuiCentrifuge extends GuiContainer
 	private static final ResourceLocation centrifugeGuiTexture2 = new ResourceLocation(TheFifthWorld.MODID +":textures/gui/centrifuge_gui_2.png");
 	private static final ResourceLocation centrifugeGuiTexture3 = new ResourceLocation(TheFifthWorld.MODID +":textures/gui/centrifuge_gui_3.png");
 
-	private final InventoryPlayer inventoryPlayer;
 	private final IInventory tileCentrifuge;
 
 	public GuiCentrifuge(InventoryPlayer parInventoryPlayer, IInventory parInventoryCentrifuge)
 	{
 		super(new ContainerCentrifuge(parInventoryPlayer, parInventoryCentrifuge));
-		inventoryPlayer = parInventoryPlayer;
 		tileCentrifuge = parInventoryCentrifuge;
 		ySize = 236;
 	}

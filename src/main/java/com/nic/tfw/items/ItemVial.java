@@ -1,24 +1,31 @@
 package com.nic.tfw.items;
 
+import com.google.common.collect.Lists;
 import com.nic.tfw.TheFifthWorld;
+import com.nic.tfw.superpower.genes.Gene;
 import com.nic.tfw.superpower.genes.GeneDefect;
+import com.nic.tfw.superpower.genes.GeneHandler;
 import com.nic.tfw.superpower.genes.GeneSet;
 import lucraft.mods.lucraftcore.LucraftCore;
 import net.minecraft.client.renderer.color.IItemColor;
 import net.minecraft.client.util.ITooltipFlag;
+import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.EnumHand;
+import net.minecraft.util.NonNullList;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
 
 import javax.annotation.Nullable;
 import java.awt.*;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.UUID;
 
 /**
  * Created by Nictogen on 1/11/19.
@@ -74,13 +81,13 @@ public class ItemVial extends Item
 			{
 				for (GeneSet.GeneData gene : geneList)
 				{
-					if (!(gene.gene instanceof GeneDefect))
+					if (!(gene.gene instanceof GeneDefect) || g.showDefects)
 					{
 						String s = "";
 						s += gene.gene.displayName;
-						s += ", ";
 						if (gene.gene.isQualified())
 						{
+							s += ", ";
 							for (QualityRating qualityRating : QualityRating.values())
 							{
 								if (gene.quality >= qualityRating.minQuality)
@@ -97,6 +104,28 @@ public class ItemVial extends Item
 			}
 		}
 	}
+
+	@Override
+	public void getSubItems(CreativeTabs tab, NonNullList<ItemStack> subItems)
+	{
+		if (!isInCreativeTab(tab))
+			return;
+
+		subItems.add(new ItemStack(this));
+		for (Gene gene : GeneHandler.GENE_REGISTRY)
+		{
+			ItemStack stack = new ItemStack(this);
+			ArrayList<GeneSet.GeneData> data = Lists.newArrayList(new GeneSet.GeneData(gene, new HashSet<>(), 1.0f, new HashSet<>()));
+			ArrayList<ArrayList<GeneSet.GeneData>> set = new ArrayList<>();
+			set.add(data);
+			GeneSet g = new GeneSet(GeneSet.SetType.GENE, set);
+			g.originalDonor = UUID.randomUUID();
+			g.showDefects = true;
+			g.addTo(stack);
+			subItems.add(stack);
+		}
+	}
+
 
 	@Override public ActionResult<ItemStack> onItemRightClick(World worldIn, EntityPlayer playerIn, EnumHand handIn)
 	{
