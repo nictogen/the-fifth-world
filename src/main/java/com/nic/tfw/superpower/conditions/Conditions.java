@@ -17,14 +17,6 @@ public class Conditions
 	@GameRegistry.ObjectHolder(TheFifthWorld.MODID)
 	public static class TheFifthWorldConditions {
 		public static final AbilityCondition.ConditionEntry always_on = null;
-		public static final AbilityCondition.ConditionEntry sneaking = null;
-		public static final AbilityCondition.ConditionEntry falling = null;
-		public static final AbilityCondition.ConditionEntry sleeping = null;
-		public static final AbilityCondition.ConditionEntry sprinting = null;
-		public static final AbilityCondition.ConditionEntry swimming = null;
-		public static final AbilityCondition.ConditionEntry using_hand = null;
-		public static final AbilityCondition.ConditionEntry day = null;
-		public static final AbilityCondition.ConditionEntry night = null;
 	}
 
 	@SubscribeEvent
@@ -38,7 +30,7 @@ public class Conditions
 		e.getRegistry().register(new AbilityCondition.ConditionEntry(UsingHandCondition.class, new ResourceLocation(TheFifthWorld.MODID, "using_hand")));
 		e.getRegistry().register(new AbilityCondition.ConditionEntry(NightCondition.class, new ResourceLocation(TheFifthWorld.MODID, "is_night")));
 		e.getRegistry().register(new AbilityCondition.ConditionEntry(DayCondition.class, new ResourceLocation(TheFifthWorld.MODID, "is_day")));
+		e.getRegistry().register(new AbilityCondition.ConditionEntry(AloneCondition.class, new ResourceLocation(TheFifthWorld.MODID, "alone")));
 	}
-
 }
 

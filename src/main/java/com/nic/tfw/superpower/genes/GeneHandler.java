@@ -199,9 +199,9 @@ public class GeneHandler
 		GENE_REGISTRY.register(new GeneDefect(ButterFingers.class, "Butter Fingers").setAlwaysOnChance(0.1f));
 		GENE_REGISTRY.register(new GeneDefect(SetOnFire.class, "Spontaneous Combustion").setAlwaysOnChance(0.2f));
 		GENE_REGISTRY.register(new GeneDefect(RestrictiveDiet.class, "Can't Eat").setAlwaysOnChance(0.9f));
-		GENE_REGISTRY.register(new GeneDefect(Deafness.class, "Deaf"));
-		GENE_REGISTRY.register(new GeneDefect(LightningRod.class, "Lightning Rod"));
-		GENE_REGISTRY.register(new GeneDefect(Starving.class, "Starving"));
+		GENE_REGISTRY.register(new GeneDefect(Deafness.class, "Deaf").setAlwaysOnChance(0.1f));
+		GENE_REGISTRY.register(new GeneDefect(LightningRod.class, "Lightning Rod").setAlwaysOnChance(0.1f));
+		GENE_REGISTRY.register(new GeneDefect(Starving.class, "Starving").setAlwaysOnChance(0.3f));
 		//		GENE_REGISTRY.register(new GeneDefect(DefectEnable.class, "Enabling Power").setAlwaysOnChance(0.0f));
 		//		GENE_REGISTRY.register(new GeneDefect(DefectDisable.class, "Disabling Power").setAlwaysOnChance(0.0f));
 

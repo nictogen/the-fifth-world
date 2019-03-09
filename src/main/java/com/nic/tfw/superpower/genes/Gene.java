@@ -40,7 +40,9 @@ public class Gene extends IForgeRegistryEntry.Impl<Gene>
 	}
 
 	public boolean isQualified(){
-		return !this.dataMods.isEmpty();
+		for (DataMod dataMod : dataMods)
+			if(dataMod.isQualified) return true;
+		return false;
 	}
 	float getQuality(Ability ability, Random r)
 	{

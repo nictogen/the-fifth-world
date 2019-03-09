@@ -18,7 +18,7 @@ public class ButterFingers extends AbilityConstant
 
 	@Override public void updateTick()
 	{
-		if (!entity.getHeldItemMainhand().isEmpty())
+		if (!entity.getHeldItemMainhand().isEmpty() && !entity.world.isRemote)
 		{
 			ItemStack stack = entity.getHeldItemMainhand();
 			ItemStack stack1 = stack.copy();
