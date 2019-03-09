@@ -45,14 +45,16 @@ public class GeneSet
 	public static final String VIAL_TYPE_TAG = "full";
 	public static final String DONOR_LIST_TAG = "donors";
 	public static final String CONDITION_LIST_TAG = "conditions";
-	public static final String DONORS_TAG = "donors";
+	public static final String ORIGINAL_DONOR_UUID_TAG = "donors";
+	public static final String ORIGINAL_DONOR_NAME_TAG = "donor_name";
+	public static final String COLOR_TAG = "color";
 	public static final String VIAL_DATA_TAG = "vial_data";
 	public static final String GENE_REGISTRY_NAME_TAG = "registry_name";
 	public static final String GENE_QUALITY_TAG = "quality";
-	public static final String COLOR_TAG = "color";
 
 	public ArrayList<ArrayList<GeneData>> genes = new ArrayList<>();
 	public UUID originalDonor = UUID.randomUUID();
+	public String originalDonorName = "";
 	public SetType type;
 
 	/**
@@ -71,7 +73,8 @@ public class GeneSet
 			genes.add(list);
 		}
 
-		this.originalDonor = nbt.getUniqueId(DONORS_TAG);
+		this.originalDonor = nbt.getUniqueId(ORIGINAL_DONOR_UUID_TAG);
+		this.originalDonorName = nbt.getString(ORIGINAL_DONOR_NAME_TAG);
 	}
 
 	public GeneSet(EntityLivingBase entityLivingBase)
@@ -93,6 +96,7 @@ public class GeneSet
 			}
 		}
 		this.originalDonor = entityLivingBase.getPersistentID();
+		this.originalDonorName = entityLivingBase.getDisplayName().getFormattedText();
 		Collections.shuffle(this.genes, getRandom());
 	}
 
@@ -126,7 +130,8 @@ public class GeneSet
 				gList.appendTag(geneData.serializeNBT());
 			geneList.appendTag(gList);
 		}
-		compound.setUniqueId(DONORS_TAG, originalDonor);
+		compound.setUniqueId(ORIGINAL_DONOR_UUID_TAG, originalDonor);
+		compound.setString(ORIGINAL_DONOR_NAME_TAG, originalDonorName);
 		compound.setTag(GENE_LIST_TAG, geneList);
 		compound.setInteger(VIAL_TYPE_TAG, type.ordinal());
 		return compound;
@@ -141,14 +146,13 @@ public class GeneSet
 		Random r = getRandom();
 		Color c = new Color(r.nextFloat(), r.nextFloat(), r.nextFloat());
 		stack.getTagCompound().setIntArray(COLOR_TAG, new int[] { c.getRed(), c.getGreen(), c.getBlue() });
-		stack.getTagCompound().setBoolean("updated_versions", true);
 	}
 
 	public boolean giveTo(EntityLivingBase entity, @Nullable EntityPlayer injector)
 	{
 		if (type != SetType.SERUM)
 			return false;
-		if (SuperpowerHandler.hasSuperpower(entity))
+		if (SuperpowerHandler.hasSuperpower(entity) && !(entity instanceof EntityVillager))
 			return false;
 		if (!originalDonor.equals(entity.getPersistentID()))
 			return false;
@@ -232,6 +236,7 @@ public class GeneSet
 	{
 		GeneSet g = new GeneSet(SetType.SERUM, new ArrayList<>(genes));
 		g.originalDonor = bloodSample.originalDonor;
+		g.originalDonorName = bloodSample.originalDonorName;
 		return g;
 	}
 

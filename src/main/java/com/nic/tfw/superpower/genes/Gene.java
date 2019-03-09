@@ -39,6 +39,9 @@ public class Gene extends IForgeRegistryEntry.Impl<Gene>
 		this(c, displayName, false);
 	}
 
+	public boolean isQualified(){
+		return !this.dataMods.isEmpty();
+	}
 	float getQuality(Ability ability, Random r)
 	{
 		float quality = 0f;

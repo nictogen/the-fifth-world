@@ -54,27 +54,43 @@ public class ItemVial extends Item
 		super.addInformation(stack, worldIn, tooltip, flagIn);
 		GeneSet g = GeneSet.fromStack(stack);
 
-		if(g != null && g.type == GeneSet.SetType.GENE)
+		if(g != null )
 		{
+			switch (g.type){
+			case EMPTY:
+				return;
+			case SAMPLE:
+				tooltip.add("Blood Sample From: " + g.originalDonorName + ".");
+				return;
+			case GENE:
+				break;
+			case SERUM:
+				tooltip.add("Serum Created For: " + g.originalDonorName + ".");
+				break;
+			}
+
 			tooltip.add("Genes: ");
 			for (ArrayList<GeneSet.GeneData> geneList : g.genes)
 			{
 				for (GeneSet.GeneData gene : geneList)
 				{
-					if(!(gene.gene instanceof GeneDefect))
+					if (!(gene.gene instanceof GeneDefect))
 					{
 						String s = "";
 						s += gene.gene.displayName;
 						s += ", ";
-						for (QualityRating qualityRating : QualityRating.values())
+						if (gene.gene.isQualified())
 						{
-							if (gene.quality >= qualityRating.minQuality)
+							for (QualityRating qualityRating : QualityRating.values())
 							{
-								s += qualityRating.displayName;
-								break;
+								if (gene.quality >= qualityRating.minQuality)
+								{
+									s += qualityRating.displayName;
+									break;
+								}
 							}
+							s += " Quality";
 						}
-						s += " Quality";
 						tooltip.add(s);
 					}
 				}
