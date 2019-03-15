@@ -2,10 +2,14 @@ package com.nic.tfw;
 
 import com.nic.tfw.blocks.centrifuge.BlockCentrifuge;
 import com.nic.tfw.blocks.centrifuge.TileEntityCentrifuge;
+import com.nic.tfw.blocks.diffuser.BlockDiffuser;
+import com.nic.tfw.blocks.diffuser.TileEntityDiffuser;
 import com.nic.tfw.blocks.microscope.BlockMicroscope;
 import com.nic.tfw.blocks.microscope.TileEntityMicroscope;
 import com.nic.tfw.client.GuiHandler;
 import com.nic.tfw.items.ItemInjectionGun;
+import com.nic.tfw.items.ItemLabCoat;
+import com.nic.tfw.items.ItemSafetyGoggles;
 import com.nic.tfw.items.ItemVial;
 import com.nic.tfw.proxy.CommonProxy;
 import com.nic.tfw.superpower.SuperpowerGeneticallyModified;
@@ -56,6 +60,7 @@ public class TheFifthWorld
     {
 	    GameRegistry.registerTileEntity(TileEntityMicroscope.class, new ResourceLocation(MODID , ":microscope"));
 	    GameRegistry.registerTileEntity(TileEntityCentrifuge.class, new ResourceLocation(MODID , ":centrifuge"));
+	    GameRegistry.registerTileEntity(TileEntityDiffuser.class, new ResourceLocation(MODID, "infinity_diffuser"));
 	    NetworkRegistry.INSTANCE.registerGuiHandler(this, new GuiHandler());
 	    proxy.onInit(event);
     }
@@ -71,6 +76,7 @@ public class TheFifthWorld
 	{
 		event.getRegistry().register(new BlockMicroscope());
 		event.getRegistry().register(new BlockCentrifuge());
+		event.getRegistry().register(new BlockDiffuser());
 	}
 
 	@SubscribeEvent
@@ -84,6 +90,8 @@ public class TheFifthWorld
 		}
 		event.getRegistry().register(new ItemVial());
 		event.getRegistry().register(new ItemInjectionGun());
+		event.getRegistry().register(new ItemLabCoat());
+		event.getRegistry().register(new ItemSafetyGoggles());
 	}
 
 	@SubscribeEvent
@@ -116,18 +124,24 @@ public class TheFifthWorld
 		event.getRegistry().register(new AbilityEntry(AbilityChangeItem.class, new ResourceLocation(MODID, "change_item")));
 		event.getRegistry().register(new AbilityEntry(AbilityBonemealArea.class, new ResourceLocation(MODID, "bonemeal_area")));
 		event.getRegistry().register(new AbilityEntry(AbilitySummonEntity.class, new ResourceLocation(MODID, "summon_entity")));
+		event.getRegistry().register(new AbilityEntry(AbilitySkinChange.class, new ResourceLocation(MODID, "skin_change")));
+		event.getRegistry().register(new AbilityEntry(AbilityIronSkin.class, new ResourceLocation(MODID, "iron_skin")));
+		event.getRegistry().register(new AbilityEntry(AbilitySizeChangeChild.class, new ResourceLocation(MODID, "size_change_child")));
 	}
 
     @GameRegistry.ObjectHolder(MODID)
     public static class Blocks {
 	    public static final Block microscope = null;
 	    public static final Block centrifuge = null;
+	    public static final Block diffuser = null;
     }
 
 	@GameRegistry.ObjectHolder(MODID)
 	public static class Items {
 		public static final Item glass_vial = null;
 		public static final Item injection_gun = null;
+		public static final Item safety_goggles = null;
+		public static final Item lab_coat = null;
 	}
 
 	@GameRegistry.ObjectHolder(MODID)

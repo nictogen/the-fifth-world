@@ -1,0 +1,29 @@
+{
+  "variants": {
+    "inventory": {
+      "model": "the-fifth-world:infinity_diffuser"
+    },
+    "facing=east": {
+      "model": "the-fifth-world:infinity_diffuser",
+      "y": 270
+    },
+    "facing=south": {
+      "model": "the-fifth-world:infinity_diffuser",
+      "y": 0
+    },
+    "facing=west": {
+      "model": "the-fifth-world:infinity_diffuser",
+      "y": 90
+    },
+    "facing=north": {
+      "model": "the-fifth-world:infinity_diffuser",
+      "y": 180
+    },
+    "facing=up": {
+      "model": "the-fifth-world:infinity_diffuser"
+    },
+    "facing=down": {
+      "model": "the-fifth-world:infinity_diffuser"
+    }
+  }
+}

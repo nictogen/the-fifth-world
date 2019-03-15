@@ -140,7 +140,7 @@ public class BlockMicroscope extends BlockContainer
 	{
 		TileEntity tileentity = worldIn.getTileEntity(pos);
 
-		if (tileentity instanceof TileEntityDispenser)
+		if (tileentity instanceof TileEntityMicroscope)
 		{
 			InventoryHelper.dropInventoryItems(worldIn, pos, (TileEntityMicroscope)tileentity);
 		}

@@ -25,7 +25,7 @@ public class GeneDisableDefect extends GeneDefect
 		return null;
 	}
 
-	public void postAbilityCreation(Ability.AbilityMap abilityList, GeneSet.GeneData geneData)
+	public void postAbilityCreation(EntityLivingBase entityLivingBase, Ability.AbilityMap abilityList, GeneSet.GeneData geneData)
 	{
 		ArrayList<AbilityCondition> list = new ArrayList<>();
 		for (AbilityCondition.ConditionEntry condition : geneData.conditions)

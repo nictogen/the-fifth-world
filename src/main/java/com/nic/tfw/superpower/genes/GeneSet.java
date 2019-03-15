@@ -34,6 +34,7 @@ import java.util.List;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import static com.nic.tfw.superpower.genes.GeneHandler.DEFECTS_GIVEN;
 import static com.nic.tfw.superpower.genes.GeneHandler.TEST_SUBJECTS_EXPLODED;
 
 /**
@@ -164,12 +165,13 @@ public class GeneSet
 
 		for (ArrayList<GeneData> gene : this.genes)
 		{
+			Random speciesRandom = new Random(entity.getClass().getName().length());
+			Random indivRandom = new Random(entity.getUniqueID().getLeastSignificantBits() + entity.getUniqueID().getMostSignificantBits());
 			gene.removeIf(geneData -> {
 				if (geneData.gene instanceof GeneDefect)
 				{
-					float speciesChance = new Random(entity.getClass().getName().length()).nextFloat() * 0.5f;
-					float indivChance =
-							new Random(entity.getUniqueID().getLeastSignificantBits() + entity.getUniqueID().getMostSignificantBits()).nextFloat() * 0.5f;
+					float speciesChance = speciesRandom.nextFloat() * 0.5f;
+					float indivChance = indivRandom.nextFloat() * 0.5f;
 					if (speciesChance + indivChance >= 0.95f)
 					{
 						Random r = entity.getRNG();
@@ -179,6 +181,8 @@ public class GeneSet
 										.spawnParticle(EnumParticleTypes.VILLAGER_HAPPY, entity.posX + r.nextGaussian() * 0.2, entity.posY + r.nextGaussian(),
 												entity.posZ + r.nextGaussian() * 0.2, 1, 0.0, 0.0, 0.0, 0.0);
 						return true;
+					} else if(entity != injector && injector != null){
+						KarmaHandler.increaseKarmaStat(injector, DEFECTS_GIVEN);
 					}
 				}
 				return false;
@@ -237,7 +241,7 @@ public class GeneSet
 		for (ArrayList<GeneData> gene : genes)
 			for (GeneData geneData : gene)
 				if (geneData.gene != null)
-					geneData.gene.postAbilityCreation(abilityList, geneData);
+					geneData.gene.postAbilityCreation(entityLivingBase, abilityList, geneData);
 		return abilityList;
 	}
 

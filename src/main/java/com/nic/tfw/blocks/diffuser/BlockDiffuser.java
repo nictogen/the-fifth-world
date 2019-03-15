@@ -1,6 +1,7 @@
-package com.nic.tfw.blocks.centrifuge;
+package com.nic.tfw.blocks.diffuser;
 
 import com.nic.tfw.TheFifthWorld;
+import com.nic.tfw.blocks.microscope.TileEntityMicroscope;
 import lucraft.mods.lucraftcore.LucraftCore;
 import net.minecraft.block.BlockContainer;
 import net.minecraft.block.BlockDirectional;
@@ -9,43 +10,45 @@ import net.minecraft.block.properties.PropertyDirection;
 import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.InventoryHelper;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.*;
-import net.minecraft.util.math.AxisAlignedBB;
+import net.minecraft.tileentity.TileEntityDispenser;
+import net.minecraft.util.EnumBlockRenderType;
+import net.minecraft.util.EnumFacing;
+import net.minecraft.util.Mirror;
+import net.minecraft.util.Rotation;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 
+import javax.annotation.Nullable;
+
 /**
- * Created by Nictogen on 1/11/19.
+ * Created by Nictogen on 2019-03-10.
  */
-public class BlockCentrifuge extends BlockContainer
+public class BlockDiffuser extends BlockContainer
 {
 	public static final PropertyDirection FACING = BlockDirectional.FACING;
-	public static final AxisAlignedBB CENTRIFUGE_AABB = new AxisAlignedBB(0.25D, 0.0, 0.25, 0.75, 0.25, 0.75);
 
-	public BlockCentrifuge()
+	public BlockDiffuser()
 	{
 		super(Material.CIRCUITS);
-		setRegistryName(TheFifthWorld.MODID, "centrifuge");
-		setTranslationKey("centrifuge");
+		setRegistryName(TheFifthWorld.MODID, "diffuser");
+		setTranslationKey("diffuser");
 		setHardness(2.0f).setResistance(10.0f);
 		this.setDefaultState(this.blockState.getBaseState().withProperty(FACING, EnumFacing.NORTH));
 		this.setCreativeTab(LucraftCore.CREATIVE_TAB);
+	}
+
+	@Nullable @Override public TileEntity createNewTileEntity(World worldIn, int meta)
+	{
+		return new TileEntityDiffuser();
 	}
 
 	public void onBlockAdded(World worldIn, BlockPos pos, IBlockState state)
 	{
 		super.onBlockAdded(worldIn, pos, state);
 		this.setDefaultDirection(worldIn, pos, state);
-	}
-
-	@Override public AxisAlignedBB getBoundingBox(IBlockState state, IBlockAccess source, BlockPos pos)
-	{
-		return CENTRIFUGE_AABB;
 	}
 
 	private void setDefaultDirection(World worldIn, BlockPos pos, IBlockState state)
@@ -95,35 +98,6 @@ public class BlockCentrifuge extends BlockContainer
 		return false;
 	}
 
-	public boolean onBlockActivated(World worldIn, BlockPos pos, IBlockState state, EntityPlayer playerIn, EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ)
-	{
-		if (worldIn.isRemote)
-		{
-			return true;
-		}
-		else
-		{
-			TileEntity tileentity = worldIn.getTileEntity(pos);
-
-			if (tileentity instanceof TileEntityCentrifuge)
-			{
-				playerIn.openGui(TheFifthWorld.INSTANCE,
-						TheFifthWorld.GUI.CENTRIFUGE.ordinal(),
-						worldIn,
-						pos.getX(),
-						pos.getY(),
-						pos.getZ());
-			}
-
-			return true;
-		}
-	}
-
-	public TileEntity createNewTileEntity(World worldIn, int meta)
-	{
-		return new TileEntityCentrifuge();
-	}
-
 	public IBlockState getStateForPlacement(World worldIn, BlockPos pos, EnumFacing facing, float hitX, float hitY, float hitZ, int meta, EntityLivingBase placer)
 	{
 		return this.getDefaultState().withProperty(FACING, EnumFacing.getDirectionFromEntityLiving(pos, placer));
@@ -131,16 +105,16 @@ public class BlockCentrifuge extends BlockContainer
 
 	public void onBlockPlacedBy(World worldIn, BlockPos pos, IBlockState state, EntityLivingBase placer, ItemStack stack)
 	{
-		worldIn.setBlockState(pos, state.withProperty(FACING, EnumFacing.getDirectionFromEntityLiving(pos, placer)));
+		worldIn.setBlockState(pos, state.withProperty(FACING, EnumFacing.getDirectionFromEntityLiving(pos, placer)), 2);
 	}
 
 	public void breakBlock(World worldIn, BlockPos pos, IBlockState state)
 	{
 		TileEntity tileentity = worldIn.getTileEntity(pos);
 
-		if (tileentity instanceof TileEntityCentrifuge)
+		if (tileentity instanceof TileEntityDispenser)
 		{
-			InventoryHelper.dropInventoryItems(worldIn, pos, (TileEntityCentrifuge)tileentity);
+			InventoryHelper.dropInventoryItems(worldIn, pos, (TileEntityMicroscope)tileentity);
 		}
 
 		super.breakBlock(worldIn, pos, state);
@@ -164,7 +138,7 @@ public class BlockCentrifuge extends BlockContainer
 		return i;
 	}
 
-		public IBlockState withRotation(IBlockState state, Rotation rot)
+	public IBlockState withRotation(IBlockState state, Rotation rot)
 	{
 		return state.withProperty(FACING, rot.rotate(state.getValue(FACING)));
 	}
@@ -178,6 +152,4 @@ public class BlockCentrifuge extends BlockContainer
 	{
 		return new BlockStateContainer(this, FACING);
 	}
-
 }
-

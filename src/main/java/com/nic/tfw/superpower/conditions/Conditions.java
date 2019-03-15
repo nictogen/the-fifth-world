@@ -21,7 +21,7 @@ public class Conditions
 
 	@SubscribeEvent
 	public static void registerConditions(RegistryEvent.Register<AbilityCondition.ConditionEntry> e) {
-		e.getRegistry().register(new AbilityCondition.ConditionEntry(AlwaysOnCondition.class, new ResourceLocation(TheFifthWorld.MODID, "always_on")));
+		AbilityCondition.ConditionEntry.register(e.getRegistry(), AlwaysOnCondition.class, new ResourceLocation(TheFifthWorld.MODID, "always_on"), (json, ability, abilities) -> new AlwaysOnCondition());
 		e.getRegistry().register(new AbilityCondition.ConditionEntry(SneakingCondition.class, new ResourceLocation(TheFifthWorld.MODID, "sneaking")));
 		e.getRegistry().register(new AbilityCondition.ConditionEntry(FallingCondition.class, new ResourceLocation(TheFifthWorld.MODID, "falling")));
 		e.getRegistry().register(new AbilityCondition.ConditionEntry(SleepingCondition.class, new ResourceLocation(TheFifthWorld.MODID, "sleeping")));

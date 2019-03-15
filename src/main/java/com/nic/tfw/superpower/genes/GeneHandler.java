@@ -167,6 +167,7 @@ public class GeneHandler
 		public static final Gene summon_zombie = new GeneSummonEntity("Summon Zombie", "minecraft:zombie", 5, 2000);
 		public static final Gene summon_bats = new GeneSummonEntity("Summon Bats", "minecraft:bat", 15, 2000);
 
+		public static final Gene iron_skin = new GeneIronSkin("Iron Skin").setRegistryName(TheFifthWorld.MODID + "iron_skin");
 	}
 
 	public static void populateGeneList()

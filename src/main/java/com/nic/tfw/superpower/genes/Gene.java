@@ -109,7 +109,7 @@ public class Gene extends IForgeRegistryEntry.Impl<Gene>
 		}
 	}
 
-	public void postAbilityCreation(Ability.AbilityMap abilityList, GeneSet.GeneData data){}
+	public void postAbilityCreation(EntityLivingBase entityLivingBase, Ability.AbilityMap abilityList, GeneSet.GeneData data){}
 
 	public GeneSet.GeneData combine(GeneSet.GeneData one, GeneSet.GeneData two)
 	{
