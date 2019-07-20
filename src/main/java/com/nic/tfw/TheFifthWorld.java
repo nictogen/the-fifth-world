@@ -2,7 +2,6 @@ package com.nic.tfw;
 
 import com.nic.tfw.blocks.centrifuge.BlockCentrifuge;
 import com.nic.tfw.blocks.centrifuge.TileEntityCentrifuge;
-import com.nic.tfw.blocks.diffuser.TileEntityDiffuser;
 import com.nic.tfw.blocks.microscope.BlockMicroscope;
 import com.nic.tfw.blocks.microscope.TileEntityMicroscope;
 import com.nic.tfw.client.GuiHandler;
@@ -59,7 +58,7 @@ public class TheFifthWorld
     {
 	    GameRegistry.registerTileEntity(TileEntityMicroscope.class, new ResourceLocation(MODID , ":microscope"));
 	    GameRegistry.registerTileEntity(TileEntityCentrifuge.class, new ResourceLocation(MODID , ":centrifuge"));
-	    GameRegistry.registerTileEntity(TileEntityDiffuser.class, new ResourceLocation(MODID, "infinity_diffuser"));
+//	    GameRegistry.registerTileEntity(TileEntityDiffuser.class, new ResourceLocation(MODID, "infinity_diffuser"));
 	    NetworkRegistry.INSTANCE.registerGuiHandler(this, new GuiHandler());
 	    proxy.onInit(event);
     }
