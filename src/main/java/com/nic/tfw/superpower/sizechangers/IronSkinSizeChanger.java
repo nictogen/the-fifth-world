@@ -37,6 +37,6 @@ public class IronSkinSizeChanger extends SizeChanger
 
 	@SubscribeEvent
 	public static void onRegisterSizeChangers(RegistryEvent.Register<SizeChanger> e) {
-		e.getRegistry().register(IRON_SKIN_SIZE_CHANGER.setRegistryName("iron_skin"));
+//		e.getRegistry().register(IRON_SKIN_SIZE_CHANGER.setRegistryName("iron_skin"));
 	}
 }

@@ -2,7 +2,6 @@ package com.nic.tfw;
 
 import com.nic.tfw.blocks.centrifuge.BlockCentrifuge;
 import com.nic.tfw.blocks.centrifuge.TileEntityCentrifuge;
-import com.nic.tfw.blocks.diffuser.BlockDiffuser;
 import com.nic.tfw.blocks.diffuser.TileEntityDiffuser;
 import com.nic.tfw.blocks.microscope.BlockMicroscope;
 import com.nic.tfw.blocks.microscope.TileEntityMicroscope;
@@ -42,7 +41,7 @@ public class TheFifthWorld
     public static final String MODID = "the-fifth-world";
     public static final String NAME = "The Fifth World";
     public static final String VERSION = "0.5";
-	public static final String DEPENDENCIES = "required-after:lucraftcore@[1.12.2-2.4.0,); after:heroesexpansion@[1.12.2-1.3.2,)";
+	public static final String DEPENDENCIES = "required-after:lucraftcore@[1.12.2-2.4.4,); after:heroesexpansion@[1.12.2-1.3.4,)";
 
 	@SidedProxy(clientSide = "com.nic.tfw.proxy.ClientProxy", serverSide = "com.nic.tfw.proxy.CommonProxy")
 	public static CommonProxy proxy;
@@ -76,7 +75,7 @@ public class TheFifthWorld
 	{
 		event.getRegistry().register(new BlockMicroscope());
 		event.getRegistry().register(new BlockCentrifuge());
-		event.getRegistry().register(new BlockDiffuser());
+//		event.getRegistry().register(new BlockDiffuser());
 	}
 
 	@SubscribeEvent
@@ -125,15 +124,15 @@ public class TheFifthWorld
 		event.getRegistry().register(new AbilityEntry(AbilityBonemealArea.class, new ResourceLocation(MODID, "bonemeal_area")));
 		event.getRegistry().register(new AbilityEntry(AbilitySummonEntity.class, new ResourceLocation(MODID, "summon_entity")));
 		event.getRegistry().register(new AbilityEntry(AbilitySkinChange.class, new ResourceLocation(MODID, "skin_change")));
-		event.getRegistry().register(new AbilityEntry(AbilityIronSkin.class, new ResourceLocation(MODID, "iron_skin")));
-		event.getRegistry().register(new AbilityEntry(AbilitySizeChangeChild.class, new ResourceLocation(MODID, "size_change_child")));
+//		event.getRegistry().register(new AbilityEntry(AbilityIronSkin.class, new ResourceLocation(MODID, "iron_skin")));
+//		event.getRegistry().register(new AbilityEntry(AbilitySizeChangeChild.class, new ResourceLocation(MODID, "size_change_child")));
 	}
 
     @GameRegistry.ObjectHolder(MODID)
     public static class Blocks {
 	    public static final Block microscope = null;
 	    public static final Block centrifuge = null;
-	    public static final Block diffuser = null;
+//	    public static final Block diffuser = null;
     }
 
 	@GameRegistry.ObjectHolder(MODID)

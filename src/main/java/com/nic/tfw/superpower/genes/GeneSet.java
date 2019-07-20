@@ -167,6 +167,7 @@ public class GeneSet
 		{
 			Random speciesRandom = new Random(entity.getClass().getName().length());
 			Random indivRandom = new Random(entity.getUniqueID().getLeastSignificantBits() + entity.getUniqueID().getMostSignificantBits());
+
 			gene.removeIf(geneData -> {
 				if (geneData.gene instanceof GeneDefect)
 				{

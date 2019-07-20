@@ -47,6 +47,8 @@ public class ItemSafetyGoggles extends ItemArmor
 
 	@SubscribeEvent
 	public static void onGetBlindness(LivingSuperpowerEvent event){
-		//TODO
+		if(event.getEntityLiving().getItemStackFromSlot(EntityEquipmentSlot.HEAD).getItem() == TheFifthWorld.Items.safety_goggles)
+			event.setCanceled(true);
+
 	}
 }

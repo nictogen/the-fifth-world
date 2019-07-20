@@ -44,7 +44,7 @@ dependencies {
         exclude group: 'cofh'
         exclude group: 'mezz.jei'
     }
-    deobfCompile ("com.gitlab.lcoremodders:HeroesExpansion:c6311361") {
+    deobfCompile ("com.gitlab.lcoremodders:HeroesExpansion:860f629e") {
         exclude group: 'mezz.jei'
     }
 }

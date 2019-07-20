@@ -23,7 +23,6 @@ import net.minecraft.client.renderer.texture.DynamicTexture;
 import net.minecraft.client.renderer.texture.TextureManager;
 import net.minecraft.client.renderer.texture.TextureUtil;
 import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.MathHelper;
 import net.minecraftforge.client.event.RenderPlayerEvent;
@@ -137,9 +136,6 @@ public class AbilitySkinChange extends AbilityConstant
 		@SubscribeEvent
 		public static void onRenderPlayerPre(RenderPlayerEvent.Pre event)
 		{
-			if (!(event.getEntity() instanceof EntityPlayer))
-				return;
-
 			for (Ability ability : Ability.getAbilities(event.getEntityLiving()))
 			{
 				if (ability instanceof AbilitySkinChange && ability.isUnlocked() && !ability.getDataManager().get(SKIN).equals(""))
