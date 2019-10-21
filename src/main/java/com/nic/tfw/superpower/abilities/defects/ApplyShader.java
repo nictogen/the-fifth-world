@@ -43,7 +43,7 @@ public class ApplyShader extends AbilityConstant
 	}
 
 	@SideOnly(Side.CLIENT)
-	@Mod.EventBusSubscriber
+	@Mod.EventBusSubscriber(value = Side.CLIENT)
 	public static class Handler
 	{
 		public static String shader = "";
