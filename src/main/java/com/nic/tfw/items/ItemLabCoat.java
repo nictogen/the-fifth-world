@@ -28,7 +28,7 @@ public class ItemLabCoat extends ItemArmor
 		setRegistryName(TheFifthWorld.MODID, "lab_coat");
 		setCreativeTab(LucraftCore.CREATIVE_TAB);
 	}
-
+	@SideOnly(Side.CLIENT)
 	@Nullable @Override public ModelBiped getArmorModel(EntityLivingBase entityLiving, ItemStack itemStack, EntityEquipmentSlot armorSlot, ModelBiped _default)
 	{
 		return ModelBipedAll.MODEL;
