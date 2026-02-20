@@ -1,14 +1,10 @@
 package com.nic.tfw;
 
 import com.mojang.logging.LogUtils;
-import com.nic.tfw.genetics.genetypes.AttributeGeneType;
+import com.nic.tfw.component.TFWDataComponents;
 import com.nic.tfw.genetics.genetypes.GeneType;
 import com.nic.tfw.genetics.genetypes.GeneTypes;
 import com.nic.tfw.power.ability.TFWAbilitySerializers;
-import net.minecraft.resources.Identifier;
-import net.minecraft.world.entity.ai.attributes.AttributeInstance;
-import net.minecraft.world.entity.ai.attributes.AttributeModifier;
-import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.ModContainer;
@@ -26,6 +22,7 @@ public class TFWMod {
     public TFWMod(IEventBus modEventBus, ModContainer modContainer) {
         GeneTypes.GENE_TYPES.register(modEventBus);
         TFWAbilitySerializers.ABILITIES.register(modEventBus);
+        TFWDataComponents.DATA_COMPONENTS.register(modEventBus);
     }
 
     @SubscribeEvent

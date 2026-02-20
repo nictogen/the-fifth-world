@@ -1,11 +1,13 @@
 package com.nic.tfw.genetics.genetypes;
 
-import com.nic.tfw.genetics.GeneticData;
 import net.minecraft.core.Holder;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.attributes.Attribute;
 
-public class AttributeGeneType extends GeneType<Double> {
+import java.util.Optional;
+
+public class AttributeGeneType extends GeneType {
 
     public final Holder<Attribute> attribute;
 
@@ -14,12 +16,13 @@ public class AttributeGeneType extends GeneType<Double> {
     }
 
     @Override
-    void apply(GeneticData<Double> data, LivingEntity entity) {
-        entity.getAttribute(attribute).setBaseValue(data.value());
+    public Optional<CompoundTag> createGeneticValue(LivingEntity entity) {
+        if(entity.getAttributes().hasAttribute(attribute)){
+            var tag = new CompoundTag();
+            tag.putString(attribute.getRegisteredName(), String.valueOf(entity.getAttributeBaseValue(attribute)));
+            return Optional.of(tag);
+        }
+        return Optional.empty();
     }
 
-    @Override
-    public Double createGeneticValue(LivingEntity entity) {
-        return entity.getAttributeBaseValue(this.attribute);
-    }
 }

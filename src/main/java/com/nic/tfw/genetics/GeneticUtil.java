@@ -1,6 +1,5 @@
 package com.nic.tfw.genetics;
 
-import com.nic.tfw.genetics.genetypes.AttributeGeneType;
 import com.nic.tfw.genetics.genetypes.GeneType;
 import com.nic.tfw.genetics.genetypes.GeneTypes;
 import net.minecraft.world.entity.LivingEntity;
@@ -12,19 +11,13 @@ import java.util.Optional;
 
 public class GeneticUtil {
 
-    public static List<GeneticData<?>> createGeneticData(LivingEntity entity){
-        var data = new ArrayList<GeneticData<?>>();
-        createAttributeData(GeneTypes.STRENGTH.get(), entity).ifPresent(data::add);
+    public static List<GeneticData> createGeneticData(LivingEntity entity) {
+        var data = new ArrayList<GeneticData>();
+        createGeneticData(GeneTypes.STRENGTH.get(), entity).ifPresent(data::add);
         return data;
     }
 
-    private static Optional<GeneticData<Double>> createAttributeData(AttributeGeneType geneType, LivingEntity entity){
-        if(entity.getAttributes().hasAttribute(geneType.attribute))
-            return Optional.of(createGeneticData(geneType, entity));
-        return Optional.empty();
-    }
-
-    private static <T> GeneticData<T> createGeneticData(GeneType<T> geneType, LivingEntity entity) {
-        return new GeneticData<>(geneType, geneType.createGeneticValue(entity), Color.BLACK, new GeneticOrigin(entity.getType().toString(), entity.getUUID()));
+    private static Optional<GeneticData> createGeneticData(GeneType geneType, LivingEntity entity) {
+        return geneType.createGeneticValue(entity).map(compoundTag -> new GeneticData(geneType, compoundTag, Color.BLACK, new GeneticOrigin(entity.getType().toString(), entity.getUUID())));
     }
 }
