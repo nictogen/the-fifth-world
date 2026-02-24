@@ -3,6 +3,7 @@ package com.nic.tfw;
 import com.mojang.logging.LogUtils;
 import com.nic.tfw.block.TFWBlocks;
 import com.nic.tfw.block.entity.TFWBlockEntities;
+import com.nic.tfw.block.menu.TFWMenus;
 import com.nic.tfw.component.TFWDataComponents;
 import com.nic.tfw.genetics.genetypes.GeneType;
 import com.nic.tfw.genetics.genetypes.GeneTypes;
@@ -26,6 +27,7 @@ public class TFWMod {
         TFWBlocks.BLOCKS.register(modEventBus);
         TFWBlockEntities.BLOCK_ENTITY_TYPES.register(modEventBus);
         TFWItems.ITEMS.register(modEventBus);
+        TFWMenus.MENU_TYPES.register(modEventBus);
         GeneTypes.GENE_TYPES.register(modEventBus);
         TFWAbilitySerializers.ABILITIES.register(modEventBus);
         TFWDataComponents.DATA_COMPONENTS.register(modEventBus);

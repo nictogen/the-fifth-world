@@ -43,9 +43,9 @@ public class BlockMicroscope extends BaseEntityBlock {
 
     private void openContainer(Level level, BlockPos pos, Player player) {
         BlockEntity blockentity = level.getBlockEntity(pos);
-//        if (blockentity instanceof FurnaceBlockEntity) {
-//            player.openMenu((MenuProvider)blockentity);
-//        }
+        if (blockentity instanceof MicroscopeBlockEntity microscope) {
+            player.openMenu(microscope);
+        }
     }
 
     @Override

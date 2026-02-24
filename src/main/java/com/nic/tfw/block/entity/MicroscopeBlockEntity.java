@@ -1,6 +1,7 @@
 package com.nic.tfw.block.entity;
 
 import com.mojang.serialization.Codec;
+import com.nic.tfw.block.menu.MicroscopeMenu;
 import com.nic.tfw.component.TFWDataComponents;
 import com.nic.tfw.genetics.GeneticData;
 import net.minecraft.core.BlockPos;
@@ -53,7 +54,7 @@ public class MicroscopeBlockEntity extends BaseContainerBlockEntity {
 
     @Override
     protected AbstractContainerMenu createMenu(int i, Inventory inventory) {
-        return null;
+        return new MicroscopeMenu(i, inventory, this);
     }
 
     @Override
