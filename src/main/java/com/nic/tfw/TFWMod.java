@@ -1,9 +1,12 @@
 package com.nic.tfw;
 
 import com.mojang.logging.LogUtils;
+import com.nic.tfw.block.TFWBlocks;
+import com.nic.tfw.block.entity.TFWBlockEntities;
 import com.nic.tfw.component.TFWDataComponents;
 import com.nic.tfw.genetics.genetypes.GeneType;
 import com.nic.tfw.genetics.genetypes.GeneTypes;
+import com.nic.tfw.items.TFWItems;
 import com.nic.tfw.power.ability.TFWAbilitySerializers;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.bus.api.SubscribeEvent;
@@ -20,6 +23,9 @@ public class TFWMod {
     public static final Logger LOGGER = LogUtils.getLogger();
 
     public TFWMod(IEventBus modEventBus, ModContainer modContainer) {
+        TFWBlocks.BLOCKS.register(modEventBus);
+        TFWBlockEntities.BLOCK_ENTITY_TYPES.register(modEventBus);
+        TFWItems.ITEMS.register(modEventBus);
         GeneTypes.GENE_TYPES.register(modEventBus);
         TFWAbilitySerializers.ABILITIES.register(modEventBus);
         TFWDataComponents.DATA_COMPONENTS.register(modEventBus);
