@@ -24,7 +24,7 @@ import java.util.List;
 public class MicroscopeBlockEntity extends BaseContainerBlockEntity {
 
     private List<GeneticData> geneticData = new ArrayList<>();
-    private NonNullList<ItemStack> items = NonNullList.withSize(1, ItemStack.EMPTY);
+    private NonNullList<ItemStack> items = NonNullList.withSize(2, ItemStack.EMPTY);
 
     public MicroscopeBlockEntity(BlockPos blockPos, BlockState blockState) {
         super(TFWBlockEntities.MICROSCOPE_BLOCK_ENTITY.get(), blockPos, blockState);

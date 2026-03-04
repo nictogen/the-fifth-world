@@ -1,11 +1,27 @@
 {
     "__comment": "Model generated using MrCrayfish's Model Creator (http://mrcrayfish.com/modelcreator/)",
+    "parent": "block/block",
     "textures": {
         "0": "minecraft:block/iron_block",
         "1": "minecraft:block/anvil",
         "2": "minecraft:block/daylight_detector_top",
         "3": "minecraft:block/glass",
         "particle": "block/iron_block"
+    },
+    "display": {
+        "gui": {
+            "rotation": [
+                30,
+                -35,
+                0
+            ],
+            "translation": [ 0, 2, 0],
+            "scale": [
+                1,
+                1,
+                1
+            ]
+        }
     },
     "elements": [
         {

@@ -22,6 +22,7 @@ public class AttributeGeneType extends GeneType {
             tag.putString(attribute.getRegisteredName(), String.valueOf(entity.getAttributeBaseValue(attribute)));
             return Optional.of(tag);
         }
+
         return Optional.empty();
     }
 

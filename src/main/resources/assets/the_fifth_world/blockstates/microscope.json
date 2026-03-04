@@ -1,8 +1,5 @@
 {
   "variants": {
-    "inventory": {
-      "model": "the_fifth_world:block/microscope"
-    },
     "facing=east": {
       "model": "the_fifth_world:block/microscope",
       "y": 270
