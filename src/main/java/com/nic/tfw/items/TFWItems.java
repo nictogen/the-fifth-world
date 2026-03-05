@@ -21,18 +21,11 @@ public class TFWItems {
 
     public static final DeferredItem<InjectionGunItem> INJECTION_GUN = ITEMS.registerItem(
             "injection_gun",
-            properties -> {
-                properties.stacksTo(1);
-                return new InjectionGunItem(properties);
-            }
+            InjectionGunItem::new
     );
 
     public static final DeferredItem<Item> VIAL = ITEMS.registerItem(
             "vial",
-            properties -> {
-                properties.stacksTo(16);
-                properties.component(TFWDataComponents.GENETIC_DATA, new ArrayList<>());
-                return new Item(properties);
-            }
+            ItemVial::new
     );
 }

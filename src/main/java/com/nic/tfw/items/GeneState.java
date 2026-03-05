@@ -30,7 +30,7 @@ public enum GeneState implements StringRepresentable {
 
     @Override
     public String getSerializedName() {
-        return TFWMod.MODID + this.name;
+        return this.name;
     }
 
     @Nullable
