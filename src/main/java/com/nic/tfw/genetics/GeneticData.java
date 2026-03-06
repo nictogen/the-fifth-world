@@ -1,5 +1,6 @@
 package com.nic.tfw.genetics;
 
+import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import com.nic.tfw.genetics.genetypes.GeneType;
@@ -13,8 +14,8 @@ import java.awt.*;
 
 public record GeneticData(GeneType geneType, CompoundTag value, Color color, GeneticOrigin origin) {
 
-    public static final MapCodec<GeneticData> CODEC =
-            RecordCodecBuilder.mapCodec(instance ->
+    public static final Codec<GeneticData> CODEC =
+            RecordCodecBuilder.create(instance ->
                     instance.group(
                             GeneType.GENE_TYPE_REGISTRY
                                     .byNameCodec()

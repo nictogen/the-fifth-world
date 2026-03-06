@@ -2,6 +2,7 @@ package com.nic.tfw.block;
 
 import com.mojang.serialization.MapCodec;
 import com.nic.tfw.block.entity.MicroscopeBlockEntity;
+import com.nic.tfw.block.entity.TFWBlockEntities;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerLevel;
@@ -14,6 +15,8 @@ import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.*;
 import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.entity.BlockEntityTicker;
+import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
@@ -96,5 +99,10 @@ public class BlockMicroscope extends BaseEntityBlock {
     @Override
     public @Nullable BlockEntity newBlockEntity(BlockPos blockPos, BlockState blockState) {
         return new MicroscopeBlockEntity(blockPos, blockState);
+    }
+
+    @Override
+    public @Nullable <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level level, BlockState state, BlockEntityType<T> blockEntityType) {
+        return (blockEntityType == TFWBlockEntities.MICROSCOPE_BLOCK_ENTITY.get()) ? (level1, blockPos, blockState, t) -> MicroscopeBlockEntity.tick(level1, (MicroscopeBlockEntity) t) : null;
     }
 }

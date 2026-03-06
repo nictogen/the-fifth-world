@@ -3,6 +3,10 @@
 
   "container.the_fifth_world.microscope_block_entity" : "Microscope",
 
+  "gene.the_fifth_world.strength.name" : "Strength",
+  "gene.the_fifth_world.strength.desc" : "This gene determines how strong an entity is without any buffs.",
+  "gene.the_fifth_world.value" : "Value: %s",
+
   "itemGroup.examplemod": "Example Mod Tab",
   "item.examplemod.example_item": "Example Item",
 

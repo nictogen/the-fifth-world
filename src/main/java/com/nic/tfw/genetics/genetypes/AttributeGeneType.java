@@ -2,6 +2,7 @@ package com.nic.tfw.genetics.genetypes;
 
 import net.minecraft.core.Holder;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.attributes.Attribute;
 
@@ -24,6 +25,12 @@ public class AttributeGeneType extends GeneType {
         }
 
         return Optional.empty();
+    }
+
+    @Override
+    public Component createValueComponent(CompoundTag tag) {
+        var value = tag.getString(attribute.getRegisteredName());
+        return Component.translatable("gene.the_fifth_world.value", value.orElse(""));
     }
 
 }
