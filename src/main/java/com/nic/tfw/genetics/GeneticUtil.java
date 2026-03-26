@@ -21,18 +21,23 @@ public class GeneticUtil {
 
     private static Optional<GeneticData> createGeneticData(GeneType geneType, LivingEntity entity) {
         var id = GeneType.GENE_TYPE_REGISTRY.getKey(geneType);
+        var colors = getColors(entity.getUUID().getMostSignificantBits() ^ entity.getUUID().getLeastSignificantBits() ^ id.hashCode());
         return geneType.createGeneticValue(entity).map(compoundTag -> new GeneticData(
                 geneType,
                 compoundTag,
-                getColor(entity.getUUID().getMostSignificantBits() ^ entity.getUUID().getLeastSignificantBits() ^ id.hashCode()),
+                colors[0],
+                colors[1],
                 new GeneticOrigin(entity.getType().toString(), entity.getUUID())));
     }
 
-    private static Color getColor(long seed) {
-        var colors = new Color[] {Color.RED, Color.ORANGE, Color.YELLOW, Color.GREEN, Color.BLUE, Color.PINK, Color.CYAN, new Color(125, 0, 255)};
+    private static Color[] getColors(long seed) {
+        var colors = new Color[] {
+                new Color(151, 22, 7), new Color(180, 104, 77), new Color(222, 177, 45),
+                new Color(17, 160, 54), new Color(33, 73, 123), new Color(154, 92, 198)
+        };
         int i = Math.floorMod(seed, colors.length);
-        var c = colors[i];
-        return c;
+        int i2 = Math.floorMod(seed + 1, colors.length);
+        return new Color[] {colors[i], colors[i2]};
     }
 
     public static Component getTitle(GeneType type){

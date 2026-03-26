@@ -41,6 +41,23 @@ repositories {
             includeGroup("software.bernie.geckolib")
         }
     }
+
+    // JEI
+    maven {
+        // location of the maven that hosts JEI files since January 2023
+        name = "Jared's maven"
+        url = "https://maven.blamejared.com/"
+    }
+    maven {
+        // location of a maven mirror for JEI files, as a fallback
+        name = "ModMaven"
+        url = "https://modmaven.dev"
+    }
+
+    // Terrablender
+    repositories {
+        maven { url = 'https://maven.minecraftforge.net/' }
+    }
 }
 
 base {
@@ -144,6 +161,14 @@ dependencies {
 
     // GeckoLib
     implementation "software.bernie.geckolib:geckolib-neoforge-1.21.11:5.4.1"
+
+    // JEI
+    runtimeOnly("mezz.jei:jei-${minecraft_version}-neoforge-api:${jei_version}")
+    runtimeOnly("mezz.jei:jei-${minecraft_version}-neoforge:${jei_version}")
+
+    // Terrablender
+    runtimeOnly("com.github.glitchfiend:TerraBlender-neoforge:${minecraft_version}-${terrablender_version}")
+
 }
 
 // This block of code expands all declared replace properties in the specified resource targets.
