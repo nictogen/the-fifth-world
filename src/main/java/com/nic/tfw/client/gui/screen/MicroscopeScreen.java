@@ -21,8 +21,8 @@ import java.util.List;
 
 public class MicroscopeScreen extends AbstractContainerScreen<MicroscopeMenu> {
 
-    private static final Identifier BACKGROUND = Identifier.fromNamespaceAndPath(TFWMod.MODID, "textures/gui/container/microscope.png");
-    private static final Identifier DNA_SPRITES = Identifier.fromNamespaceAndPath(TFWMod.MODID, "textures/gui/container/dna_sprites.png");
+    private static final Identifier BACKGROUND = Identifier.fromNamespaceAndPath(TFWMod.MOD_ID, "textures/gui/container/microscope.png");
+    private static final Identifier DNA_SPRITES = Identifier.fromNamespaceAndPath(TFWMod.MOD_ID, "textures/gui/container/dna_sprites.png");
 
     private static final int WIDTH = 256, HEIGHT = 231, DNA_WIDTH = 7, DNA_HEIGHT = 21;
 

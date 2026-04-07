@@ -2,16 +2,13 @@ package com.nic.tfw.items;
 
 import com.nic.tfw.TFWMod;
 import com.nic.tfw.block.TFWBlocks;
-import com.nic.tfw.component.TFWDataComponents;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
 import net.neoforged.neoforge.registries.DeferredItem;
 import net.neoforged.neoforge.registries.DeferredRegister;
 
-import java.util.ArrayList;
-
 public class TFWItems {
-    public static final DeferredRegister.Items ITEMS = DeferredRegister.createItems(TFWMod.MODID);
+    public static final DeferredRegister.Items ITEMS = DeferredRegister.createItems(TFWMod.MOD_ID);
 
     public static final DeferredItem<BlockItem> MICROSCOPE = ITEMS.registerSimpleBlockItem(
             "microscope",

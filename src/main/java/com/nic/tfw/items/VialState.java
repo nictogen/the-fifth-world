@@ -14,17 +14,18 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import javax.annotation.Nullable;
 import java.util.function.IntFunction;
 
-public enum GeneState implements StringRepresentable {
+public enum VialState implements StringRepresentable {
     EMPTY(0, "empty"),
     BLOOD(1, "blood"),
-    DNA(2, "dna");
+    DNA(2, "dna"),
+    ENZYME(3, "enzyme");
     private final String name;
     private final int id;
-    public static final Codec<GeneState> CODEC = StringRepresentable.fromValues(GeneState::values);
-    public static final IntFunction<GeneState> BY_ID = ByIdMap.continuous((gene) -> gene.id, values(), ByIdMap.OutOfBoundsStrategy.ZERO);
-    public static final StreamCodec<ByteBuf, GeneState> STREAM_CODEC = ByteBufCodecs.idMapper(BY_ID, (gene) -> gene.id);
+    public static final Codec<VialState> CODEC = StringRepresentable.fromValues(VialState::values);
+    public static final IntFunction<VialState> BY_ID = ByIdMap.continuous((gene) -> gene.id, values(), ByIdMap.OutOfBoundsStrategy.ZERO);
+    public static final StreamCodec<ByteBuf, VialState> STREAM_CODEC = ByteBufCodecs.idMapper(BY_ID, (gene) -> gene.id);
 
-    GeneState(int id, String name) {
+    VialState(int id, String name) {
         this.name = name;
         this.id = id;
     }
@@ -35,22 +36,22 @@ public enum GeneState implements StringRepresentable {
     }
 
     @Nullable
-    private static GeneState getState(DataComponentMap geneticSource) {
+    private static VialState getState(DataComponentMap geneticSource) {
         var data = geneticSource.get(TFWDataComponents.GENETIC_DATA);
 
         if(data == null) return null;
         if (data.isEmpty())
-            return GeneState.EMPTY;
-        return GeneState.BLOOD;
+            return VialState.EMPTY;
+        return VialState.BLOOD;
     }
 
     @Nullable
-    public static GeneState getState(ItemStack stack){
+    public static VialState getState(ItemStack stack){
         return getState(stack.getComponents());
     }
 
     @Nullable
-    public static GeneState getState(BlockEntity blockEntity) {
+    public static VialState getState(BlockEntity blockEntity) {
         return getState(blockEntity.collectComponents());
     }
 }

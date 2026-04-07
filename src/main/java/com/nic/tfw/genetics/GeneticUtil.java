@@ -1,10 +1,12 @@
 package com.nic.tfw.genetics;
 
 import com.nic.tfw.TFWMod;
+import com.nic.tfw.component.TFWDataComponents;
 import com.nic.tfw.genetics.genetypes.GeneType;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.item.ItemStack;
 
 import java.awt.*;
 import java.util.ArrayList;
@@ -42,13 +44,24 @@ public class GeneticUtil {
 
     public static Component getTitle(GeneType type){
         var key = GeneType.GENE_TYPE_REGISTRY.getKey(type);
-        if(key == null) key = Identifier.fromNamespaceAndPath(TFWMod.MODID, "error");
+        if(key == null) key = Identifier.fromNamespaceAndPath(TFWMod.MOD_ID, "error");
         return Component.translatable("gene." + key.getNamespace() + "." + key.getPath() + ".name");
     }
 
     public static Component getDesc(GeneType type){
         var key = GeneType.GENE_TYPE_REGISTRY.getKey(type);
-        if(key == null) key = Identifier.fromNamespaceAndPath(TFWMod.MODID, "error");
+        if(key == null) key = Identifier.fromNamespaceAndPath(TFWMod.MOD_ID, "error");
         return Component.translatable("gene." + key.getNamespace() + "." + key.getPath() + ".desc");
+    }
+
+    public static Color getColor(ItemStack itemStack, int index){
+        return getColor(itemStack.getOrDefault(TFWDataComponents.GENETIC_DATA, new ArrayList<>()), index);
+    }
+
+    private static Color getColor(List<GeneticData> geneticData, int index){
+        if(geneticData.isEmpty()) return Color.WHITE;
+        double i = index;
+        while(i < geneticData.size() * 2.0) i -= geneticData.size() * 2.0;
+        return (i % 2 == 0) ? geneticData.get((int) (i / 2.0)).color1() : geneticData.get((int) (i / 2.0)).color2();
     }
 }

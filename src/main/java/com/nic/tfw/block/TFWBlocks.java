@@ -9,7 +9,7 @@ import net.neoforged.neoforge.registries.DeferredRegister;
 
 public class TFWBlocks {
 
-    public static final DeferredRegister.Blocks BLOCKS = DeferredRegister.createBlocks(TFWMod.MODID);
+    public static final DeferredRegister.Blocks BLOCKS = DeferredRegister.createBlocks(TFWMod.MOD_ID);
 
     public static final DeferredBlock<BlockMicroscope> MICROSCOPE = BLOCKS.register(
             "microscope",

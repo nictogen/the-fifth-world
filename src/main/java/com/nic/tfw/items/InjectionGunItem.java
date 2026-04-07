@@ -6,7 +6,6 @@ import com.nic.tfw.genetics.GeneticData;
 import com.nic.tfw.genetics.GeneticUtil;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
-import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
@@ -15,13 +14,11 @@ import net.minecraft.world.level.Level;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.event.entity.player.AttackEntityEvent;
-import net.neoforged.neoforge.event.entity.player.PlayerInteractEvent;
 
-import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 
-@EventBusSubscriber(modid = TFWMod.MODID)
+@EventBusSubscriber(modid = TFWMod.MOD_ID)
 public class InjectionGunItem extends Item {
 
     public InjectionGunItem(Properties properties) {
@@ -38,8 +35,8 @@ public class InjectionGunItem extends Item {
     public static void onLeftClickEntity(AttackEntityEvent event) {
         var item = event.getEntity().getMainHandItem();
         if (item.getItem() == TFWItems.INJECTION_GUN.asItem()) {
-            GeneState state = GeneState.getState(item);
-            if (event.getEntity().level().isClientSide() || state != GeneState.EMPTY) return;
+            VialState state = VialState.getState(item);
+            if (event.getEntity().level().isClientSide() || state != VialState.EMPTY) return;
             if (event.getTarget() instanceof LivingEntity livingTarget)
                 item.set(TFWDataComponents.GENETIC_DATA, GeneticUtil.createGeneticData(livingTarget));
         }
@@ -51,8 +48,8 @@ public class InjectionGunItem extends Item {
         ItemStack stack = clicker.getItemInHand(hand);
         ItemStack stackOff = clicker.getItemInHand(off);
 
-        GeneState state = GeneState.getState(stack);
-        GeneState stateOff = GeneState.getState(stackOff);
+        VialState state = VialState.getState(stack);
+        VialState stateOff = VialState.getState(stackOff);
 
         List<GeneticData> geneticData = stack.get(TFWDataComponents.GENETIC_DATA);
         List<GeneticData> geneticDataOff = stackOff.get(TFWDataComponents.GENETIC_DATA);
@@ -61,18 +58,19 @@ public class InjectionGunItem extends Item {
             if (geneticDataOff == null || geneticDataOff.isEmpty()) {
                 stack.set(TFWDataComponents.GENETIC_DATA, geneticDataOff != null ? geneticDataOff : new ArrayList<>());
                 clicker.setItemInHand(off, ItemStack.EMPTY);
-            } else if (stateOff != GeneState.DNA) {
+            } else if (stateOff != VialState.DNA) {
                 stack.set(TFWDataComponents.GENETIC_DATA, geneticDataOff);
                 clicker.setItemInHand(off, ItemStack.EMPTY);
             }
             return true;
         } else if (stackOff.isEmpty()) {
-            if (clicker.isCrouching() && state == GeneState.EMPTY) {
+            if (clicker.isCrouching() && state == VialState.EMPTY) {
                 stack.set(TFWDataComponents.GENETIC_DATA, GeneticUtil.createGeneticData(clicker));
                 return true;
             } else if(geneticData != null) {
                 ItemStack vial = new ItemStack(TFWItems.VIAL.asItem());
                 vial.set(TFWDataComponents.GENETIC_DATA, geneticData);
+                vial.set(TFWDataComponents.LIQUID_AMOUNT, 10);
                 clicker.setItemInHand(off, vial);
                 stack.remove(TFWDataComponents.GENETIC_DATA);
                 return true;

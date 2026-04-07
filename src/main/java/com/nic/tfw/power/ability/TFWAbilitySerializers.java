@@ -7,6 +7,6 @@ import net.threetag.palladium.registry.PalladiumRegistryKeys;
 
 public class TFWAbilitySerializers {
 
-    public static final DeferredRegister<AbilitySerializer<?>> ABILITIES = DeferredRegister.create(PalladiumRegistryKeys.ABILITY_SERIALIZER, TFWMod.MODID);
+    public static final DeferredRegister<AbilitySerializer<?>> ABILITIES = DeferredRegister.create(PalladiumRegistryKeys.ABILITY_SERIALIZER, TFWMod.MOD_ID);
 
 }

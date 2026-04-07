@@ -1,0 +1,6 @@
+{
+  "parent": "minecraft:item/generated",
+  "textures": {
+    "layer0": "the_fifth_world:item/vial_dna_3"
+  }
+}

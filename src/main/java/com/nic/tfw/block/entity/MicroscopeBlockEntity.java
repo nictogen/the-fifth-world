@@ -4,8 +4,7 @@ import com.mojang.serialization.Codec;
 import com.nic.tfw.block.menu.MicroscopeMenu;
 import com.nic.tfw.component.TFWDataComponents;
 import com.nic.tfw.genetics.GeneticData;
-import com.nic.tfw.genetics.GeneticUtil;
-import com.nic.tfw.items.GeneState;
+import com.nic.tfw.items.VialState;
 import com.nic.tfw.items.TFWItems;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
@@ -46,16 +45,19 @@ public class MicroscopeBlockEntity extends BaseContainerBlockEntity {
     }
 
     public static void tick(Level level, MicroscopeBlockEntity blockEntity) {
-        if(level.isClientSide()) return;
-        if(hasValidPipetteSlot(blockEntity)){
-            if(blockEntity.progress++ >= PIPETTE_TIME){
+        if (level.isClientSide()) return;
+        if (hasValidPipetteSlot(blockEntity)) {
+            if (blockEntity.progress++ >= PIPETTE_TIME) {
                 addPipetteSlot(blockEntity);
                 blockEntity.progress = 0;
-                blockEntity.setItem(0, new ItemStack(TFWItems.VIAL.asItem())); //TODO uses
+                ItemStack slot = blockEntity.getItem(0);
+                slot.set(TFWDataComponents.LIQUID_AMOUNT, slot.getOrDefault(TFWDataComponents.LIQUID_AMOUNT, 1) - 1);
+                if (slot.getOrDefault(TFWDataComponents.LIQUID_AMOUNT, 0) == 0)
+                    blockEntity.setItem(0, new ItemStack(TFWItems.VIAL.asItem()));
                 level.sendBlockUpdated(blockEntity.worldPosition, level.getBlockState(blockEntity.worldPosition), level.getBlockState(blockEntity.worldPosition), Block.UPDATE_CLIENTS);
             }
             blockEntity.setChanged();
-        } else if (blockEntity.progress != 0){
+        } else if (blockEntity.progress != 0) {
             blockEntity.progress = 0;
             blockEntity.setChanged();
         }
@@ -63,12 +65,13 @@ public class MicroscopeBlockEntity extends BaseContainerBlockEntity {
 
     private static boolean hasValidPipetteSlot(MicroscopeBlockEntity blockEntity) {
         ItemStack slot = blockEntity.getItem(0);
-        if(slot.isEmpty()) return false;
-        GeneState state = GeneState.getState(blockEntity);
-        GeneState slotState = GeneState.getState(slot);
-        switch (state){
+        if (slot.isEmpty()) return false;
+        if (slot.getOrDefault(TFWDataComponents.LIQUID_AMOUNT, 0) == 0) return false;
+        VialState state = VialState.getState(blockEntity);
+        VialState slotState = VialState.getState(slot);
+        switch (state) {
             case EMPTY -> {
-                return slotState != GeneState.EMPTY;
+                return slotState != VialState.EMPTY;
             }
             case BLOOD -> {
                 //Return true if an enzyme is in slot
@@ -82,16 +85,19 @@ public class MicroscopeBlockEntity extends BaseContainerBlockEntity {
                 //Should never occur
                 return false;
             }
+            case ENZYME -> {
+                return false;
+            }
         }
     }
 
     private static void addPipetteSlot(MicroscopeBlockEntity blockEntity) {
         ItemStack slot = blockEntity.getItem(0);
-        GeneState state = GeneState.getState(blockEntity);
-        GeneState slotState = GeneState.getState(slot);
-        switch (state){
+        VialState state = VialState.getState(blockEntity);
+        VialState slotState = VialState.getState(slot);
+        switch (state) {
             case EMPTY -> {
-                if(slotState != GeneState.EMPTY) {
+                if (slotState != VialState.EMPTY) {
                     blockEntity.geneticData = slot.getOrDefault(TFWDataComponents.GENETIC_DATA, new ArrayList<>());
                     return;
                 }
@@ -105,6 +111,8 @@ public class MicroscopeBlockEntity extends BaseContainerBlockEntity {
             case null -> {
                 //Should never occur
             }
+            case ENZYME -> {
+            }
         }
     }
 
@@ -113,7 +121,6 @@ public class MicroscopeBlockEntity extends BaseContainerBlockEntity {
         super.loadAdditional(input);
         this.items = NonNullList.withSize(this.getContainerSize(), ItemStack.EMPTY);
         ContainerHelper.loadAllItems(input, this.items);
-
         this.geneticData.clear();
         this.geneticData.addAll(input.read("genetic_data", Codec.list(GeneticData.CODEC)).orElse(List.of()));
         this.progress = input.getIntOr("progress", 0);

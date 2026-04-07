@@ -12,7 +12,7 @@ import net.neoforged.neoforge.registries.RegistryBuilder;
 import java.util.Optional;
 
 public abstract class GeneType {
-    public static final ResourceKey<Registry<GeneType>> GENE_TYPE_REGISTRY_KEY = ResourceKey.createRegistryKey(Identifier.fromNamespaceAndPath(TFWMod.MODID, "gene_types"));
+    public static final ResourceKey<Registry<GeneType>> GENE_TYPE_REGISTRY_KEY = ResourceKey.createRegistryKey(Identifier.fromNamespaceAndPath(TFWMod.MOD_ID, "gene_types"));
     public static final Registry<GeneType> GENE_TYPE_REGISTRY = new RegistryBuilder<>(GENE_TYPE_REGISTRY_KEY).create();
 
     public abstract Optional<CompoundTag> createGeneticValue(LivingEntity entity);
