@@ -7,7 +7,7 @@ import com.nic.tfw.genetics.GeneticData;
 import com.nic.tfw.genetics.GeneticUtil;
 import com.nic.tfw.items.TFWItems;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.network.chat.Component;
@@ -30,10 +30,7 @@ public class MicroscopeScreen extends AbstractContainerScreen<MicroscopeMenu> {
     private boolean paused = false;
 
     public MicroscopeScreen(MicroscopeMenu menu, Inventory playerInventory, Component title) {
-        super(menu, playerInventory, title);
-
-        this.imageWidth = WIDTH;
-        this.imageHeight = HEIGHT;
+        super(menu, playerInventory, title, WIDTH, HEIGHT);
 
         this.titleLabelX = 10;
         this.titleLabelY = 2;
@@ -43,9 +40,10 @@ public class MicroscopeScreen extends AbstractContainerScreen<MicroscopeMenu> {
     }
 
     @Override
-    protected void renderBg(GuiGraphics guiGraphics, float v, int i, int i1) {
-        //Render BG texture
-        guiGraphics.blit(
+    public void extractBackground(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float a) {
+        super.extractBackground(graphics, mouseX, mouseY, a);
+
+        graphics.blit(
                 RenderPipelines.GUI_TEXTURED,
                 BACKGROUND,
                 this.leftPos, this.topPos,
@@ -54,13 +52,13 @@ public class MicroscopeScreen extends AbstractContainerScreen<MicroscopeMenu> {
                 256, 256
         );
 
-        var pose = guiGraphics.pose();
+        var pose = graphics.pose();
 
         //Render Microscope Icon
         pose.pushMatrix();
         pose.translate(this.leftPos + 196, this.topPos + 195);
         pose.scale(1.9f);
-        guiGraphics.renderFakeItem(new ItemStack(TFWItems.MICROSCOPE.asItem()), 0, 0);
+        graphics.fakeItem(new ItemStack(TFWItems.MICROSCOPE.asItem()), 0, 0);
         pose.popMatrix();
     }
 
@@ -73,15 +71,15 @@ public class MicroscopeScreen extends AbstractContainerScreen<MicroscopeMenu> {
     }
 
     @Override
-    public void renderContents(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
-        super.renderContents(guiGraphics, mouseX, mouseY, partialTick);
+    public void extractContents(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float partialTick) {
+        super.extractContents(graphics, mouseX, mouseY, partialTick);
 
         this.paused = mouseX > this.leftPos + 10 && mouseX < this.leftPos + 181 && mouseY > this.topPos + 13 && mouseY < this.topPos + 137;
 
         var microscope = this.menu.getMicroscopeEntity(Minecraft.getInstance().level);
         if (microscope != null) {
 
-            guiGraphics.enableScissor(this.leftPos + 10, this.topPos + 13, this.leftPos + 181, this.topPos + 137);
+            graphics.enableScissor(this.leftPos + 10, this.topPos + 13, this.leftPos + 181, this.topPos + 137);
 
             var geneticData = microscope.collectComponents().getOrDefault(TFWDataComponents.GENETIC_DATA, new ArrayList<GeneticData>());
             boolean focused = false;
@@ -99,32 +97,29 @@ public class MicroscopeScreen extends AbstractContainerScreen<MicroscopeMenu> {
                             focusedTime = 0;
                         }
                     } else {
-                        renderDNA(guiGraphics, 1.0f, x, y, geneticData, i);
+                        renderDNA(graphics, 1.0f, x, y, geneticData, i);
                         if(focusedData == i) focusedData = -1;
                     }
-                } else renderDNA(guiGraphics, 1.0f, x, y, geneticData, i);
+                } else renderDNA(graphics, 1.0f, x, y, geneticData, i);
             }
 
-            guiGraphics.disableScissor();
+            graphics.disableScissor();
 
             if (focusedData != -1) {
                 int x = this.leftPos + ((int) (((focusedData * 21.0 + timer)) / 160) % 12) * 14 + 15;
                 int y = this.topPos + ((focusedData * 21 + timer) % 160) - 10;
                 float inflation = Math.min(20, 5 + focusedTime) * 0.2f;
-                renderDNA(guiGraphics, inflation, x, y, geneticData, focusedData);
+                renderDNA(graphics, inflation, x, y, geneticData, focusedData);
                 var fData = geneticData.get(focusedData);
-
-                guiGraphics.drawString(this.font, GeneticUtil.getTitle(fData.geneType()), this.leftPos + 184, this.topPos + 12, fData.color1().getRGB(), true);
-                guiGraphics.drawWordWrap(this.font, GeneticUtil.getDesc(fData.geneType()), this.leftPos + 184, this.topPos + 25, 70, Color.WHITE.getRGB(), true);
-
-                guiGraphics.drawWordWrap(this.font, fData.geneType().createValueComponent(fData.value()), this.leftPos + 184, this.topPos + 130, 70, fData.color2().getRGB(), true);
-
+                graphics.text(this.font, GeneticUtil.getTitle(fData.geneType()), this.leftPos + 184, this.topPos + 12, fData.color1().getRGB(), true);
+                graphics.textWithWordWrap(this.font, GeneticUtil.getDesc(fData.geneType()), this.leftPos + 184, this.topPos + 25, 70, Color.WHITE.getRGB(), true);
+                graphics.textWithWordWrap(this.font, fData.geneType().createValueComponent(fData.value()), this.leftPos + 184, this.topPos + 130, 70, fData.color2().getRGB(), true);
             }
         }
     }
 
-    private void renderDNA(GuiGraphics guiGraphics, float scale, int x, int y, List<GeneticData> data, int i) {
-        var pose = guiGraphics.pose();
+    private void renderDNA(GuiGraphicsExtractor graphics, float scale, int x, int y, List<GeneticData> data, int i) {
+        var pose = graphics.pose();
         int uOff = (data.size() == 1 || scale >= 2.0f) ? 0 : (data.size() == i + 1) ? 7 : (i == 0) ? 14 : 21;
 
         pose.pushMatrix();
@@ -132,7 +127,7 @@ public class MicroscopeScreen extends AbstractContainerScreen<MicroscopeMenu> {
         pose.scale(scale);
         pose.translate(-3.5f, -10.5f);
         //Color 1
-        guiGraphics.blit(
+        graphics.blit(
                 RenderPipelines.GUI_TEXTURED,
                 DNA_SPRITES,
                 0, 0,
@@ -142,7 +137,7 @@ public class MicroscopeScreen extends AbstractContainerScreen<MicroscopeMenu> {
                 data.get(i).color1().getRGB()
         );
         //Color 2
-        guiGraphics.blit(
+        graphics.blit(
                 RenderPipelines.GUI_TEXTURED,
                 DNA_SPRITES,
                 0, 0,
@@ -152,7 +147,7 @@ public class MicroscopeScreen extends AbstractContainerScreen<MicroscopeMenu> {
                 data.get(i).color2().getRGB()
         );
         //Frame
-        guiGraphics.blit(
+        graphics.blit(
                 RenderPipelines.GUI_TEXTURED,
                 DNA_SPRITES,
                 0, 0,

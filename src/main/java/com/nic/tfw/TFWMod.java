@@ -29,7 +29,6 @@ public class TFWMod {
         GeneTypes.GENE_TYPES.register(modEventBus);
         TFWAbilitySerializers.ABILITIES.register(modEventBus);
         TFWDataComponents.DATA_COMPONENTS.register(modEventBus);
-
     }
 
     @SubscribeEvent
